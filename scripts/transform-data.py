@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import helper
+import shutil
 
 alert_status_mapping = {
     0: "untriaged",
@@ -44,6 +45,10 @@ df_alerts.rename(columns={'test_series_signature_id': 'signature_id'}, inplace=T
 cutoff_date_time = pd.to_datetime('2024-04-02 08:58:00')
 for project in projects_folders_mapping:
     for folder in projects_folders_mapping[project]:
+        '''
         if not os.path.exists('../datasets/' + folder + "-processed"):
             os.makedirs('../datasets/' + folder + "-processed", exist_ok=True)
         process_folder(folder)
+        '''
+        shutil.rmtree('../datasets/' + folder)
+        os.rename('../datasets/' + folder + "-processed", '../datasets/' + folder)
