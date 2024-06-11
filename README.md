@@ -3,7 +3,7 @@
 This repository contains the code to extract performance-related data as well as the data itself. The generated data resides in the `datasets` folder.
 The code files inside `scripts` folder are as follows :
 - `extract-alerts.py` : extracts performance-related alerts (ones triggered from one year ago until the time of running the script) using an [API endpoint](https://treeherder.mozilla.org/docs/). It produces two data files `alerts_data.csv` and `signatures.txt`.
-- `extract-bugs.py` : extracts all bugs by using [bugbug](https://github.com/mozilla/bugbug) and labels bugs between performance-related and not performance-related. It produces a data file `bugs_data.csv`.
+- `extract-bugs.py` : extracts all bugs related to alerts previously extracted by using [bugbug](https://github.com/mozilla/bugbug) and labels them between performance-related and not performance-related. It produces a data file `bugs_data.csv`.
 - `extract-timeseries.py` : given `signatures.txt` which contains signature IDs associated with performance-related alerts triggered in the last year, signatures timeseries are extracted using a combination of [API endpoints](https://treeherder.mozilla.org/docs/). It produces multiple folders, each representing signature IDs from a specific project. Each folder contains files each representing the timeseries associated with one signature ID.
 - `transform-data.py` : given the folders generated through running `extract-timeseries.py`, the script goes through the files and labels the entries in them as follows : 
   - *True negatives* : timeseries data points that are not appearing in the alerts whatsoever

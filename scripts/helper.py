@@ -27,4 +27,5 @@ def txt_to_list(filename):
     with open(filename, 'r') as file:
         content = file.read().strip()
         ids = content.split(',')
+        ids = [id.lstrip() for id in ids]
         return ids

@@ -1,6 +1,6 @@
 from bugbug import bugzilla, db, bug_features
 import pandas as pd
-import helper
+from helper import append_strings, get_json, txt_to_list
 
 '''
 This function is dedicated for extracting JSON attrbutes that do not exist always with exception handling
@@ -82,8 +82,8 @@ df = pd.DataFrame(columns=columns)
 '''
 Only bugs that are asosciated with alerts extracted through extract-alerts.py will be kept. note that bugs.txt contains the IDs of bugs associated with alerts obtained from the same Python script previously mentioned
 '''
+aa = 0
 bugs_ids = txt_to_list("bugs.txt")
-
 for bug in bugzilla.get_bugs():
     if str(bug["id"]) in bugs_ids:
         isperfbug = False
@@ -91,4 +91,6 @@ for bug in bugzilla.get_bugs():
             isperfbug = True
         new_row = extract_row(bug, isperfbug)
         df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+        aa += 1
 df.to_csv('../datasets/bugs_data.csv', index=False)
+print(aa)

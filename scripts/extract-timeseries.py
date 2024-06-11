@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 import json
 import random
-import helper
+from helper import append_strings, get_json, txt_to_list
 
 '''
 The following function extracts a list of strings associated with a given attribute and it appends them in a pipe-separated string
