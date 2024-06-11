@@ -2,7 +2,7 @@ import requests
 from datetime import datetime, timedelta
 import pandas as pd
 import json
-import helper
+from helper import append_strings, get_json, txt_to_list
 
 '''
 This function is used in the get_alert_info function. Provided the JSON of alerts related to a specific alert, it gets their ID and make them into a pipe '|' separated string
