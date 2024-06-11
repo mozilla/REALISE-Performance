@@ -38,3 +38,5 @@ The `project1` folder contains scripts (under `project1/scripts`) to extract per
 This work is a collaboration between Mozilla and REALISE Lab in Concordia University. Lab members participating in the project are : 
 - Prof. Diego Elias Costa (Supervising Professor)
 - Mohamed Bilel Besbes (Research assistant)
+
+![Concordia logo](assets/concordia-logo.png)
