@@ -65,14 +65,17 @@ def extract_data(json_data):
     }
     return data_entry
 
-important_porjects = [
+#projects mentionned in the alerts dataset
+mentionned_porjects = [
     'firefox-android',
     "mozilla-central",
     "mozilla-beta",
     "mozilla-release",
     "autoland"
 ]
-unimportant_porjects = [
+
+#projects not mentionned in the alerts dataset
+unmentionned_porjects = [
     "try",
     "android-components",
     "application-services",
@@ -200,7 +203,7 @@ def extract_timeseries(project):
                 new_row_df = pd.DataFrame(new_row, index=[0])
                 df = pd.concat([df, new_row_df], ignore_index=True)
             df.to_csv('../datasets/' + project + '/' + signature_id + '_timeseries_data.csv', header=True, mode='w', index=False)
-for project in important_porjects:
+for project in mentionned_porjects:
     if not os.path.exists('../datasets/' + project):
         os.makedirs('../datasets/' + project)
     extract_timeseries(project)
