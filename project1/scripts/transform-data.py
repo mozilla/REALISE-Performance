@@ -17,19 +17,20 @@ alert_status_mapping = {
 
 category_mapping = {
     'investigating': 'SP', # 'SP' stands for 'Still Processing'
-    'reassigned': 'SP',
+    'reassigned': 'TP',
     'invalid': 'FP',
     'improvement': 'TP',
     'fixed': 'TP',
-    'wontfix': 'FP',
+    'wontfix': 'TP',
     'untriaged': 'SP',
     'backedout': 'TP'
 }
 
 def process_folder(folder):
     for signature_file in os.listdir('../datasets/' + folder):
-        df = pd.read_csv('../datasets/' + folder + '/' + signature_file, index_col=False)
-        df["push_timestamp"] = pd.to_datetime(df["push_timestamp"], format='%Y-%m-%dT%H:%M:%S')
+        df = pd.read_csv('../datasets/' + folder + '/' + signature_file, index_col=False)[["job_id", "entry_id", "push_timestamp", "value", "revision", "push_id", "repository_name", "test", "lower_is_better", "name", "parent_signature", "repository_id", "measurement_unit", "application", "has_subtests", "tags", "extra_options", "signature_id", "framework_id" , "signature_hash", "option_collection_hash", "machine_platform", "suite", "should_alert"]]
+        #df["push_timestamp"] = pd.to_datetime(df["push_timestamp"], format='%Y-%m-%dT%H:%M:%S', errors='coerce')
+        df["push_timestamp"] = pd.to_datetime(df["push_timestamp"], format='mixed')
         df = df[df['push_timestamp'] < cutoff_date_time]
         df_merged = pd.merge(df, df_alerts, left_on=['revision', 'signature_id'], right_on=['alert_revision', 'signature_id'], how='left')
         df_merged['alert_status'].fillna('TN', inplace=True)

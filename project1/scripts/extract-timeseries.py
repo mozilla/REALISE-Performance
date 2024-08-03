@@ -35,6 +35,8 @@ def extract_sig_attr(signature_json):
     }
     return summary_entry
 
+
+
 '''
 this function extracts signature summary attributes and returns them given a summary JSON
 '''
