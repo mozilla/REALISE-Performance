@@ -5,8 +5,12 @@ import json
 
 projects_folders = ["autoland1", "autoland2", "autoland3", "autoland4", "firefox-android", "mozilla-central", "mozilla-beta", "mozilla-release"]
 
+with open('tp6_signatures.txt', 'r') as file:
+    tp6_signatures = file.read().split(',')
+with open('speedometer3_signatures.txt', 'r') as file:
+    speedometer3_signatures = file.read().split(',')
 
-filtered_signatures = [2549380, 4722823]
+filtered_signatures = speedometer3_signatures + tp6_signatures
 filtered_signatures = [str(i) for i in filtered_signatures]
 
 annotations = dict()

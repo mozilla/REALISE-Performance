@@ -1,0 +1,19 @@
+{
+    "name": "4524541",
+    "longname": "4524541 timeseries",
+    "n_obs": 0,
+    "n_dim": 1,
+    "time": {
+        "type": "string",
+        "format": "%Y-%m-%d %H:%M:%S",
+        "index": [],
+        "raw": []
+    },
+    "series": [
+        {
+            "label": "Timeseries",
+            "type": "float",
+            "raw": []
+        }
+    ]
+}
