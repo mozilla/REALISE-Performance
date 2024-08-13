@@ -20,6 +20,7 @@ for project in projects_folders:
         if (isinstance(filtered_signatures, list) and signature_id in filtered_signatures):
             df = pd.read_csv('../datasets/' + project + '/' + signature_file)
             df['alert_status'] = df['alert_status'].apply(lambda x: 1 if x == 'FP' else 0)
+            df = df.sort_values(by='push_timestamp', ascending=True)
             indices = df.index[df['alert_status'] == 1].tolist()
             indices.sort()
             new_entry = {
