@@ -184,7 +184,6 @@ columns = ['alert_id',
 'alert_performance_tags'
 ]
 unique_signatures = set()
-unique_bugs = set()
 df = pd.DataFrame(columns=columns)
 while ((comp_time_stamp >= threshold_timestamp) and (url != None)):
     payload = get_json(url)
@@ -207,19 +206,11 @@ while ((comp_time_stamp >= threshold_timestamp) and (url != None)):
             new_row.update(alert_info)
             new_row.update(test_info)
             unique_signatures.add(new_row['test_series_signature_id'])
-            if (new_row['alert_bug_number']):
-                unique_bugs.add(new_row['alert_bug_number'])
             df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
 df.to_csv('../datasets/alerts_data.csv', index=False)
 sig_ids_str = ", ".join(list(list(map(lambda id: str(id), unique_signatures))))
-bug_ids_str = ", ".join(list(list(map(lambda id: str(id), unique_bugs))))
 '''
 The signatures.txt file contains the signature IDs associated with performance alerts extracted through this script. This file will be used in the extract-timeseries.py file
 '''
 with open("signatures.txt", "w") as file:
     file.write(sig_ids_str)
-'''
-The bugs.txt file contains the bug IDs associated with performance alerts extracted through this script. This file will be used in the extract-bugs.py file
-'''
-with open("bugs.txt", "w") as file:
-    file.write(bug_ids_str)
