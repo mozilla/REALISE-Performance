@@ -1,3 +1,6 @@
+import requests
+import json
+
 '''
 Provided the JSON of tags related to a specific alertand make them into a comma-separated string
 '''

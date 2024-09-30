@@ -23,7 +23,8 @@ category_mapping = {
     'fixed': 'TP',
     'wontfix': 'TP',
     'untriaged': 'SP',
-    'backedout': 'TP'
+    'backedout': 'TP',
+    'downstream': 'TP'
 }
 
 def process_folder(folder):

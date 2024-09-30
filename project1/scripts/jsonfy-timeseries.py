@@ -3,8 +3,10 @@ import pandas as pd
 import json
 
 
-df_alerts = pd.read_csv('../datasets/alerts_data.csv', index_col=False)
+df_alerts = pd.read_csv('../datasets/rectified_alerts_data.csv', index_col=False)
 projects_folders = ["autoland1", "autoland2", "autoland3", "autoland4", "firefox-android", "mozilla-central", "mozilla-beta", "mozilla-release"]
+dest_folder = 'new-datasets-json'
+os.makedirs('../' + dest_folder, exist_ok=True)
 
 '''
 with open('tp6_signatures.txt', 'r') as file:
@@ -30,7 +32,7 @@ for project in projects_folders:
         signature_id = signature_file.split("_")[0]
         if (isinstance(filtered_signatures, list) and signature_id in filtered_signatures):
             df = pd.read_csv('../datasets/' + project + '/' + signature_file)
-            df['alert_status'] = df['alert_status'].apply(lambda x: 1 if x in ['TP', 'FN'] else 0)
+            df['alert_status'] = df['alert_status'].apply(lambda x: 1 if x in ['TP', 'FN', 'SP'] else 0)
             df = df.sort_values(by='push_timestamp', ascending=True)
             indices = df.index[df['alert_status'] == 1].tolist()
             indices.sort()
@@ -38,7 +40,7 @@ for project in projects_folders:
                 "1": indices
             }
             annotations[signature_id] = new_entry
-            with open('../datasets-json/annotations.json', 'w') as file:
+            with open('../' + dest_folder + '/annotations.json', 'w') as file:
                 json.dump(annotations, file, indent=4)
             n_obs = len(df)
             json_df = {
@@ -61,5 +63,6 @@ for project in projects_folders:
                 ]
             }
             signature_json_file = signature_id + ".json"
-            with open('../datasets-json/' + project + '/' + signature_json_file, 'w') as file:
+            os.makedirs('../' + dest_folder + '/' + project, exist_ok=True)
+            with open('../' + dest_folder + '/' + project + '/' + signature_json_file, 'w') as file:
                 json.dump(json_df, file, indent=4)
