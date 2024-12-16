@@ -1,3 +1,0 @@
-requests==2.31.0
-pandas==2.2.2
-bugbug==0.0.544
