@@ -1,37 +1,32 @@
+# Command to build: docker build --build-arg DATASETS_PATH=data/datasets-aggregated --build-arg ANNOTATIONS_PATH=data/annotations/sample_data/sp_is_fp/annotations.json -t avg-agg-original -f prediction_generation/Dockerfile .
 FROM simoneismann/tcpdbench:latest
+ENV PROJECT_FOLDER='prediction_generation'
+ARG ANNOTATIONS_PATH='annotations.json'
+ARG DATASETS_PATH='datasets'
 WORKDIR TCPDBench
-COPY annotations.json /TCPDBench/analysis/annotations/
-#RUN rm /TCPDBench/analysis/scripts/make_table.py
-COPY make_table.py /TCPDBench/analysis/scripts/make_table.py
-#COPY simulation/analysis/scripts/summarize_metrics.py /TCPDBench/analysis/scripts/summarize_metrics.py
-#RUN rm /TCPDBench/analysis/scripts/aggregate_table_wide.py
-COPY aggregate_table_wide.py /TCPDBench/analysis/scripts/aggregate_table_wide.py
-#RUN rm /TCPDBench/Makefile
-#RUN rm /TCPDBench/execs/R/utils.R
-#RUN rm /TCPDBench/execs/R/cpdbench_wbs.R
-#RUN rm /TCPDBench/execs/R/cpdbench_prophet.R
-#RUN rm /TCPDBench/execs/python/cpdbench_utils.py
-#RUN rm /TCPDBench/analysis/scripts/summarize.py
-COPY cpdbench_utils.py /TCPDBench/execs/python/cpdbench_utils.py
-COPY summarize.py /TCPDBench/analysis/scripts/summarize.py
-COPY summarize_metrics.py /TCPDBench/analysis/scripts/summarize_metrics.py
-COPY utils.R /TCPDBench/execs/R/utils.R
-COPY cpdbench_wbs.R /TCPDBench/execs/R/cpdbench_wbs.R
-COPY cpdbench_prophet.py /TCPDBench/execs/python/cpdbench_prophet.py
-#RUN rm -rf /TCPDBench/execs/python/mongodb
-#RUN mkdir p /TCPDBench/execs/python/prophet && chmod 755 /TCPDBench/execs/python/prophet
+COPY ${PROJECT_FOLDER}/make_table.py /TCPDBench/analysis/scripts/make_table.py
+COPY ${PROJECT_FOLDER}/aggregate_table_wide.py /TCPDBench/analysis/scripts/aggregate_table_wide.py
+COPY ${PROJECT_FOLDER}/cpdbench_utils.py /TCPDBench/execs/python/cpdbench_utils.py
+COPY ${PROJECT_FOLDER}/summarize.py /TCPDBench/analysis/scripts/summarize.py
+COPY ${PROJECT_FOLDER}/summarize_metrics.py /TCPDBench/analysis/scripts/summarize_metrics.py
+COPY ${PROJECT_FOLDER}/utils.R /TCPDBench/execs/R/utils.R
+COPY ${PROJECT_FOLDER}/cpdbench_wbs.R /TCPDBench/execs/R/cpdbench_wbs.R
+COPY ${PROJECT_FOLDER}/cpdbench_prophet.py /TCPDBench/execs/python/cpdbench_prophet.py
 RUN python3.9 -m venv /TCPDBench/execs/python/venv
-COPY requirements.txt /TCPDBench/execs/python/venv/requirements.txt
+COPY ${PROJECT_FOLDER}/requirements-venv.txt /TCPDBench/execs/python/venv/requirements.txt
 RUN apt-get install nano
+# Some methods that utilize Python instead of R (MongoDB and Prophet) need a virtual environment to be able to run
 RUN /bin/bash -c "source /TCPDBench/execs/python/venv/bin/activate && pip install -r /TCPDBench/execs/python/venv/requirements.txt"
-RUN python3.9 -m pip install signal-processing-algorithms==2.0.0 ruptures==1.1.9 numpy==1.21.5
-RUN python3.9 -m pip install --upgrade setuptools
-RUN python3.9 -m pip install rpy2
+# Some methods that utilize Python instead of R (KCPA and zero) are utilizing the existing python3.9 installation.
+# Setuptools is installed separately because including it in the requirements.txt causes issues with rpy2 installation
+RUN python3.9 -m pip install setuptools==75.4.0
+COPY ${PROJECT_FOLDER}/requirements.txt /TCPDBench/requirements.txt
+RUN python3.9 -m pip install -r /TCPDBench/requirements.txt
 RUN mkdir stagedir
-COPY Makefile /TCPDBench/Makefile
-#COPY cpdbench_ecp.py /TCPDBench/execs/python/cpdbench_ecp.py
-COPY cpdbench_ecp.R /TCPDBench/execs/R/cpdbench_ecp.R
-COPY cpdbench_kcpa.py /TCPDBench/execs/python/cpdbench_kcpa.py
-COPY abed_conf.py /TCPDBench/abed_conf.py
-ADD datasets /TCPDBench/datasets
+COPY ${PROJECT_FOLDER}/Makefile /TCPDBench/Makefile
+COPY ${PROJECT_FOLDER}/cpdbench_ecp.R /TCPDBench/execs/R/cpdbench_ecp.R
+COPY ${PROJECT_FOLDER}/cpdbench_kcpa.py /TCPDBench/execs/python/cpdbench_kcpa.py
+COPY ${PROJECT_FOLDER}/abed_conf.py /TCPDBench/abed_conf.py
+ADD ${DATASETS_PATH} /TCPDBench/datasets
+COPY ${ANNOTATIONS_PATH} /TCPDBench/analysis/annotations/
 RUN chmod +x utils/setup_datasets.sh && ./utils/setup_datasets.sh
