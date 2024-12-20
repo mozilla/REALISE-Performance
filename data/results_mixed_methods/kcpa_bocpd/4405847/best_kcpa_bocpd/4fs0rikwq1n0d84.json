@@ -1,0 +1,59 @@
+{
+    "error": null,
+    "dataset": "4405847",
+    "dataset_md5": "381827e721f5e8d2a6c6caf95cb74ef6",
+    "hostname": "d30854552e89",
+    "status": "SUCCESS",
+    "parameters": {
+        "kcpa_input": "/TCPDBench/datasets/4405847.json",
+        "kcpa_kernel": "linear",
+        "kcpa_maxcp": 5,
+        "kcpa_minsize": 3.0,
+        "kcpa_output": null,
+        "bocpd_missPts": "none",
+        "bocpd_cpthreshold": 0.5,
+        "bocpd_truncRlim": 0.0001,
+        "bocpd_minRlength": 1,
+        "bocpd_maxRlength": 10000,
+        "bocpd_minsep": 1,
+        "bocpd_maxsep": 10000,
+        "bocpd_multivariate": false,
+        "bocpd_lambda": 200,
+        "bocpd_prior_a": 100,
+        "bocpd_prior_b": 100,
+        "bocpd_prior_k": 0.01
+    },
+    "args": {
+        "kcpa_kernel": "linear",
+        "kcpa_maxcp": 5,
+        "kcpa_minsize": 3.0,
+        "bocpd_lambda": 200,
+        "bocpd_prior_a": 100,
+        "bocpd_prior_b": 100,
+        "bocpd_prior_k": 0.01
+    },
+    "result": {
+        "cplocations": [
+            16,
+            132,
+            134,
+            136,
+            139,
+            879,
+            936,
+            1013,
+            1016,
+            1123,
+            1196,
+            1337,
+            1852,
+            1948,
+            2070,
+            2093,
+            2302,
+            2804,
+            2978
+        ],
+        "runtime": 1.44728644140625
+    }
+}

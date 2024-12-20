@@ -1,0 +1,33 @@
+{
+	"args": {
+		"kernel": "linear",
+		"maxcp": 5,
+		"minsize": 2.0
+	},
+	"command": "/TCPDBench/execs/python/cpdbench_kcpa.py -i /TCPDBench/datasets/3779386.json --maxcp 5 --minsize 2 --kernel linear",
+	"dataset": "3779386",
+	"dataset_md5": "642a716480dde3bcd371856830fdcc1e",
+	"error": null,
+	"hostname": "d30854552e89",
+	"parameters": {
+		"input": "/TCPDBench/datasets/3779386.json",
+		"kernel": "linear",
+		"maxcp": 5,
+		"minsize": 2.0,
+		"output": null
+	},
+	"result": {
+		"cplocations": [
+			137,
+			142,
+			144,
+			1084,
+			1086,
+			2680
+		],
+		"runtime": 0.06731605529785156
+	},
+	"script": "/TCPDBench/execs/python/cpdbench_kcpa.py",
+	"script_md5": "16b44f4bdbc91472e1d735dda466a919",
+	"status": "SUCCESS"
+}

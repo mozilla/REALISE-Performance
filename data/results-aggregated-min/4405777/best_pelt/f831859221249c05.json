@@ -1,0 +1,51 @@
+{
+	"error" : null,
+	"command" : "/usr/lib/R/bin/exec/R --slave --no-restore --no-save --slave --file=/TCPDBench/execs/R/cpdbench_changepoint.R --args -i /TCPDBench/datasets/4405777.json -p Hannan-Quinn -f mean -t Normal -m PELT",
+	"script" : "/TCPDBench/execs/R/cpdbench_changepoint.R",
+	"script_md5" : "c5a9eb6b79b918fc674b55b669629f44",
+	"hostname" : "56cdd2de670c",
+	"dataset" : "4405777",
+	"dataset_md5" : "93d50c88d33a23b5f0da43cb866cac6b",
+	"status" : "SUCCESS",
+	"parameters" : {
+		"pen.value" : 0,
+		"func" : "mean",
+		"max_cp" : "max",
+		"method" : "PELT",
+		"penalty" : "Hannan-Quinn",
+		"test_statistic" : "Normal"
+	},
+	"result" : {
+		"cplocations" : [
+			74,
+			75,
+			85,
+			326,
+			328,
+			337,
+			347,
+			530,
+			683,
+			789,
+			794,
+			931,
+			953,
+			1327,
+			1346,
+			1348,
+			1349,
+			1885,
+			1920,
+			2544,
+			2545
+		],
+		"runtime" : 0.005136251
+	},
+	"args" : {
+		"func" : "mean",
+		"max_cp" : "max",
+		"method" : "PELT",
+		"penalty" : "Hannan-Quinn",
+		"test_statistic" : "Normal"
+	}
+} 

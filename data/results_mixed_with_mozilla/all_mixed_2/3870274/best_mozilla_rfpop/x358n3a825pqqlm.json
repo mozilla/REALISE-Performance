@@ -1,0 +1,27 @@
+{
+    "error": null,
+    "dataset": "3870274",
+    "dataset_md5": "14e36d89cd0dd2cbc036342ed4616345",
+    "hostname": "no_host",
+    "status": "SUCCESS",
+    "parameters": {
+        "mozilla_method": "Mozilla",
+        "rfpop_lambda": 16.12676,
+        "rfpop_lthreshold": 3,
+        "rfpop_loss": "Outlier"
+    },
+    "args": {
+        "mozilla_method": "Mozilla",
+        "rfpop_loss": "Outlier"
+    },
+    "result": {
+        "cplocations": [
+            1321,
+            1682,
+            1805,
+            2531,
+            3001
+        ],
+        "runtime": 0.004101276
+    }
+}

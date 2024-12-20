@@ -1,0 +1,47 @@
+{
+    "error": null,
+    "dataset": "3779886",
+    "dataset_md5": "01f7e8c5083d66e47313f437fa78fbd9",
+    "hostname": "d30854552e89",
+    "status": "SUCCESS",
+    "parameters": {
+        "kcpa_input": "/TCPDBench/datasets/3779886.json",
+        "kcpa_kernel": "rbf",
+        "kcpa_maxcp": 10,
+        "kcpa_minsize": 2.0,
+        "kcpa_output": null,
+        "binseg_Q": 5,
+        "binseg_pen.value": 0,
+        "binseg_func": "mean",
+        "binseg_max_cp": "default",
+        "binseg_method": "BinSeg",
+        "binseg_penalty": "Hannan-Quinn",
+        "binseg_test_statistic": "CUSUM"
+    },
+    "args": {
+        "kcpa_kernel": "rbf",
+        "kcpa_maxcp": 10,
+        "kcpa_minsize": 2.0,
+        "binseg_func": "mean",
+        "binseg_max_cp": "default",
+        "binseg_method": "BinSeg",
+        "binseg_penalty": "Hannan-Quinn",
+        "binseg_test_statistic": "CUSUM"
+    },
+    "result": {
+        "cplocations": [
+            362,
+            981,
+            1051,
+            1333,
+            1494,
+            1828,
+            2317,
+            2468,
+            3340,
+            3538,
+            3609
+        ],
+        "runtime": 0.5515291731286621
+    }
+}

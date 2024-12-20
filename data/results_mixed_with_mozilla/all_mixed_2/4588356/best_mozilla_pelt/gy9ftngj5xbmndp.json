@@ -1,0 +1,28 @@
+{
+    "error": null,
+    "dataset": "4588356",
+    "dataset_md5": "e775de12fd445238b5e393a70b843315",
+    "hostname": "no_host",
+    "status": "SUCCESS",
+    "parameters": {
+        "mozilla_method": "Mozilla",
+        "pelt_pen.value": 0,
+        "pelt_func": "var",
+        "pelt_max_cp": "max",
+        "pelt_method": "PELT",
+        "pelt_penalty": "AIC",
+        "pelt_test_statistic": "Normal"
+    },
+    "args": {
+        "mozilla_method": "Mozilla",
+        "pelt_func": "var",
+        "pelt_max_cp": "max",
+        "pelt_method": "PELT",
+        "pelt_penalty": "AIC",
+        "pelt_test_statistic": "Normal"
+    },
+    "result": {
+        "cplocations": [],
+        "runtime": 0.03855443
+    }
+}

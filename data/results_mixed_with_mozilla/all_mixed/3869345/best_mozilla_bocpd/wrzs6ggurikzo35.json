@@ -1,0 +1,60 @@
+{
+    "error": null,
+    "dataset": "3869345",
+    "dataset_md5": "de67886d7b35fac99b8132a4f659b596",
+    "hostname": "no_host",
+    "status": "SUCCESS",
+    "parameters": {
+        "mozilla_method": "Mozilla",
+        "bocpd_missPts": "none",
+        "bocpd_cpthreshold": 0.5,
+        "bocpd_truncRlim": 0.0001,
+        "bocpd_minRlength": 1,
+        "bocpd_maxRlength": 10000,
+        "bocpd_minsep": 1,
+        "bocpd_maxsep": 10000,
+        "bocpd_multivariate": false,
+        "bocpd_lambda": 100,
+        "bocpd_prior_a": 0.01,
+        "bocpd_prior_b": 100,
+        "bocpd_prior_k": 100
+    },
+    "args": {
+        "mozilla_method": "Mozilla",
+        "bocpd_lambda": 100,
+        "bocpd_prior_a": 0.01,
+        "bocpd_prior_b": 100,
+        "bocpd_prior_k": 100
+    },
+    "result": {
+        "cplocations": [
+            19,
+            136,
+            140,
+            434,
+            931,
+            976,
+            1052,
+            1164,
+            1250,
+            1266,
+            1322,
+            1506,
+            1744,
+            1771,
+            1944,
+            1954,
+            1969,
+            2063,
+            2123,
+            2352,
+            2459,
+            2631,
+            2707,
+            2752,
+            2780,
+            3047
+        ],
+        "runtime": 1.676219
+    }
+}

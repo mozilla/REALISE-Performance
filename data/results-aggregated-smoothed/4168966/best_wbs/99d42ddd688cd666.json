@@ -1,0 +1,57 @@
+{
+	"error" : null,
+	"command" : "/usr/lib/R/bin/exec/R --slave --no-restore --no-save --slave --file=/TCPDBench/execs/R/cpdbench_wbs.R --args -i /TCPDBench/datasets/4168966.json -K default --penalty BIC -g false",
+	"script" : "/TCPDBench/execs/R/cpdbench_wbs.R",
+	"script_md5" : "5a6618abb22729a95f48685ff1f24c2e",
+	"hostname" : "7233945ba110",
+	"dataset" : "4168966",
+	"dataset_md5" : "05730edb0811c49bf46f6b872e38db94",
+	"status" : "SUCCESS",
+	"parameters" : {
+		"M" : 5000,
+		"rand.intervals" : true,
+		"Kmax" : 50,
+		"integrated" : false,
+		"penalty" : "BIC"
+	},
+	"result" : {
+		"cplocations" : [
+			22,
+			57,
+			91,
+			124,
+			147,
+			149,
+			189,
+			217,
+			243,
+			271,
+			308,
+			336,
+			339,
+			385,
+			387,
+			424,
+			426,
+			470,
+			505,
+			516,
+			564,
+			574,
+			591,
+			644,
+			691,
+			703,
+			715,
+			726,
+			737,
+			749
+		],
+		"runtime" : 0.05606174
+	},
+	"args" : {
+		"Kmax" : "default",
+		"integrated" : "false",
+		"penalty" : "BIC"
+	}
+} 

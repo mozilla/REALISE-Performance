@@ -1,0 +1,37 @@
+{
+    "error": null,
+    "dataset": "3777799",
+    "dataset_md5": "667406267dc8bfb849462e76e6b6a542",
+    "hostname": "d30854552e89",
+    "status": "SUCCESS",
+    "parameters": {
+        "binseg_Q": 5,
+        "binseg_pen.value": 0,
+        "binseg_func": "meanvar",
+        "binseg_max_cp": "default",
+        "binseg_method": "BinSeg",
+        "binseg_penalty": "AIC",
+        "binseg_test_statistic": "Normal"
+    },
+    "args": {
+        "mongodb_permutations": 50,
+        "mongodb_pvalue": 0.01,
+        "binseg_func": "meanvar",
+        "binseg_max_cp": "default",
+        "binseg_method": "BinSeg",
+        "binseg_penalty": "AIC",
+        "binseg_test_statistic": "Normal"
+    },
+    "result": {
+        "cplocations": [
+            150,
+            884,
+            1787,
+            1857,
+            1862,
+            2395,
+            2411
+        ],
+        "runtime": 5.678176880162232
+    }
+}

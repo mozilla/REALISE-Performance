@@ -1,0 +1,35 @@
+{
+    "error": null,
+    "dataset": "4864567",
+    "dataset_md5": "d89b3f4752c20ad76764f95c10a94cae",
+    "hostname": "no_host",
+    "status": "SUCCESS",
+    "parameters": {
+        "mozilla_method": "Mozilla",
+        "wbs_M": 5000,
+        "wbs_rand.intervals": true,
+        "wbs_Kmax": 1504,
+        "wbs_integrated": false,
+        "wbs_penalty": "MBIC"
+    },
+    "args": {
+        "mozilla_method": "Mozilla",
+        "wbs_Kmax": "max",
+        "wbs_integrated": "false",
+        "wbs_penalty": "MBIC"
+    },
+    "result": {
+        "cplocations": [
+            59,
+            350,
+            689,
+            764,
+            903,
+            1083,
+            1201,
+            1246,
+            1348
+        ],
+        "runtime": 0.164324
+    }
+}

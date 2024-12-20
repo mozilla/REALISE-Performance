@@ -1,0 +1,39 @@
+{
+    "error": null,
+    "dataset": "4405849",
+    "dataset_md5": "7199f65c3ada61f4b2f409cd84ff048e",
+    "hostname": "d30854552e89",
+    "status": "SUCCESS",
+    "parameters": {
+        "kcpa_input": "/TCPDBench/datasets/4405849.json",
+        "kcpa_kernel": "rbf",
+        "kcpa_maxcp": 5,
+        "kcpa_minsize": 3.0,
+        "kcpa_output": null
+    },
+    "args": {
+        "mongodb_permutations": 20,
+        "mongodb_pvalue": 0.05,
+        "kcpa_kernel": "rbf",
+        "kcpa_maxcp": 5,
+        "kcpa_minsize": 3.0
+    },
+    "result": {
+        "cplocations": [
+            12,
+            872,
+            936,
+            1198,
+            1272,
+            1343,
+            1855,
+            1948,
+            2093,
+            2302,
+            2304,
+            2804,
+            2978
+        ],
+        "runtime": 7.088929653167725
+    }
+}

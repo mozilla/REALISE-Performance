@@ -1,0 +1,30 @@
+{
+	"error" : "Gamma test statistic requires positive data",
+	"command" : "/usr/lib/R/bin/exec/R --slave --no-restore --no-save --slave --file=/TCPDBench/execs/R/cpdbench_changepoint.R --args -i /TCPDBench/datasets/4405847.json -p BIC -f meanvar -t Gamma -m BinSeg -Q default",
+	"script" : "/TCPDBench/execs/R/cpdbench_changepoint.R",
+	"script_md5" : "c5a9eb6b79b918fc674b55b669629f44",
+	"hostname" : "7233945ba110",
+	"dataset" : "4405847",
+	"dataset_md5" : "34389082d5460de23210f2096c2e44e0",
+	"status" : "FAIL",
+	"parameters" : {
+		"Q" : 5,
+		"pen.value" : 0,
+		"func" : "meanvar",
+		"max_cp" : "default",
+		"method" : "BinSeg",
+		"penalty" : "BIC",
+		"test_statistic" : "Gamma"
+	},
+	"result" : {
+		"cplocations" : null,
+		"runtime" : null
+	},
+	"args" : {
+		"func" : "meanvar",
+		"max_cp" : "default",
+		"method" : "BinSeg",
+		"penalty" : "BIC",
+		"test_statistic" : "Gamma"
+	}
+} 

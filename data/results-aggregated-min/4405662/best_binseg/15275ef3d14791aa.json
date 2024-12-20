@@ -1,0 +1,30 @@
+{
+	"error" : "Invalid test statistic, must be Normal or CUSUM",
+	"command" : "/usr/lib/R/bin/exec/R --slave --no-restore --no-save --slave --file=/TCPDBench/execs/R/cpdbench_changepoint.R --args -i /TCPDBench/datasets/4405662.json -p SIC -f mean -t Poisson -m BinSeg -Q default",
+	"script" : "/TCPDBench/execs/R/cpdbench_changepoint.R",
+	"script_md5" : "c5a9eb6b79b918fc674b55b669629f44",
+	"hostname" : "56cdd2de670c",
+	"dataset" : "4405662",
+	"dataset_md5" : "3ca5f72d0be4eedbb21b9f237db8ba86",
+	"status" : "FAIL",
+	"parameters" : {
+		"Q" : 5,
+		"pen.value" : 0,
+		"func" : "mean",
+		"max_cp" : "default",
+		"method" : "BinSeg",
+		"penalty" : "SIC",
+		"test_statistic" : "Poisson"
+	},
+	"result" : {
+		"cplocations" : null,
+		"runtime" : null
+	},
+	"args" : {
+		"func" : "mean",
+		"max_cp" : "default",
+		"method" : "BinSeg",
+		"penalty" : "SIC",
+		"test_statistic" : "Poisson"
+	}
+} 

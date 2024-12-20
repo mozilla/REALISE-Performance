@@ -178,18 +178,9 @@ columns = ['alert_id',
 
 
 df = pd.read_csv('../datasets/alerts_data.csv', index_col=False)
-print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-print(df[df['alert_id'] == 40712].head(5))
-print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-print(df[df['alert_id'] == 40712]["alert_status"])
-print(new_sp_df[new_sp_df['alert_id'] == 40712].head(5))
 sp_alert_summaries_ids = df[df["alert_status"].isin([0, 5])]["alert_id"].unique()
 
-# new_sp_df = pd.DataFrame(columns=columns)
 new_sp_df = df[~df['alert_id'].isin(sp_alert_summaries_ids)]
-print("#######################################")
-print(new_sp_df[new_sp_df['alert_id'] == 40712].head(5))
-print("#######################################")
 problematic_summaries = set()
 
 for alert_summary_id in sp_alert_summaries_ids:

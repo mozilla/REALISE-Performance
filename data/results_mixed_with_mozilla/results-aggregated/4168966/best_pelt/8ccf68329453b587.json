@@ -1,0 +1,29 @@
+{
+	"error" : "Invalid test statistic, must be Normal or CUSUM",
+	"command" : "/usr/lib/R/bin/exec/R --slave --no-restore --no-save --slave --file=/TCPDBench/execs/R/cpdbench_changepoint.R --args -i /TCPDBench/datasets/4168966.json -p None -f mean -t Gamma -m PELT",
+	"script" : "/TCPDBench/execs/R/cpdbench_changepoint.R",
+	"script_md5" : "c5a9eb6b79b918fc674b55b669629f44",
+	"hostname" : "d30854552e89",
+	"dataset" : "4168966",
+	"dataset_md5" : "de43e4c52607ea78da4123a5b8666157",
+	"status" : "FAIL",
+	"parameters" : {
+		"pen.value" : 0,
+		"func" : "mean",
+		"max_cp" : "max",
+		"method" : "PELT",
+		"penalty" : "None",
+		"test_statistic" : "Gamma"
+	},
+	"result" : {
+		"cplocations" : null,
+		"runtime" : null
+	},
+	"args" : {
+		"func" : "mean",
+		"max_cp" : "max",
+		"method" : "PELT",
+		"penalty" : "None",
+		"test_statistic" : "Gamma"
+	}
+} 

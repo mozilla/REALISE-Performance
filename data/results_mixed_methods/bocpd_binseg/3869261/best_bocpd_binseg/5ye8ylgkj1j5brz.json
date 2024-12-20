@@ -1,0 +1,54 @@
+{
+    "error": null,
+    "dataset": "3869261",
+    "dataset_md5": "199f62eaa4118a0e4bf48138ec245247",
+    "hostname": "d30854552e89",
+    "status": "SUCCESS",
+    "parameters": {
+        "bocpd_missPts": "none",
+        "bocpd_cpthreshold": 0.5,
+        "bocpd_truncRlim": 0.0001,
+        "bocpd_minRlength": 1,
+        "bocpd_maxRlength": 10000,
+        "bocpd_minsep": 1,
+        "bocpd_maxsep": 10000,
+        "bocpd_multivariate": false,
+        "bocpd_lambda": 200,
+        "bocpd_prior_a": 1,
+        "bocpd_prior_b": 100,
+        "bocpd_prior_k": 1,
+        "binseg_Q": 5,
+        "binseg_pen.value": 0,
+        "binseg_func": "var",
+        "binseg_max_cp": "default",
+        "binseg_method": "BinSeg",
+        "binseg_penalty": "None",
+        "binseg_test_statistic": "CSS"
+    },
+    "args": {
+        "bocpd_lambda": 200,
+        "bocpd_prior_a": 1,
+        "bocpd_prior_b": 100,
+        "bocpd_prior_k": 1,
+        "binseg_func": "var",
+        "binseg_max_cp": "default",
+        "binseg_method": "BinSeg",
+        "binseg_penalty": "None",
+        "binseg_test_statistic": "CSS"
+    },
+    "result": {
+        "cplocations": [
+            434,
+            1053,
+            1057,
+            1164,
+            2062,
+            2063,
+            2065,
+            2261,
+            2264,
+            3047
+        ],
+        "runtime": 1.5950112399999998
+    }
+}

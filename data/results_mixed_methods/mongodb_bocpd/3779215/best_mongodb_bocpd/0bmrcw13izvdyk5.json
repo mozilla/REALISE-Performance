@@ -1,0 +1,54 @@
+{
+    "error": null,
+    "dataset": "3779215",
+    "dataset_md5": "0507d3ced0558d4abc1f590d6835d848",
+    "hostname": "d30854552e89",
+    "status": "SUCCESS",
+    "parameters": {
+        "bocpd_missPts": "none",
+        "bocpd_cpthreshold": 0.5,
+        "bocpd_truncRlim": 0.0001,
+        "bocpd_minRlength": 1,
+        "bocpd_maxRlength": 10000,
+        "bocpd_minsep": 1,
+        "bocpd_maxsep": 10000,
+        "bocpd_multivariate": false,
+        "bocpd_lambda": 200,
+        "bocpd_prior_a": 100,
+        "bocpd_prior_b": 100,
+        "bocpd_prior_k": 0.01
+    },
+    "args": {
+        "mongodb_permutations": 100,
+        "mongodb_pvalue": 0.01,
+        "bocpd_lambda": 200,
+        "bocpd_prior_a": 100,
+        "bocpd_prior_b": 100,
+        "bocpd_prior_k": 0.01
+    },
+    "result": {
+        "cplocations": [
+            26,
+            137,
+            139,
+            141,
+            144,
+            433,
+            882,
+            910,
+            989,
+            992,
+            1084,
+            1086,
+            1846,
+            1874,
+            1904,
+            1914,
+            2072,
+            2232,
+            2275,
+            2324
+        ],
+        "runtime": 17.215040100219728
+    }
+}

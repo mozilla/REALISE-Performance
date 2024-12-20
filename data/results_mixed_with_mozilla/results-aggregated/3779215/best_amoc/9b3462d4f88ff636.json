@@ -1,0 +1,31 @@
+{
+	"error" : null,
+	"command" : "/usr/lib/R/bin/exec/R --slave --no-restore --no-save --slave --file=/TCPDBench/execs/R/cpdbench_changepoint.R --args -i /TCPDBench/datasets/3779215.json -p MBIC -f var -t Normal -m AMOC",
+	"script" : "/TCPDBench/execs/R/cpdbench_changepoint.R",
+	"script_md5" : "c5a9eb6b79b918fc674b55b669629f44",
+	"hostname" : "d30854552e89",
+	"dataset" : "3779215",
+	"dataset_md5" : "0507d3ced0558d4abc1f590d6835d848",
+	"status" : "SUCCESS",
+	"parameters" : {
+		"pen.value" : 0,
+		"func" : "var",
+		"max_cp" : "max",
+		"method" : "AMOC",
+		"penalty" : "MBIC",
+		"test_statistic" : "Normal"
+	},
+	"result" : {
+		"cplocations" : [
+			144
+		],
+		"runtime" : 0.002716064
+	},
+	"args" : {
+		"func" : "var",
+		"max_cp" : "max",
+		"method" : "AMOC",
+		"penalty" : "MBIC",
+		"test_statistic" : "Normal"
+	}
+} 

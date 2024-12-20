@@ -1,0 +1,57 @@
+{
+	"error" : null,
+	"command" : "/usr/lib/R/bin/exec/R --slave --no-restore --no-save --slave --file=/TCPDBench/execs/R/cpdbench_changepoint.R --args -i /TCPDBench/datasets/3869349.json -p Asymptotic -f var -t Normal -m BinSeg -Q max",
+	"script" : "/TCPDBench/execs/R/cpdbench_changepoint.R",
+	"script_md5" : "c5a9eb6b79b918fc674b55b669629f44",
+	"hostname" : "d30854552e89",
+	"dataset" : "3869349",
+	"dataset_md5" : "f583807dc3b93fb5a612ae9fdfa1abb5",
+	"status" : "SUCCESS",
+	"parameters" : {
+		"Q" : 1613.5,
+		"pen.value" : 0.05,
+		"func" : "var",
+		"max_cp" : "max",
+		"method" : "BinSeg",
+		"penalty" : "Asymptotic",
+		"test_statistic" : "Normal"
+	},
+	"result" : {
+		"cplocations" : [
+			19,
+			133,
+			140,
+			180,
+			379,
+			381,
+			433,
+			436,
+			567,
+			921,
+			968,
+			1053,
+			1057,
+			1132,
+			1135,
+			1160,
+			1164,
+			1197,
+			1411,
+			1993,
+			2062,
+			2065,
+			2521,
+			2710,
+			2875,
+			3047
+		],
+		"runtime" : 0.5077021
+	},
+	"args" : {
+		"func" : "var",
+		"max_cp" : "max",
+		"method" : "BinSeg",
+		"penalty" : "Asymptotic",
+		"test_statistic" : "Normal"
+	}
+} 

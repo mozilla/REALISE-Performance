@@ -1,0 +1,46 @@
+{
+	"error" : null,
+	"command" : "/usr/lib/R/bin/exec/R --slave --no-restore --no-save --slave --file=/TCPDBench/execs/R/cpdbench_ocp.R --args -i /TCPDBench/datasets/4168121.json -l 50 --prior-a 0.01 --prior-b 1.0 --prior-k 100",
+	"script" : "/TCPDBench/execs/R/cpdbench_ocp.R",
+	"script_md5" : "c8f652930f61de1aa9c9b558f3010139",
+	"hostname" : "7233945ba110",
+	"dataset" : "4168121",
+	"dataset_md5" : "0f1706e2a78ed91f9973d27c9a76fbcd",
+	"status" : "SUCCESS",
+	"parameters" : {
+		"missPts" : "none",
+		"cpthreshold" : 0.5,
+		"truncRlim" : 0.0001,
+		"minRlength" : 1,
+		"maxRlength" : 10000,
+		"minsep" : 1,
+		"maxsep" : 10000,
+		"multivariate" : false,
+		"lambda" : 50,
+		"prior_a" : 0.01,
+		"prior_b" : 1,
+		"prior_k" : 100
+	},
+	"result" : {
+		"cplocations" : [
+			58,
+			127,
+			150,
+			194,
+			357,
+			411,
+			447,
+			499,
+			544,
+			689,
+			737
+		],
+		"runtime" : 0.2544115
+	},
+	"args" : {
+		"lambda" : 50,
+		"prior_a" : 0.01,
+		"prior_b" : 1,
+		"prior_k" : 100
+	}
+} 

@@ -1,0 +1,58 @@
+{
+	"error" : null,
+	"command" : "/usr/lib/R/bin/exec/R --slave --no-restore --no-save --slave --file=/TCPDBench/execs/R/cpdbench_changepointnp.R --args -i /TCPDBench/datasets/4722823.json -p Hannan-Quinn -q 30",
+	"script" : "/TCPDBench/execs/R/cpdbench_changepointnp.R",
+	"script_md5" : "43ed9dac8cb9570e29df4eeae78efd13",
+	"hostname" : "56cdd2de670c",
+	"dataset" : "4722823",
+	"dataset_md5" : "095a2bcb5c3c82aecdad4a3465b80c24",
+	"status" : "SUCCESS",
+	"parameters" : {
+		"method" : "PELT",
+		"test.stat" : "empirical_distribution",
+		"minseglen" : 1,
+		"nquantiles" : 30,
+		"penalty" : "Hannan-Quinn"
+	},
+	"result" : {
+		"cplocations" : [
+			74,
+			93,
+			105,
+			112,
+			160,
+			167,
+			191,
+			192,
+			218,
+			236,
+			296,
+			378,
+			449,
+			490,
+			554,
+			578,
+			627,
+			755,
+			836,
+			948,
+			1145,
+			1177,
+			1206,
+			1303,
+			1442,
+			1485,
+			1553,
+			1600,
+			1725,
+			1935,
+			2020,
+			2205
+		],
+		"runtime" : 0.08921146
+	},
+	"args" : {
+		"nquantiles" : 30,
+		"penalty" : "Hannan-Quinn"
+	}
+} 

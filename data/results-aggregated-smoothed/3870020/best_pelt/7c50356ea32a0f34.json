@@ -1,0 +1,53 @@
+{
+	"error" : null,
+	"command" : "/usr/lib/R/bin/exec/R --slave --no-restore --no-save --slave --file=/TCPDBench/execs/R/cpdbench_changepoint.R --args -i /TCPDBench/datasets/3870020.json -p SIC -f var -t Normal -m PELT",
+	"script" : "/TCPDBench/execs/R/cpdbench_changepoint.R",
+	"script_md5" : "c5a9eb6b79b918fc674b55b669629f44",
+	"hostname" : "7233945ba110",
+	"dataset" : "3870020",
+	"dataset_md5" : "2b9933dafcb4ad5edef0f7445b19fe29",
+	"status" : "SUCCESS",
+	"parameters" : {
+		"pen.value" : 0,
+		"func" : "var",
+		"max_cp" : "max",
+		"method" : "PELT",
+		"penalty" : "SIC",
+		"test_statistic" : "Normal"
+	},
+	"result" : {
+		"cplocations" : [
+			108,
+			153,
+			165,
+			258,
+			522,
+			728,
+			902,
+			956,
+			1047,
+			1056,
+			1243,
+			1277,
+			1359,
+			1484,
+			2169,
+			2178,
+			2312,
+			2399,
+			2535,
+			2586,
+			2772,
+			2786,
+			3000
+		],
+		"runtime" : 0.01067853
+	},
+	"args" : {
+		"func" : "var",
+		"max_cp" : "max",
+		"method" : "PELT",
+		"penalty" : "SIC",
+		"test_statistic" : "Normal"
+	}
+} 

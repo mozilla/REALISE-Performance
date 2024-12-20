@@ -1,0 +1,47 @@
+{
+    "error": null,
+    "dataset": "3779392",
+    "dataset_md5": "be4d1f609763ef10f38c01b5dc542978",
+    "hostname": "no_host",
+    "status": "SUCCESS",
+    "parameters": {
+        "mozilla_method": "Mozilla",
+        "binseg_Q": 5,
+        "binseg_pen.value": 0.05,
+        "binseg_func": "mean",
+        "binseg_max_cp": "default",
+        "binseg_method": "BinSeg",
+        "binseg_penalty": "Asymptotic",
+        "binseg_test_statistic": "Normal"
+    },
+    "args": {
+        "mozilla_method": "Mozilla",
+        "binseg_func": "mean",
+        "binseg_max_cp": "default",
+        "binseg_method": "BinSeg",
+        "binseg_penalty": "Asymptotic",
+        "binseg_test_statistic": "Normal"
+    },
+    "result": {
+        "cplocations": [
+            25,
+            26,
+            882,
+            910,
+            1160,
+            1273,
+            1348,
+            1411,
+            1612,
+            1649,
+            1717,
+            1762,
+            1877,
+            1942,
+            2072,
+            2233,
+            2365
+        ],
+        "runtime": 0.005224943
+    }
+}

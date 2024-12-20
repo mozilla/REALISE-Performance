@@ -1,0 +1,45 @@
+{
+    "error": null,
+    "dataset": "3778072",
+    "dataset_md5": "eb04feea9be72b3e4d2f77449722ad94",
+    "hostname": "no_host",
+    "status": "SUCCESS",
+    "parameters": {
+        "mozilla_method": "Mozilla"
+    },
+    "args": {
+        "mozilla_method": "Mozilla",
+        "mongodb_permutations": 100,
+        "mongodb_pvalue": 0.01
+    },
+    "result": {
+        "cplocations": [
+            250,
+            278,
+            288,
+            367,
+            508,
+            509,
+            627,
+            681,
+            697,
+            1025,
+            1076,
+            1124,
+            1269,
+            1432,
+            2017,
+            2092,
+            2157,
+            2290,
+            2369,
+            2456,
+            2495,
+            2573,
+            2689,
+            3330,
+            3337
+        ],
+        "runtime": 37.537312269210815
+    }
+}

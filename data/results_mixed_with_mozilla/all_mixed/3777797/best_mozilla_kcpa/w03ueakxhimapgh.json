@@ -1,0 +1,47 @@
+{
+    "error": null,
+    "dataset": "3777797",
+    "dataset_md5": "75c1fe2f8255008714627991ade277ce",
+    "hostname": "no_host",
+    "status": "SUCCESS",
+    "parameters": {
+        "mozilla_method": "Mozilla",
+        "kcpa_input": "/TCPDBench/datasets/3777797.json",
+        "kcpa_kernel": "linear",
+        "kcpa_maxcp": 2,
+        "kcpa_minsize": 2.0,
+        "kcpa_output": null
+    },
+    "args": {
+        "mozilla_method": "Mozilla",
+        "kcpa_kernel": "linear",
+        "kcpa_maxcp": 2,
+        "kcpa_minsize": 2.0
+    },
+    "result": {
+        "cplocations": [
+            27,
+            97,
+            148,
+            150,
+            898,
+            959,
+            1221,
+            1347,
+            1591,
+            1671,
+            1714,
+            1834,
+            1910,
+            2028,
+            2091,
+            2261,
+            2303,
+            2342,
+            2367,
+            2418,
+            2768
+        ],
+        "runtime": 0.05804038047790527
+    }
+}

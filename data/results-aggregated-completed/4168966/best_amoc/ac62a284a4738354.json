@@ -1,0 +1,29 @@
+{
+	"error" : "Invalid test statistic, must be Normal, Gamma, Exponential or Poisson",
+	"command" : "/usr/lib/R/bin/exec/R --slave --no-restore --no-save --slave --file=/TCPDBench/execs/R/cpdbench_changepoint.R --args -i /TCPDBench/datasets/4168966.json -p Hannan-Quinn -f meanvar -t CSS -m AMOC",
+	"script" : "/TCPDBench/execs/R/cpdbench_changepoint.R",
+	"script_md5" : "c5a9eb6b79b918fc674b55b669629f44",
+	"hostname" : "d30854552e89",
+	"dataset" : "4168966",
+	"dataset_md5" : "de43e4c52607ea78da4123a5b8666157",
+	"status" : "FAIL",
+	"parameters" : {
+		"pen.value" : 0,
+		"func" : "meanvar",
+		"max_cp" : "max",
+		"method" : "AMOC",
+		"penalty" : "Hannan-Quinn",
+		"test_statistic" : "CSS"
+	},
+	"result" : {
+		"cplocations" : null,
+		"runtime" : null
+	},
+	"args" : {
+		"func" : "meanvar",
+		"max_cp" : "max",
+		"method" : "AMOC",
+		"penalty" : "Hannan-Quinn",
+		"test_statistic" : "CSS"
+	}
+} 

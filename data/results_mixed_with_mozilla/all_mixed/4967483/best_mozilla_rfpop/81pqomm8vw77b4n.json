@@ -1,0 +1,63 @@
+{
+    "error": null,
+    "dataset": "4967483",
+    "dataset_md5": "d8b2718c7c6154fb83fa7f984b8b3c5c",
+    "hostname": "no_host",
+    "status": "SUCCESS",
+    "parameters": {
+        "mozilla_method": "Mozilla",
+        "rfpop_lambda": 7.256297,
+        "rfpop_loss": "L1"
+    },
+    "args": {
+        "mozilla_method": "Mozilla",
+        "rfpop_loss": "L1"
+    },
+    "result": {
+        "cplocations": [
+            3,
+            166,
+            167,
+            177,
+            197,
+            228,
+            240,
+            320,
+            321,
+            338,
+            360,
+            438,
+            456,
+            460,
+            483,
+            518,
+            519,
+            540,
+            559,
+            592,
+            635,
+            677,
+            685,
+            701,
+            712,
+            713,
+            740,
+            784,
+            801,
+            891,
+            910,
+            952,
+            966,
+            976,
+            991,
+            1008,
+            1016,
+            1051,
+            1067,
+            1110,
+            1288,
+            1314
+        ],
+        "runtime": 0.005131006
+    }
+}

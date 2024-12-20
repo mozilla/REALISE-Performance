@@ -1,0 +1,35 @@
+{
+    "error": null,
+    "dataset": "3779213",
+    "dataset_md5": "4c7eb33b2e16c4816cf852783ef8b252",
+    "hostname": "no_host",
+    "status": "SUCCESS",
+    "parameters": {
+        "mozilla_method": "Mozilla",
+        "cpnp_method": "PELT",
+        "cpnp_test.stat": "empirical_distribution",
+        "cpnp_minseglen": 1,
+        "cpnp_nquantiles": 10,
+        "cpnp_penalty": "MBIC"
+    },
+    "args": {
+        "mozilla_method": "Mozilla",
+        "cpnp_nquantiles": 10,
+        "cpnp_penalty": "MBIC"
+    },
+    "result": {
+        "cplocations": [
+            26,
+            882,
+            910,
+            1175,
+            1649,
+            1717,
+            1762,
+            2072,
+            2275,
+            2439
+        ],
+        "runtime": 0.05158782
+    }
+}

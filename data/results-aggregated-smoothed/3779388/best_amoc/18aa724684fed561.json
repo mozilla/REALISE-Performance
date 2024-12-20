@@ -1,0 +1,29 @@
+{
+	"error" : "Invalid test statistic, must be Normal, Gamma, Exponential or Poisson",
+	"command" : "/usr/lib/R/bin/exec/R --slave --no-restore --no-save --slave --file=/TCPDBench/execs/R/cpdbench_changepoint.R --args -i /TCPDBench/datasets/3779388.json -p MBIC -f meanvar -t CUSUM -m AMOC",
+	"script" : "/TCPDBench/execs/R/cpdbench_changepoint.R",
+	"script_md5" : "c5a9eb6b79b918fc674b55b669629f44",
+	"hostname" : "7233945ba110",
+	"dataset" : "3779388",
+	"dataset_md5" : "130f22e9bf11f3463d7f8c8acbffd545",
+	"status" : "FAIL",
+	"parameters" : {
+		"pen.value" : 0,
+		"func" : "meanvar",
+		"max_cp" : "max",
+		"method" : "AMOC",
+		"penalty" : "MBIC",
+		"test_statistic" : "CUSUM"
+	},
+	"result" : {
+		"cplocations" : null,
+		"runtime" : null
+	},
+	"args" : {
+		"func" : "meanvar",
+		"max_cp" : "max",
+		"method" : "AMOC",
+		"penalty" : "MBIC",
+		"test_statistic" : "CUSUM"
+	}
+} 

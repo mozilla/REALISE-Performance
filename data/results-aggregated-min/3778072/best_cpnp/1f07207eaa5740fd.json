@@ -1,0 +1,58 @@
+{
+	"error" : null,
+	"command" : "/usr/lib/R/bin/exec/R --slave --no-restore --no-save --slave --file=/TCPDBench/execs/R/cpdbench_changepointnp.R --args -i /TCPDBench/datasets/3778072.json -p MBIC -q 30",
+	"script" : "/TCPDBench/execs/R/cpdbench_changepointnp.R",
+	"script_md5" : "43ed9dac8cb9570e29df4eeae78efd13",
+	"hostname" : "56cdd2de670c",
+	"dataset" : "3778072",
+	"dataset_md5" : "4ccb5d8492f87600ffef5156181fb5cc",
+	"status" : "SUCCESS",
+	"parameters" : {
+		"method" : "PELT",
+		"test.stat" : "empirical_distribution",
+		"minseglen" : 1,
+		"nquantiles" : 30,
+		"penalty" : "MBIC"
+	},
+	"result" : {
+		"cplocations" : [
+			226,
+			253,
+			278,
+			364,
+			508,
+			697,
+			789,
+			846,
+			926,
+			930,
+			1025,
+			1115,
+			1188,
+			1259,
+			1395,
+			1436,
+			1601,
+			1814,
+			1830,
+			2024,
+			2159,
+			2369,
+			2456,
+			2538,
+			2543,
+			2689,
+			2841,
+			2972,
+			2978,
+			3330,
+			3393,
+			3441
+		],
+		"runtime" : 0.2192602
+	},
+	"args" : {
+		"nquantiles" : 30,
+		"penalty" : "MBIC"
+	}
+} 

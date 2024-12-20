@@ -1,0 +1,54 @@
+{
+	"error" : null,
+	"command" : "/usr/lib/R/bin/exec/R --slave --no-restore --no-save --slave --file=/TCPDBench/execs/R/cpdbench_changepoint.R --args -i /TCPDBench/datasets/3777106.json -p Hannan-Quinn -f var -t Normal -m BinSeg -Q max",
+	"script" : "/TCPDBench/execs/R/cpdbench_changepoint.R",
+	"script_md5" : "c5a9eb6b79b918fc674b55b669629f44",
+	"hostname" : "d30854552e89",
+	"dataset" : "3777106",
+	"dataset_md5" : "a67636171137604b08ae04ad066047e7",
+	"status" : "SUCCESS",
+	"parameters" : {
+		"Q" : 1710,
+		"pen.value" : 0,
+		"func" : "var",
+		"max_cp" : "max",
+		"method" : "BinSeg",
+		"penalty" : "Hannan-Quinn",
+		"test_statistic" : "Normal"
+	},
+	"result" : {
+		"cplocations" : [
+			253,
+			341,
+			368,
+			393,
+			507,
+			595,
+			636,
+			648,
+			658,
+			686,
+			1039,
+			1149,
+			1825,
+			2345,
+			2352,
+			2354,
+			2408,
+			2471,
+			2503,
+			2523,
+			2793,
+			3147,
+			3359
+		],
+		"runtime" : 0.6006548
+	},
+	"args" : {
+		"func" : "var",
+		"max_cp" : "max",
+		"method" : "BinSeg",
+		"penalty" : "Hannan-Quinn",
+		"test_statistic" : "Normal"
+	}
+} 

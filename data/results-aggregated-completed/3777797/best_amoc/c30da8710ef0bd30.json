@@ -1,0 +1,31 @@
+{
+	"error" : null,
+	"command" : "/usr/lib/R/bin/exec/R --slave --no-restore --no-save --slave --file=/TCPDBench/execs/R/cpdbench_changepoint.R --args -i /TCPDBench/datasets/3777797.json -p Asymptotic -f var -t CSS -m AMOC",
+	"script" : "/TCPDBench/execs/R/cpdbench_changepoint.R",
+	"script_md5" : "c5a9eb6b79b918fc674b55b669629f44",
+	"hostname" : "d30854552e89",
+	"dataset" : "3777797",
+	"dataset_md5" : "75c1fe2f8255008714627991ade277ce",
+	"status" : "SUCCESS",
+	"parameters" : {
+		"pen.value" : 0.05,
+		"func" : "var",
+		"max_cp" : "max",
+		"method" : "AMOC",
+		"penalty" : "Asymptotic",
+		"test_statistic" : "CSS"
+	},
+	"result" : {
+		"cplocations" : [
+			149
+		],
+		"runtime" : 0.002284288
+	},
+	"args" : {
+		"func" : "var",
+		"max_cp" : "max",
+		"method" : "AMOC",
+		"penalty" : "Asymptotic",
+		"test_statistic" : "CSS"
+	}
+} 

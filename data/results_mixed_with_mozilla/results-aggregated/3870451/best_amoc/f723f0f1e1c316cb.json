@@ -1,0 +1,29 @@
+{
+	"error" : "Invalid test statistic, must be Normal or CUSUM",
+	"command" : "/usr/lib/R/bin/exec/R --slave --no-restore --no-save --slave --file=/TCPDBench/execs/R/cpdbench_changepoint.R --args -i /TCPDBench/datasets/3870451.json -p Asymptotic -f mean -t Gamma -m AMOC",
+	"script" : "/TCPDBench/execs/R/cpdbench_changepoint.R",
+	"script_md5" : "c5a9eb6b79b918fc674b55b669629f44",
+	"hostname" : "d30854552e89",
+	"dataset" : "3870451",
+	"dataset_md5" : "b0e974125d4135c5f9bb32f44d2f50d2",
+	"status" : "FAIL",
+	"parameters" : {
+		"pen.value" : 0.05,
+		"func" : "mean",
+		"max_cp" : "max",
+		"method" : "AMOC",
+		"penalty" : "Asymptotic",
+		"test_statistic" : "Gamma"
+	},
+	"result" : {
+		"cplocations" : null,
+		"runtime" : null
+	},
+	"args" : {
+		"func" : "mean",
+		"max_cp" : "max",
+		"method" : "AMOC",
+		"penalty" : "Asymptotic",
+		"test_statistic" : "Gamma"
+	}
+} 

@@ -1,0 +1,30 @@
+{
+    "error": null,
+    "dataset": "3870451",
+    "dataset_md5": "b0e974125d4135c5f9bb32f44d2f50d2",
+    "hostname": "no_host",
+    "status": "SUCCESS",
+    "parameters": {
+        "mozilla_method": "Mozilla",
+        "amoc_pen.value": 0,
+        "amoc_func": "meanvar",
+        "amoc_max_cp": "max",
+        "amoc_method": "AMOC",
+        "amoc_penalty": "None",
+        "amoc_test_statistic": "Normal"
+    },
+    "args": {
+        "mozilla_method": "Mozilla",
+        "amoc_func": "meanvar",
+        "amoc_max_cp": "max",
+        "amoc_method": "AMOC",
+        "amoc_penalty": "None",
+        "amoc_test_statistic": "Normal"
+    },
+    "result": {
+        "cplocations": [
+            2573
+        ],
+        "runtime": 0.002632856
+    }
+}

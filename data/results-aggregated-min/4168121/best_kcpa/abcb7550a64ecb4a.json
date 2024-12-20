@@ -1,0 +1,38 @@
+{
+	"args": {
+		"kernel": "rbf",
+		"maxcp": 10,
+		"minsize": 2.0
+	},
+	"command": "/TCPDBench/execs/python/cpdbench_kcpa.py -i /TCPDBench/datasets/4168121.json --maxcp 10 --minsize 2 --kernel rbf",
+	"dataset": "4168121",
+	"dataset_md5": "0639bdc4d6d8b86f5f57952a4ee0a9cf",
+	"error": null,
+	"hostname": "56cdd2de670c",
+	"parameters": {
+		"input": "/TCPDBench/datasets/4168121.json",
+		"kernel": "rbf",
+		"maxcp": 10,
+		"minsize": 2.0,
+		"output": null
+	},
+	"result": {
+		"cplocations": [
+			329,
+			357,
+			411,
+			448,
+			498,
+			544,
+			597,
+			630,
+			689,
+			737,
+			807
+		],
+		"runtime": 0.03179526329040527
+	},
+	"script": "/TCPDBench/execs/python/cpdbench_kcpa.py",
+	"script_md5": "16b44f4bdbc91472e1d735dda466a919",
+	"status": "SUCCESS"
+}

@@ -1,0 +1,30 @@
+{
+	"error" : "MBIC penalty is not valid for nonparametric test statistics.",
+	"command" : "/usr/lib/R/bin/exec/R --slave --no-restore --no-save --slave --file=/TCPDBench/execs/R/cpdbench_changepoint.R --args -i /TCPDBench/datasets/3869345.json -p MBIC -f var -t CSS -m BinSeg -Q default",
+	"script" : "/TCPDBench/execs/R/cpdbench_changepoint.R",
+	"script_md5" : "c5a9eb6b79b918fc674b55b669629f44",
+	"hostname" : "7233945ba110",
+	"dataset" : "3869345",
+	"dataset_md5" : "f63befef59efd088640887faab50d46b",
+	"status" : "FAIL",
+	"parameters" : {
+		"Q" : 5,
+		"pen.value" : 0,
+		"func" : "var",
+		"max_cp" : "default",
+		"method" : "BinSeg",
+		"penalty" : "MBIC",
+		"test_statistic" : "CSS"
+	},
+	"result" : {
+		"cplocations" : null,
+		"runtime" : null
+	},
+	"args" : {
+		"func" : "var",
+		"max_cp" : "default",
+		"method" : "BinSeg",
+		"penalty" : "MBIC",
+		"test_statistic" : "CSS"
+	}
+} 

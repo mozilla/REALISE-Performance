@@ -1,0 +1,30 @@
+{
+	"error" : "Invalid test statistic, must be Normal, Gamma, Exponential or Poisson",
+	"command" : "/usr/lib/R/bin/exec/R --slave --no-restore --no-save --slave --file=/TCPDBench/execs/R/cpdbench_changepoint.R --args -i /TCPDBench/datasets/3870451.json -p Hannan-Quinn -f meanvar -t CSS -m BinSeg -Q max",
+	"script" : "/TCPDBench/execs/R/cpdbench_changepoint.R",
+	"script_md5" : "c5a9eb6b79b918fc674b55b669629f44",
+	"hostname" : "d30854552e89",
+	"dataset" : "3870451",
+	"dataset_md5" : "b0e974125d4135c5f9bb32f44d2f50d2",
+	"status" : "FAIL",
+	"parameters" : {
+		"Q" : 1375.5,
+		"pen.value" : 0,
+		"func" : "meanvar",
+		"max_cp" : "max",
+		"method" : "BinSeg",
+		"penalty" : "Hannan-Quinn",
+		"test_statistic" : "CSS"
+	},
+	"result" : {
+		"cplocations" : null,
+		"runtime" : null
+	},
+	"args" : {
+		"func" : "meanvar",
+		"max_cp" : "max",
+		"method" : "BinSeg",
+		"penalty" : "Hannan-Quinn",
+		"test_statistic" : "CSS"
+	}
+} 
