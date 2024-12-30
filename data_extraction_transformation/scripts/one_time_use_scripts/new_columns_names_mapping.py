@@ -48,7 +48,7 @@ sorted_output_dict = {key: output_dict[key] for key in sorted(output_dict)}
 for key, value in sorted_output_dict.items():
     print(f"'{key}': '{value}',")
 '''
-
+ 
 common_mapping_record = {
     'alert_assignee_email': 'alert_summary_assignee_email',
     'alert_assignee_username': 'alert_summary_assignee_username',
@@ -57,6 +57,7 @@ common_mapping_record = {
     'alert_bug_updated': 'alert_summary_bug_updated',
     'alert_creation_timestamp': 'alert_summary_creation_timestamp',
     'alert_first_triaged': 'alert_summary_first_triaged',
+    'alert_first_triage': 'alert_summary_first_triaged',
     'alert_framework': 'alert_summary_framework',
     'alert_id': 'alert_summary_id',
     'alert_issue_tracker': 'alert_summary_issue_tracker',

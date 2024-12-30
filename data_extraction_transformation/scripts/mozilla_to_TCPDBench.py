@@ -32,7 +32,7 @@ def write_json(dict_sig, sig_path, conf):
 
 
 df = pd.read_csv("../datasets/more_than_10_alert_summaries_speedometer3_tp6.csv")
-signatures = df['test_series_signature_id'].unique().tolist()
+signatures = df['signature_id'].unique().tolist()
 signatures = list(map(str, signatures))
 
 input_folder = '../datasets-original-annotated-2-aggregated'
@@ -66,7 +66,7 @@ def process_folder(folder):
         except:
             problematic_signatures.append(sig)
 
-projects_folders_mapping = {"autoland": ["autoland1", "autoland2", "autoland3", "autoland4"], "firefox-android": ["firefox-android"], "mozilla-beta": ["mozilla-beta"]}
+projects_folders_mapping = {"autoland": ["autoland1", "autoland2", "autoland3", "autoland4"], "firefox-android": ["firefox-android"], "mozilla-beta": ["mozilla-beta"], "mozilla-release": ["mozilla-release"], "mozilla-central": ["mozilla-central"]}
 os.makedirs(output_folder, exist_ok=True)
 if projects_folders_mapping:
     for project in projects_folders_mapping:

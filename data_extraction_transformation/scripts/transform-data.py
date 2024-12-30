@@ -21,16 +21,12 @@ def process_folder(input_folder, output_folder, folder):
             df["push_timestamp"] = pd.to_datetime(df["push_timestamp"], format='%Y-%m-%dT%H:%M:%S', errors='coerce')
             # df["push_timestamp"] = pd.to_datetime(df['push_timestamp'], format='mixed')
             df = df[df['push_timestamp'] <= cutoff_date_time]
-            df_merged = pd.merge(df, df_alerts, left_on=['revision', 'signature_id'], right_on=['alert_revision', 'signature_id'], how='left')
-            df_merged['test_status_general'] = df_merged['test_status'].map(test_status_mapping)
-            df_merged['test_status_general'].fillna('TN', inplace=True)
-            df_merged['alert_status_general'].fillna('TN', inplace=True)
+            df_merged = pd.merge(df, df_alerts, left_on=['revision', 'signature_id'], right_on=['alert_summary_revision', 'signature_id'], how='left')
+            df_merged['alert_summary_status_general'].fillna('TN', inplace=True)
             df_final = df_merged.drop_duplicates()
-            df_final["test_status_general"] = df_final["test_status_general"].replace(category_mapping)
-            df_final.loc[df_final['test_manually_created'] == True, 'test_status_general'] = "FN"
-            df_final.loc[df_final['test_manually_created'] == True, 'alert_status_general'] = "FN"
+            df_final.loc[df_final['alert_manually_created'] == True, 'alert_summary_status_general'] = "FN"
             df_final.sort_values(by="push_timestamp", ascending=True)
-            if not df_final['alert_id'].isna().all():
+            if not df_final['alert_summary_id'].isna().all():
                 df_final.to_csv(output_folder + '/' + folder + '/' + signature_file, index=False)
         except:
             problematic_signatures.append(folder + '/' + signature_file)
@@ -44,13 +40,13 @@ def main():
     global cutoff_date_time
     global df_alerts
     global category_mapping
+    global alert_summary_status_mapping
     global alert_status_mapping
-    global test_status_mapping
     args = parse_args()
     input_folder = args.input_folder
     output_folder = args.output_folder
     alerts_file = args.alerts_file
-    alert_status_mapping = {
+    alert_summary_status_mapping = {
         0: "untriaged",
         1: "downstream",
         2: "reassigned",
@@ -62,7 +58,7 @@ def main():
         8: "backedout"
     }
 
-    test_status_mapping = {
+    alert_status_mapping = {
         0: "untriaged",
         1: "downstream",
         2: "reassigned",
@@ -86,12 +82,10 @@ def main():
 
     projects_folders_mapping = {"autoland": ["autoland1", "autoland2", "autoland3", "autoland4"], "firefox-android": ["firefox-android"], "mozilla-beta": ["mozilla-beta"], "mozilla-release": ["mozilla-release"], "mozilla-central": ["mozilla-central"]}
     df_alerts = pd.read_csv(alerts_file, index_col=False)
-    # df_alerts['alert_push_timestamp'] = pd.to_datetime(df_alerts['alert_push_timestamp'], unit='s')
-    cutoff_date_time = df_alerts['alert_push_timestamp'].max()
-    df_alerts = df_alerts.drop(columns=['alert_push_timestamp'])
-    df_alerts['alert_status_general'] = df_alerts['alert_status'].map(alert_status_mapping)
-    df_alerts["alert_status_general"] = df_alerts["alert_status_general"].replace(category_mapping)
-    df_alerts.rename(columns={'test_series_signature_id': 'signature_id'}, inplace=True)
+    cutoff_date_time = df_alerts['push_timestamp'].max()
+    df_alerts = df_alerts.drop(columns=['push_timestamp'])
+    df_alerts['alert_summary_status_general'] = df_alerts['alert_summary_status'].map(alert_summary_status_mappingg)
+    df_alerts["alert_summary_status_general"] = df_alerts["alert_summary_status_general"].replace(category_mapping)
 
     os.makedirs(output_folder, exist_ok=True)
     for project in projects_folders_mapping:

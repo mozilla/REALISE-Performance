@@ -12,7 +12,7 @@ import os
 def parse_args():
     parser = argparse.ArgumentParser(description="Check if there are alerts adjacent to the SP datapoints")
     parser.add_argument('-i', '--input-folder', required=True, help="Path to the input timeseries folder")
-    parser.add_argument('-o', '--input-folder', required=True, help="Path to the output timeseries folder")
+    parser.add_argument('-o', '--output-folder', required=True, help="Path to the output timeseries folder")
     return parser.parse_args()
 
 def process_folder(input_folder, output_folder, folder):
@@ -24,6 +24,7 @@ def process_folder(input_folder, output_folder, folder):
         'alert_bug_updated': 'alert_summary_bug_updated',
         'alert_creation_timestamp': 'alert_summary_creation_timestamp',
         'alert_first_triaged': 'alert_summary_first_triaged',
+        'alert_first_triage': 'alert_summary_first_triaged',
         'alert_framework': 'alert_summary_framework',
         'alert_id': 'alert_summary_id',
         'alert_issue_tracker': 'alert_summary_issue_tracker',
@@ -91,7 +92,7 @@ def process_folder(input_folder, output_folder, folder):
         df = pd.read_csv(input_folder + '/' + folder + '/' + signature_file, index_col=False)
         df.rename(columns=all_cols_renaming, inplace=True)
         df = df.drop(columns=['single_alert_status_general'])
-        df.to_csv(output_folder + '/' + folder + '/' + signature_file, index_col=False)
+        df.to_csv(output_folder + '/' + folder + '/' + signature_file, index=False)
 
 
 
@@ -99,10 +100,12 @@ def main():
     args = parse_args()
     input_folder = args.input_folder
     output_folder = args.output_folder
-    projects_folders_mapping = {"autoland": ["autoland1", "autoland2", "autoland3", "autoland4"], "firefox-android": ["firefox-android"], "mozilla-beta": ["mozilla-beta"]}
+    projects_folders_mapping = {"autoland": ["autoland1", "autoland2", "autoland3", "autoland4"], "firefox-android": ["firefox-android"], "mozilla-beta": ["mozilla-beta"], "mozilla-release": ["mozilla-release"], "mozilla-central": ["mozilla-central"]}
+    os.makedirs(output_folder, exist_ok=True)
     if projects_folders_mapping:
         for project in projects_folders_mapping:
             for folder in projects_folders_mapping[project]:
+                os.makedirs(output_folder + '/' + folder, exist_ok=True)
                 process_folder(input_folder, output_folder, folder)
 if __name__ == "__main__":
     main()
