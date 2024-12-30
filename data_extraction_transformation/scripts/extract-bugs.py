@@ -1,6 +1,16 @@
 from bugbug import bugzilla, db, bug_features
 import pandas as pd
 from helper import append_strings, get_json, txt_to_list
+import os
+import pandas as pd
+import shutil
+import argparse
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Script to cross-checkif the signatures are corrct or not")
+    parser.add_argument('-a', '--alert-file', required=True, help="Path to the alerts file")
+    parser.add_argument('-o', '--output-location', required=True, help="Path the location of the bugs CSV")
+    return parser.parse_args()
 
 '''
 This function is dedicated for extracting JSON attrbutes that do not exist always with exception handling
@@ -42,52 +52,64 @@ def extract_row(json_bug, isperfbug):
     }
     return bug_row
 
-'''
-The following list contains the columns names of the CSV to be generated through this script
-'''
-columns = [
-    'bug_id',
-    'bug_resolution',
-    'bug_type',
-    'bug_component',
-    'bug_summary',
-    'bug_classification',
-    'bug_status',
-    'bug_creation_time',
-    'bug_url',
-    'bug_last_change_time',
-    'bug_severity',
-    'bug_priority',
-    'bug_product',
-    'bug_is_confirmed',
-    'bug_votes',
-    'bug_is_open',
-    'bug_assigned_to',
-    'bug_cf_last_resolved',
-    'bug_cf_performance_impact',
-    'bug_version',
-    'bug_whiteboard',
-    'bug_platform',
-    'bug_keywords',
-    'IsPerformanceBug'
-]
 
 
-'''
-Downlanding the latest version of bugs data using bugbug
-'''
-db.download(bugzilla.BUGS_DB)
-df = pd.DataFrame(columns=columns)
+def main():
+    args = parse_args()
+    alert_file = args.alert_file
+    output_location = args.output_location
 
-'''
-Only bugs that are asosciated with alerts extracted through extract-alerts.py will be kept. note that bugs.txt contains the IDs of bugs associated with alerts obtained from the same Python script previously mentioned
-'''
-bugs_ids = txt_to_list("bugs.txt")
-for bug in bugzilla.get_bugs():
-    if str(bug["id"]) in bugs_ids:
-        isperfbug = False
-        if(bug_features.IsPerformanceBug().__call__(bug)):
-            isperfbug = True
-        new_row = extract_row(bug, isperfbug)
-        df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
-df.to_csv('../datasets/bugs_data.csv', index=False)
+    '''
+    The following list contains the columns names of the CSV to be generated through this script
+    '''
+    columns = [
+        'bug_id',
+        'bug_resolution',
+        'bug_type',
+        'bug_component',
+        'bug_summary',
+        'bug_classification',
+        'bug_status',
+        'bug_creation_time',
+        'bug_url',
+        'bug_last_change_time',
+        'bug_severity',
+        'bug_priority',
+        'bug_product',
+        'bug_is_confirmed',
+        'bug_votes',
+        'bug_is_open',
+        'bug_assigned_to',
+        'bug_cf_last_resolved',
+        'bug_cf_performance_impact',
+        'bug_version',
+        'bug_whiteboard',
+        'bug_platform',
+        'bug_keywords',
+        'IsPerformanceBug'
+    ]
+
+
+    '''
+    Downlanding the latest version of bugs data using bugbug
+    '''
+    db.download(bugzilla.BUGS_DB)
+    df = pd.DataFrame(columns=columns)
+    alerts_df = pd.read_csv(alerts_file)
+    '''
+    Only bugs that are asosciated with alerts extracted through extract-alerts.py will be kept. note that bugs.txt contains the IDs of bugs associated with alerts obtained from the same Python script previously mentioned
+    '''
+    bugs_ids = alerts_df['alert_bug_number'].unique().flatten()
+    for bug in bugzilla.get_bugs():
+        if str(bug["id"]) in bugs_ids:
+            isperfbug = False
+            if(bug_features.IsPerformanceBug().__call__(bug)):
+                isperfbug = True
+            new_row = extract_row(bug, isperfbug)
+            df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+    df.to_csv(output_location + '/bugs_data.csv', index=False)
+
+
+
+if __name__ == "__main__":
+    main()
