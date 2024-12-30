@@ -41,7 +41,9 @@ def main():
     projects_folders_mapping = {
         "autoland": ["autoland1", "autoland2", "autoland3", "autoland4"], 
         "firefox-android": ["firefox-android"],
-        "mozilla-beta": ["mozilla-beta"]
+        "mozilla-beta": ["mozilla-beta"],
+        , "mozilla-release": ["mozilla-release"],
+        "mozilla-central": ["mozilla-central"]
     }
 
     # Process each subfolder

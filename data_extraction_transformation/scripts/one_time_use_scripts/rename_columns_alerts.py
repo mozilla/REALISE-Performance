@@ -11,8 +11,8 @@ import os
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Check if there are alerts adjacent to the SP datapoints")
-    parser.add_argument('-i', '--input-folder', required=True, help="Path to the input timeseries folder")
-    parser.add_argument('-o', '--input-folder', required=True, help="Path to the output timeseries folder")
+    parser.add_argument('-i', '--input-file', required=True, help="Path to the input timeseries folder")
+    parser.add_argument('-o', '--output-file', required=True, help="Path to the output timeseries folder")
     return parser.parse_args()
 
 def main():
@@ -24,6 +24,7 @@ def main():
         'alert_bug_updated': 'alert_summary_bug_updated',
         'alert_creation_timestamp': 'alert_summary_creation_timestamp',
         'alert_first_triaged': 'alert_summary_first_triaged',
+        'alert_first_triage': 'alert_summary_first_triaged',
         'alert_framework': 'alert_summary_framework',
         'alert_id': 'alert_summary_id',
         'alert_issue_tracker': 'alert_summary_issue_tracker',
@@ -88,9 +89,12 @@ def main():
     }
     all_cols_renaming = {**common_mapping_record, **alerts_csv_specific_mapping}
     args = parse_args()
-    input_folder = args.input_folder
-    output_folder = args.output_folder
-    df = pd.read_csv(input_folder + '/' + folder + '/' + signature_file, index_col=False)
+    input_file = args.input_file
+    output_file = args.output_file
+    
+    df = pd.read_csv(input_file, index_col=False)
     df.rename(columns=all_cols_renaming, inplace=True)
-    df.to_csv(output_folder + '/' + folder + '/' + signature_file, index_col=False)
+    df.to_csv(output_file, index=False)
+
+if __name__ == "__main__":
     main()
