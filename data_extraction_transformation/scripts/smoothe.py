@@ -3,6 +3,7 @@ import pandas as pd
 import time
 import argparse
 from scipy.ndimage import gaussian_filter1d
+import argparse
 
 def apply_gaussian_smoothing(df, column, sigma):
     """

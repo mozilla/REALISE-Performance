@@ -5,7 +5,8 @@ import pandas as pd
 import json
 import random
 from helper import append_strings, get_json, txt_to_list
-
+import argparse
+ 
 '''
 The following function extracts a list of strings associated with a given attribute and it appends them in a pipe-separated string
 '''
@@ -67,97 +68,9 @@ def extract_data(json_data):
     }
     return data_entry
 
-#projects mentionned in the alerts dataset
-mentionned_porjects = [
-    'firefox-android',
-    "mozilla-central",
-    "mozilla-beta",
-    "mozilla-release",
-    "autoland"
-]
 
-#projects not mentionned in the alerts dataset
-unmentionned_porjects = [
-    "try",
-    "android-components",
-    "application-services",
-    "ash",
-    "birch",
-    "cedar",
-    "ci-admin",
-    "ci-admin-try",
-    "ci-configuration",
-    "ci-configuration-try",
-    "comm-beta",
-    "comm-central",
-    "comm-esr115",
-    "comm-release",
-    "elm",
-    "fenix",
-    "firefox-ios",
-    "firefox-translations-training",
-    "focus-android",
-    "holly",
-    "jamun",
-    "kaios",
-    "kaios-try",
-    "larch",
-    "maple",
-    "mozilla-esr115",
-    "mozilla-release",
-    "mozilla-vpn-client",
-    "mozilla-vpn-client-release",
-    "nss",
-    "nss-try",
-    "oak",
-    "pine",
-    "reference-browser",
-    "servo-auto",
-    "servo-master",
-    "servo-try",
-    "staging-android-components",
-    "staging-fenix",
-    "staging-firefox-translations-training",
-    "staging-focus-android",
-    "taskgraph",
-    "toolchains",
-    "try-comm-central",
-    "webrender"
-]
-
-'''
-The following list contains the columns names of the CSV to be generated through this script
-'''
-columns = [
-    "repository_name",
-    "signature_id",
-    "framework_id",
-    "signature_hash",
-    "machine_platform",
-    "should_alert",
-    "has_subtests",
-    "extra_options",
-    "tags",
-    "option_collection_hash",
-    "test",
-    "suite",
-    "lower_is_better",
-    "name",
-    "parent_signature",
-    "repository_id",
-    "measurement_unit",
-    "application",
-    "job_id",
-    "entry_id",
-    "push_timestamp",
-    "value",
-    "revision",
-    "push_id"
-]
-
-filtered_sig_ids = txt_to_list("signatures.txt")
-
-def extract_timeseries(project):
+def extract_timeseries(output_folder, project):
+    global filtered_sig_ids
     signature_url = "https://treeherder.mozilla.org/api/project/" + project + "/performance/signatures/"
     signatures_json = get_json(signature_url)
     cond = lambda x: str(x[1]["id"]) in filtered_sig_ids
@@ -208,8 +121,114 @@ def extract_timeseries(project):
                 new_row.update(data_attributes)
                 new_row_df = pd.DataFrame(new_row, index=[0])
                 df = pd.concat([df, new_row_df], ignore_index=True)
-            df.to_csv('../datasets/' + project + '/' + signature_id + '_timeseries_data.csv', header=True, mode='w', index=False)
-for project in mentionned_porjects:
-    if not os.path.exists('../datasets/' + project):
-        os.makedirs('../datasets/' + project)
-    extract_timeseries(project)
+            df.to_csv(output_folder + '/' + project + '/' + signature_id + '_timeseries_data.csv', header=True, mode='w', index=False)
+
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Fetch timeseires details from an API and save to a folder of CSV files organized into separate folders per project.")
+    parser.add_argument('-o', '--output-folder', help="Path to the output folder of time series CSV files.")
+    parser.add_argument('-a', '--alerts-file', help="Path to the alerts CSV file.")
+
+    return parser.parse_args()
+
+
+
+def main():
+    global filtered_sig_ids
+    args = parse_args()
+    output_folder = args.output_folder
+    alerts_file = args.alerts_file
+    alerts_df = pd.read_csv(alerts_file)
+    mentionned_projects = alerts_df['alert_summary_repository'].unique().tolist()
+    filtered_sig_ids = alerts_df['signature_id'].unique().tolist()
+
+    # For reference, these are all of the projects
+    '''
+    all_porjects = [
+        "try",
+        "android-components",
+        "application-services",
+        "ash",
+        "birch",
+        "cedar",
+        "ci-admin",
+        "ci-admin-try",
+        "ci-configuration",
+        "ci-configuration-try",
+        "comm-beta",
+        "comm-central",
+        "comm-esr115",
+        "comm-release",
+        "elm",
+        "fenix",
+        "firefox-ios",
+        "firefox-translations-training",
+        "focus-android",
+        "holly",
+        "jamun",
+        "kaios",
+        "kaios-try",
+        "larch",
+        "maple",
+        "mozilla-esr115",
+        "mozilla-release",
+        "mozilla-vpn-client",
+        "mozilla-vpn-client-release",
+        "nss",
+        "nss-try",
+        "oak",
+        "pine",
+        "reference-browser",
+        "servo-auto",
+        "servo-master",
+        "servo-try",
+        "staging-android-components",
+        "staging-fenix",
+        "staging-firefox-translations-training",
+        "staging-focus-android",
+        "taskgraph",
+        "toolchains",
+        "try-comm-central",
+        "webrender"
+    ]
+    '''
+
+    '''
+    The following list contains the columns names of the CSV to be generated through this script
+    '''
+    columns = [
+        "repository_name",
+        "signature_id",
+        "framework_id",
+        "signature_hash",
+        "machine_platform",
+        "should_alert",
+        "has_subtests",
+        "extra_options",
+        "tags",
+        "option_collection_hash",
+        "test",
+        "suite",
+        "lower_is_better",
+        "name",
+        "parent_signature",
+        "repository_id",
+        "measurement_unit",
+        "application",
+        "job_id",
+        "entry_id",
+        "push_timestamp",
+        "value",
+        "revision",
+        "push_id"
+    ]
+
+
+    for project in mentionned_porjects:
+        if not os.path.exists(output_folder + '/' + project):
+            os.makedirs(output_folder + '/' + project, exist_ok=True)
+        extract_timeseries(output_folder, project)
+
+if __name__ == "__main__":
+    main()
