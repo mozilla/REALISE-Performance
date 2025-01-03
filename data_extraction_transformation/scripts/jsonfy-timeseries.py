@@ -13,7 +13,6 @@ def parse_args():
 
 def main():
     args = parse_args()
-
     input_folder = args.input_folder
     output_folder = args.output_folder
     alerts_file = args.alerts_file
@@ -21,9 +20,7 @@ def main():
     y_column = 'alert_status_general'
 
     df_alerts = pd.read_csv(alerts_file, index_col=False)
-    # projects_folders = ["autoland1", "autoland2", "autoland3", "autoland4", "firefox-android", "mozilla-beta", "mozilla-central", "mozilla-release"]
-    
-    projects_folders = ["mozilla-central", "mozilla-release"]
+    projects_folders = ["autoland1", "autoland2", "autoland3", "autoland4", "firefox-android", "mozilla-beta", "mozilla-central", "mozilla-release"]
     
     os.makedirs(output_folder, exist_ok=True)
 

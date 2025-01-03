@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 import json
 from helper import append_strings, get_json, txt_to_list
+import argparse
 
 '''
 This function is used in the get_alert_summary_info function. Provided the JSON of alerts related to a specific alert, it gets their ID and make them into a pipe '|' separated string
@@ -108,104 +109,124 @@ def get_alert_summary_info(json_alert):
     }
     return alert_characteristics
 
-url = "https://treeherder.mozilla.org/api/performance/alertsummary/"
-json_data = get_json(url)
-current_timestamp = datetime.now()
-comp_time_stamp = current_timestamp
-'''
-This script extracts the perofrmance-related alerts from the time of running the script down until around 365 days ago
-'''
-threshold_timestamp = current_timestamp - timedelta(days=365)
-'''
-The following list contains the columns names of the CSV to be generated through this script
-'''
-columns = ['alert_summary_id',
-'alert_summary_push_id',
-'alert_summary_prev_push_id',
-'alert_summary_creation_timestamp',
-'alert_summary_first_triaged',
-'alert_summary_triage_due_date',
-'alert_summary_repository',
-'alert_summary_framework',
-'single_alert_id',
-'single_alert_status',
-'signature_id',
-'single_alert_series_signature_framework_id',
-'single_alert_series_signature_signature_hash',
-'single_alert_series_signature_machine_platform',
-'single_alert_series_signature_test',
-'single_alert_series_signature_suite',
-'single_alert_series_signature_lower_is_better',
-'single_alert_series_signature_has_subtests',
-'single_alert_series_signature_option_collection_hash',
-'single_alert_series_signature_tags',
-'single_alert_series_signature_extra_options',
-'single_alert_series_signature_measurement_unit',
-'single_alert_series_signature_suite_public_name',
-'single_alert_series_signature_test_public_name',
-'single_alert_prev_taskcluster_metadata_task_id',
-'single_alert_prev_taskcluster_metadata_retry_id',
-'single_alert_taskcluster_metadata_task_id',
-'single_alert_taskcluster_metadata_retry_id',
-'single_alert_profile_url',
-'single_alert_prev_profile_url',
-'single_alert_is_regression',
-'single_alert_prev_value',
-'single_alert_new_value',
-'single_alert_t_value',
-'single_alert_amount_abs',
-'single_alert_amount_pct',
-'single_alert_summary_id',
-'single_alert_related_summary_id',
-'single_alert_manually_created',
-'single_alert_classifier',
-'single_alert_starred',
-'single_alert_classifier_email',
-'single_alert_backfill_record_context',
-'single_alert_backfill_record_status',
-'single_alert_backfill_record_total_actions_triggered',
-'single_alert_backfill_record_total_backfills_failed',
-'single_alert_backfill_record_total_backfills_successful',
-'single_alert_backfill_record_total_backfills_in_progress',
-'single_alert_noise_profile',
-'alert_summary_related_alerts',
-'alert_summary_status',
-'alert_summary_bug_number',
-'alert_summary_bug_due_date',
-'alert_summary_bug_updated',
-'alert_summary_issue_tracker',
-'alert_summary_notes',
-'alert_summary_revision',
-'push_timestamp',
-'alert_prev_push_revision',
-'alert_summary_assignee_username',
-'alert_summary_assignee_email',
-'alert_summary_performance_tags'
-]
 
-df = pd.read_csv('../datasets/alerts_data.csv', index_col=False)
-sp_alert_summaries_ids = df[df["alert_status"].isin([0, 5])]["alert_id"].unique()
+def parse_args():
+    parser = argparse.ArgumentParser(description="Update the status of the alerts falling under 'Still Processing' alert summaries (if the update happens too far away after fetching the original data, some alerts might get loqst if their creation date surpass one year so make sure to include them separately).")
+    parser.add_argument('-i', '--input-alerts-file', help="Path to the input alerts CSV file.")
+    parser.add_argument('-o', '--output-alerts-file', help="Path to the alerts CSV file.")
+    return parser.parse_args()
 
-new_sp_df = df[~df['alert_id'].isin(sp_alert_summaries_ids)]
-problematic_summaries = set()
 
-for alert_summary_id in sp_alert_summaries_ids:
-    try:
-        url = "https://treeherder.mozilla.org/api/performance/alertsummary/" + str(alert_summary_id) + "/"
-        payload = get_json(url)
-        alert_info = get_alert_summary_info(payload)
-        for j in payload['alerts']:
-            test_info = get_alert_info(j)
-            new_row = {}
-            new_row.update(alert_info)
-            new_row.update(test_info)
-            new_sp_df = pd.concat([new_sp_df, pd.DataFrame([new_row])], ignore_index=True)
-    except:
-        problematic_summaries.add(alert_summary_id)
-        continue
+def main():
+    # input_alerts_file = '../datasets/alerts_data.csv'
+    # output_alerts_file = '../datasets/1_rectified_alerts_data.csv'
 
-new_sp_df.to_csv('../datasets/1_rectified_alerts_data.csv', index=False)
 
-print("PROBLEMATIC SUMMARIES REPORT")
-for i in problematic_summaries:
-    print(i)
+    url = "https://treeherder.mozilla.org/api/performance/alertsummary/"
+    json_data = get_json(url)
+    current_timestamp = datetime.now()
+    comp_time_stamp = current_timestamp
+    '''
+    This script extracts the perofrmance-related alerts from the time of running the script down until around 365 days ago
+    '''
+    threshold_timestamp = current_timestamp - timedelta(days=365)
+    '''
+    The following list contains the columns names of the CSV to be generated through this script
+    '''
+    columns = ['alert_summary_id',
+    'alert_summary_push_id',
+    'alert_summary_prev_push_id',
+    'alert_summary_creation_timestamp',
+    'alert_summary_first_triaged',
+    'alert_summary_triage_due_date',
+    'alert_summary_repository',
+    'alert_summary_framework',
+    'single_alert_id',
+    'single_alert_status',
+    'signature_id',
+    'single_alert_series_signature_framework_id',
+    'single_alert_series_signature_signature_hash',
+    'single_alert_series_signature_machine_platform',
+    'single_alert_series_signature_test',
+    'single_alert_series_signature_suite',
+    'single_alert_series_signature_lower_is_better',
+    'single_alert_series_signature_has_subtests',
+    'single_alert_series_signature_option_collection_hash',
+    'single_alert_series_signature_tags',
+    'single_alert_series_signature_extra_options',
+    'single_alert_series_signature_measurement_unit',
+    'single_alert_series_signature_suite_public_name',
+    'single_alert_series_signature_test_public_name',
+    'single_alert_prev_taskcluster_metadata_task_id',
+    'single_alert_prev_taskcluster_metadata_retry_id',
+    'single_alert_taskcluster_metadata_task_id',
+    'single_alert_taskcluster_metadata_retry_id',
+    'single_alert_profile_url',
+    'single_alert_prev_profile_url',
+    'single_alert_is_regression',
+    'single_alert_prev_value',
+    'single_alert_new_value',
+    'single_alert_t_value',
+    'single_alert_amount_abs',
+    'single_alert_amount_pct',
+    'single_alert_summary_id',
+    'single_alert_related_summary_id',
+    'single_alert_manually_created',
+    'single_alert_classifier',
+    'single_alert_starred',
+    'single_alert_classifier_email',
+    'single_alert_backfill_record_context',
+    'single_alert_backfill_record_status',
+    'single_alert_backfill_record_total_actions_triggered',
+    'single_alert_backfill_record_total_backfills_failed',
+    'single_alert_backfill_record_total_backfills_successful',
+    'single_alert_backfill_record_total_backfills_in_progress',
+    'single_alert_noise_profile',
+    'alert_summary_related_alerts',
+    'alert_summary_status',
+    'alert_summary_bug_number',
+    'alert_summary_bug_due_date',
+    'alert_summary_bug_updated',
+    'alert_summary_issue_tracker',
+    'alert_summary_notes',
+    'alert_summary_revision',
+    'push_timestamp',
+    'alert_prev_push_revision',
+    'alert_summary_assignee_username',
+    'alert_summary_assignee_email',
+    'alert_summary_performance_tags'
+    ]
+
+
+    args = parse_args()
+    input_alerts_file = args.input_alerts_file
+    output_alerts_file = args.output_alerts_file
+    df = pd.read_csv(input_alerts_file, index_col=False)
+    sp_alert_summaries_ids = df[df["alert_summary_status"].isin([0, 5])]["alert_summary_id"].unique()
+    new_sp_df = df[~df['alert_summary_id'].isin(sp_alert_summaries_ids)]
+    problematic_summaries = set()
+
+    for alert_summary_id in sp_alert_summaries_ids:
+        try:
+            url = "https://treeherder.mozilla.org/api/performance/alertsummary/" + str(alert_summary_id) + "/"
+            payload = get_json(url)
+            alert_info = get_alert_summary_info(payload)
+            for j in payload['alerts']:
+                test_info = get_alert_info(j)
+                new_row = {}
+                new_row.update(alert_info)
+                new_row.update(test_info)
+                new_sp_df = pd.concat([new_sp_df, pd.DataFrame([new_row])], ignore_index=True)
+        except:
+            problematic_summaries.add(alert_summary_id)
+            continue
+
+    new_sp_df.to_csv(output_alerts_file, index=False)
+
+    print("PROBLEMATIC SUMMARIES REPORT")
+    for i in problematic_summaries:
+        print(i)
+
+
+if __name__ == "__main__":
+    main() 

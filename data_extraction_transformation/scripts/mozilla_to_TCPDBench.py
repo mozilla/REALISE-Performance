@@ -2,7 +2,7 @@ import pandas as pd
 import json
 import os
 import shutil
-
+import argparse
 
 '''
 {
@@ -30,17 +30,7 @@ def write_json(dict_sig, sig_path, conf):
     with open(path + '/' + conf + '.json', 'w') as file:
         json.dump(dict_sig, file, indent=4)
 
-
-df = pd.read_csv("../datasets/more_than_10_alert_summaries_speedometer3_tp6.csv")
-signatures = df['signature_id'].unique().tolist()
-signatures = list(map(str, signatures))
-
-input_folder = '../datasets-original-annotated-2-aggregated'
-output_folder = '../filtered-datasets-original-annotated-2-aggregated-tcpdbench-2'
-
-problematic_signatures = []
-
-def process_folder(folder):
+def process_folder(input_folder, output_folder, folder):
     for signature_file in os.listdir(input_folder + '/' + folder):
         df = pd.read_csv(input_folder + '/' + folder + '/' + signature_file, index_col=False)
         sig = signature_file.split('_')[0]
@@ -66,18 +56,44 @@ def process_folder(folder):
         except:
             problematic_signatures.append(sig)
 
-projects_folders_mapping = {"autoland": ["autoland1", "autoland2", "autoland3", "autoland4"], "firefox-android": ["firefox-android"], "mozilla-beta": ["mozilla-beta"], "mozilla-release": ["mozilla-release"], "mozilla-central": ["mozilla-central"]}
-os.makedirs(output_folder, exist_ok=True)
-if projects_folders_mapping:
-    for project in projects_folders_mapping:
-        for folder in projects_folders_mapping[project]:
-            # os.makedirs(output_folder + '/' + folder, exist_ok=True)
-            process_folder(folder)
-            #shutil.rmtree('../datasets/' + folder)
-            #os.rename('../datasets/' + folder + "-processed", '../datasets/' + folder)
-else:
-    process_folder(input_folder)
-print('####### Problematic signatures #######')
-for sig in problematic_signatures:
-    print('Signature path:')
-    print(sig)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Handpick specific timeseries JSON files and format them into th TCPDBench output to compare them to TCPDBench predictions.")
+    parser.add_argument('-o', '--output-folder', help="Path to the output folder of time series JSON files.")
+    parser.add_argument('-i', '--input-folder', help="Path to the input folder of time series JSON files.")
+    parser.add_argument('-f', '--filtered-singatures-file', help="Path to the CSV file with the signatures to handpick (it has to have a column signature_id).")
+
+    return parser.parse_args()
+
+
+
+def main():
+    args = parse_args()
+    input_folder = args.input_folder
+    filtered_signatures_file = args.filtered_signatures_file
+    output_folder = args.output_folder
+    # input_folder = '../datasets-original-annotated-2-aggregated'
+    # output_folder = '../filtered-datasets-original-annotated-2-aggregated-tcpdbench-2'
+    # filtered_signatures_file = "../datasets/more_than_10_alert_summaries_speedometer3_tp6.csv"
+    filtered_signatures_file = args.filtered_signatures_file
+    df = pd.read_csv(filtered_signatures_file)
+    signatures = df['signature_id'].unique().tolist()
+    signatures = list(map(str, signatures))
+    problematic_signatures = []
+
+    projects_folders_mapping = {"autoland": ["autoland1", "autoland2", "autoland3", "autoland4"], "firefox-android": ["firefox-android"], "mozilla-beta": ["mozilla-beta"], "mozilla-release": ["mozilla-release"], "mozilla-central": ["mozilla-central"]}
+    os.makedirs(output_folder, exist_ok=True)
+    if projects_folders_mapping:
+        for project in projects_folders_mapping:
+            for folder in projects_folders_mapping[project]:
+                os.makedirs(output_folder + '/' + folder, exist_ok=True)
+                process_folder(input_folder, output_folder, folder)
+                #shutil.rmtree('../datasets/' + folder)
+                #os.rename('../datasets/' + folder + "-processed", '../datasets/' + folder)
+    else:
+        process_folder(input_folder)
+    print('####### Problematic signatures #######')
+    for sig in problematic_signatures:
+        print('Signature path:')
+        print(sig)

@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 import pandas as pd
 import json
 from helper import append_strings, get_json, txt_to_list
+import argparse
+
 
 '''
 This function is used in the get_alert_summary_info function. Provided the JSON of alerts related to a specific alert, it gets their ID and make them into a pipe '|' separated string
@@ -108,108 +110,125 @@ def get_alert_summary_info(json_alert):
     }
     return alert_characteristics
 
-url = "https://treeherder.mozilla.org/api/performance/alertsummary/"
-json_data = get_json(url)
-current_timestamp = datetime.now()
-comp_time_stamp = current_timestamp
-'''
-This script extracts the perofrmance-related alerts from the time of running the script down until around 365 days ago
-'''
-threshold_timestamp = current_timestamp - timedelta(days=365)
-'''
-The following list contains the columns names of the CSV to be generated through this script
-'''
-columns = ['alert_summary_id',
-'alert_summary_push_id',
-'alert_summary_prev_push_id',
-'alert_summary_creation_timestamp',
-'alert_summary_first_triaged',
-'alert_summary_triage_due_date',
-'alert_summary_repository',
-'alert_summary_framework',
-'single_alert_id',
-'single_alert_status',
-'signature_id',
-'single_alert_series_signature_framework_id',
-'single_alert_series_signature_signature_hash',
-'single_alert_series_signature_machine_platform',
-'single_alert_series_signature_test',
-'single_alert_series_signature_suite',
-'single_alert_series_signature_lower_is_better',
-'single_alert_series_signature_has_subtests',
-'single_alert_series_signature_option_collection_hash',
-'single_alert_series_signature_tags',
-'single_alert_series_signature_extra_options',
-'single_alert_series_signature_measurement_unit',
-'single_alert_series_signature_suite_public_name',
-'single_alert_series_signature_test_public_name',
-'single_alert_prev_taskcluster_metadata_task_id',
-'single_alert_prev_taskcluster_metadata_retry_id',
-'single_alert_taskcluster_metadata_task_id',
-'single_alert_taskcluster_metadata_retry_id',
-'single_alert_profile_url',
-'single_alert_prev_profile_url',
-'single_alert_is_regression',
-'single_alert_prev_value',
-'single_alert_new_value',
-'single_alert_t_value',
-'single_alert_amount_abs',
-'single_alert_amount_pct',
-'single_alert_summary_id',
-'single_alert_related_summary_id',
-'single_alert_manually_created',
-'single_alert_classifier',
-'single_alert_starred',
-'single_alert_classifier_email',
-'single_alert_backfill_record_context',
-'single_alert_backfill_record_status',
-'single_alert_backfill_record_total_actions_triggered',
-'single_alert_backfill_record_total_backfills_failed',
-'single_alert_backfill_record_total_backfills_successful',
-'single_alert_backfill_record_total_backfills_in_progress',
-'single_alert_noise_profile',
-'alert_summary_related_alerts',
-'alert_summary_status',
-'alert_summary_bug_number',
-'alert_summary_bug_due_date',
-'alert_summary_bug_updated',
-'alert_summary_issue_tracker',
-'alert_summary_notes',
-'alert_summary_revision',
-'push_timestamp',
-'alert_prev_push_revision',
-'alert_summary_assignee_username',
-'alert_summary_assignee_email',
-'alert_summary_performance_tags'
-]
-unique_signatures = set()
-df = pd.DataFrame(columns=columns)
-while ((comp_time_stamp >= threshold_timestamp) and (url != None)):
-    payload = get_json(url)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Fetch alerts details from an API and save to a CSV file.")
+    parser.add_argument('-a', '--alerts-file', help="Path to the output CSV alerts file.")
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+    #alerts_output = '../datasets/alerts_data.csv'
+    alerts_output = args.alerts_file
+    current_timestamp = datetime.now()
+    comp_time_stamp = current_timestamp
+
     '''
-    the API works in a pagination style, so each API response contains, along with a handful of data entries, the URL for the API endpoint containing the next data entries and so on and so fourth
+    This script extracts the perofrmance-related alerts from the time of running the script down until around 365 days ago
     '''
-    url = payload['next']
+    threshold_timestamp = current_timestamp - timedelta(days=365)
     '''
-    earliest_date will be used to determine when to stop the alerts data extraction
+    The following list contains the columns names of the CSV to be generated through this script
     '''
-    earliest_date = payload['results'][-1]['created']
-    comp_time_stamp = parse_timestamp(earliest_date)
-    '''the following loop will extract the alerts data obtained from one given API call
-    '''
-    for i in payload['results']:
-        alert_info = get_alert_summary_info(i)
-        for j in i['alerts']:
-            test_info = get_alert_info(j)
-            new_row = {}
-            new_row.update(alert_info)
-            new_row.update(test_info)
-            unique_signatures.add(new_row['signature_id'])
-            df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
-df.to_csv('../datasets/alerts_data.csv', index=False)
-sig_ids_str = ", ".join(list(list(map(lambda id: str(id), unique_signatures))))
-'''
-The signatures.txt file contains the signature IDs associated with performance alerts extracted through this script. This file will be used in the extract-timeseries.py file
-'''
-with open("signatures.txt", "w") as file:
-    file.write(sig_ids_str)
+    columns = ['alert_summary_id',
+    'alert_summary_push_id',
+    'alert_summary_prev_push_id',
+    'alert_summary_creation_timestamp',
+    'alert_summary_first_triaged',
+    'alert_summary_triage_due_date',
+    'alert_summary_repository',
+    'alert_summary_framework',
+    'single_alert_id',
+    'single_alert_status',
+    'signature_id',
+    'single_alert_series_signature_framework_id',
+    'single_alert_series_signature_signature_hash',
+    'single_alert_series_signature_machine_platform',
+    'single_alert_series_signature_test',
+    'single_alert_series_signature_suite',
+    'single_alert_series_signature_lower_is_better',
+    'single_alert_series_signature_has_subtests',
+    'single_alert_series_signature_option_collection_hash',
+    'single_alert_series_signature_tags',
+    'single_alert_series_signature_extra_options',
+    'single_alert_series_signature_measurement_unit',
+    'single_alert_series_signature_suite_public_name',
+    'single_alert_series_signature_test_public_name',
+    'single_alert_prev_taskcluster_metadata_task_id',
+    'single_alert_prev_taskcluster_metadata_retry_id',
+    'single_alert_taskcluster_metadata_task_id',
+    'single_alert_taskcluster_metadata_retry_id',
+    'single_alert_profile_url',
+    'single_alert_prev_profile_url',
+    'single_alert_is_regression',
+    'single_alert_prev_value',
+    'single_alert_new_value',
+    'single_alert_t_value',
+    'single_alert_amount_abs',
+    'single_alert_amount_pct',
+    'single_alert_summary_id',
+    'single_alert_related_summary_id',
+    'single_alert_manually_created',
+    'single_alert_classifier',
+    'single_alert_starred',
+    'single_alert_classifier_email',
+    'single_alert_backfill_record_context',
+    'single_alert_backfill_record_status',
+    'single_alert_backfill_record_total_actions_triggered',
+    'single_alert_backfill_record_total_backfills_failed',
+    'single_alert_backfill_record_total_backfills_successful',
+    'single_alert_backfill_record_total_backfills_in_progress',
+    'single_alert_noise_profile',
+    'alert_summary_related_alerts',
+    'alert_summary_status',
+    'alert_summary_bug_number',
+    'alert_summary_bug_due_date',
+    'alert_summary_bug_updated',
+    'alert_summary_issue_tracker',
+    'alert_summary_notes',
+    'alert_summary_revision',
+    'push_timestamp',
+    'alert_prev_push_revision',
+    'alert_summary_assignee_username',
+    'alert_summary_assignee_email',
+    'alert_summary_performance_tags'
+    ]
+    unique_signatures = set()
+    df = pd.DataFrame(columns=columns)
+
+    while ((comp_time_stamp >= threshold_timestamp) and (url != None)):
+        payload = get_json(url)
+        '''
+        the API works in a pagination style, so each API response contains, along with a handful of data entries, the URL for the API endpoint containing the next data entries and so on and so fourth
+        '''
+        url = payload['next']
+        '''
+        earliest_date will be used to determine when to stop the alerts data extraction
+        '''
+        earliest_date = payload['results'][-1]['created']
+        comp_time_stamp = parse_timestamp(earliest_date)
+        '''the following loop will extract the alerts data obtained from one given API call
+        '''
+        for i in payload['results']:
+            alert_info = get_alert_summary_info(i)
+            for j in i['alerts']:
+                test_info = get_alert_info(j)
+                new_row = {}
+                new_row.update(alert_info)
+                new_row.update(test_info)
+                unique_signatures.add(new_row['signature_id'])
+                df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+    df.to_csv(alerts_output, index=False)
+# sig_ids_str = ", ".join(list(list(map(lambda id: str(id), unique_signatures))))
+# '''
+# The signatures.txt file contains the signature IDs associated with performance alerts extracted through this script. This file will be used in the extract-timeseries.py file
+# '''
+# with open("signatures.txt", "w") as file:
+#     file.write(sig_ids_str)
+
+
+
+if __name__ == "__main__":
+    main()
