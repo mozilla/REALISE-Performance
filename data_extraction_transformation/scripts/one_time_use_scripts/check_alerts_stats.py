@@ -1,8 +1,8 @@
 import os
 import pandas as pd
 
-input_files = 'project1/datasets-original-annotated-2-aggregated'
-col = 'alert_status_general'
+input_files = '../../../data/all-datasets-annotated-aggregated'
+col = 'alert_summary_status_general'
 
 total_data_points = 0
 total_sig = 0
@@ -20,7 +20,9 @@ def process_file(file_path):
 projects_folders_mapping = {
     "autoland": ["autoland1", "autoland2", "autoland3", "autoland4"],
     "firefox-android": ["firefox-android"],
-    "mozilla-beta": ["mozilla-beta"]
+    "mozilla-beta": ["mozilla-beta"],
+    "mozilla-central": ["mozilla-central"],
+    "mozilla-release": ["mozilla-release"]
 }
 
 # Initialize an empty list to store the 'status' values

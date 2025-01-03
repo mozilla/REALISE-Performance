@@ -24,7 +24,7 @@ def process_folder(input_folder, output_folder, folder):
             df_merged = pd.merge(df, df_alerts, left_on=['revision', 'signature_id'], right_on=['alert_summary_revision', 'signature_id'], how='left')
             df_merged['alert_summary_status_general'].fillna('TN', inplace=True)
             df_final = df_merged.drop_duplicates()
-            df_final.loc[df_final['alert_manually_created'] == True, 'alert_summary_status_general'] = "FN"
+            df_final.loc[df_final['single_alert_manually_created'] == True, 'alert_summary_status_general'] = "FN"
             df_final.sort_values(by="push_timestamp", ascending=True)
             if not df_final['alert_summary_id'].isna().all():
                 df_final.to_csv(output_folder + '/' + folder + '/' + signature_file, index=False)
