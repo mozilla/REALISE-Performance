@@ -13,6 +13,9 @@ The following part presents the data existing in the replication package\cite{re
 
 `data_extraction_transformation` folder: It contains the necessary code for extracting the data (not the exact same data as the content will include the data from the last year, for example if the data extraction is being done in March 2025, the data to be obtained is the related to March 2024 up until March 2025). It also contains the analysis notebooks to conduct the analysis (including the code generating some of the graphs in this paper).
 
+
+TODO: complete the description of the other files/folders (they are not needed for the artifacts challenge submission).
+
 ## Alerts/Alert summaries data:
 
 
