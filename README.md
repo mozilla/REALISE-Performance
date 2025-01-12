@@ -4,34 +4,44 @@ The performance of large systems is crucial for business efficiency, as unrespon
 
 ## Vision
 
-We want to **incorporate performance assessment during the code review process**. Upon submitting a patch for review, the solution should :
-- Identify performance tests covering code changes & run them for comparison with historical data.
-- Analyze the differences in the performance across the relevant performance metrics & include an actionable report in the code review.
-- Optionally allow requesting further details on code change impact performance-wise
-
+- The goal is to enhance Mozilla's performance workflow by trying different strategies including empirical analysis of the performance workflow, both from a system perspective and from manual process perspective, in order to explore the landscape. Afterwards, based on the findings, we want to propose possible changes to the workflow and we want to report the changes' effects on the performance engineering workflow if the changes are implemented.
 ## Challenges
 
 In order to make the vision concrete, the project is divided to multiple challeneges
-- Challenge 0: **Exploring the performance test suite of Mozilla projects**
-During this step, we analyze Mozilla's current performance testing and analysis practices to determine how the performance tests can be used within the code review workflow. 
-- Challenge 1: **Mitigating the noise in the performance measurement data**
+- Challenge 0: **Extracting performance related data from Mozilla systems**
+As Mozilla's systems are open to the general public, the data collection should take place. That can be followed by an analysis of the data to identify insights.
 
-Multiple factors can influence performance measurements (e.g., hardware, other software systems competing for resources, different testing workloads, compiler optimizations, etc.), causing a lot of noise in the measurements. This noise in the data may trigger false performance alerts, wasting the time and resources of the development and operations team. The gist of this step is **to reduce noise in the generated data or to better identify it from the existing data with the aim of reducing false positive performance-related alerts.**
+- Challenge 1: **Proposing changes to Mozilla's workflow**
+Based on the insigths from the previous challenge, we proceed with identifying areas of change in the performance engineering workflow. The current idea is to try different techniques for predicting change points in Mozilla's performance measuremnt time series to enhance precision and accuracy of performance anomaly detection.
 
-- Challenge 2: **Selecting relevant performance tests for fast performance assessment**
+- Challenge 2: **Implementing the changes into Mozilla systems**
+Based on the results fro mthe previous challenge, we implement changes in the Mozilla systems.
 
-Mozilla’s performance testing suite is comprehensive and time-consuming to run at a patch level. The full performance test suite takes 138 CPU hours to run. We need to find ways to reduce the time it takes to run performance tests to give timely feedback during code review. Multiple strategies are put in place to tackle this problem :
-  - Selecting a small set of the most relevant performance tests
-  - Prioritizing running performance tests on “performance-sensitive code changes.”
-  - Generating small performance tests (e.g., microbenchmarks) in the system critical path
-- Challenge 3: **Handling gradual performance change**
-Gradual changes that bypass change point detection methods may cause hard-to-fix performance regressions in the long term. The strategy we're aiming to apply to mitigate this challenge is to include long-term data analysis (e.g., trends,  autoregression) as part of the alert triggering mechanism by applying trend detection methods such as **change point detection**.
-- Challenge 4: **Integrating performance metrics in the code review workflow**
-Based on experience, performance tests can generate a lot of data that can overwhelm developers during code review. We need to plan how to communicate performance test results to developers in a way that is **1. actionable** and **2. informative**. The strategy to applied to overcome the challenge is to Incorporate the performance testing results as a bot solution in code review where developers can interact with the bot to request more tests to confirm the shown results as well as performance timeseries plots.
 
-## project1 overview
+- Challenge 3: **Evaluating the effect of the changes**
+Once the changes are implemented and has been around for a while, we assess the impact of these changes on the long term on the performance engineering workflow at Mozilla.
 
-The `project1` folder contains scripts (under `project1/scripts`) to extract performance-related data from [Treeherder API](https://treeherder.mozilla.org/docs/) and [bugbug](https://github.com/mozilla/bugbug). Performance-related alerts are extracted from one year ago (from beginning of May 2023 to the beginning of May 2024). Data associated with bugs and signatures from these alerts is extracted respectively (and saved under `project1/datasets`) and the data is utilized for analysis through Python notebooks (under `project1/notebooks`). For detailed information, refer to the [README.md](project1/README.md) file of the project.
+## Work done
+
+Currently, the work done has revolved around extracting data from Mozilla system and try different change point detection techniques to detect anomalies in Mozilla data. The work that has been done exists in the folders `data`, `data_extraction_transformation`, `prediction_generation`, and `prediction_postprocessing_scripts`.
+
+## data_extraction_transformation overview
+
+The `data_extraction_transformation` folder contains scripts and notebooks to extract performance-related data from [Treeherder API](https://treeherder.mozilla.org/docs/), tranform them, and do preliminary analysis on them. Performance-related alerts are extracted from one year ago (from beginning of May 2023 to the beginning of May 2024).
+
+## prediction_generation overview
+
+The `prediction_generation` folder contains scripts to detect the change points in the data using [TCPDBench](https://github.com/SimonEismann/TCPDBench). The YCPDBench project is extended and altered to fit the use case of this project.
+
+## prediction_postprocessing_scripts overview
+
+The `prediction_postprocessing_scripts` folder contains scripts to further tranform and analyze the data generated by TCPDBench by combining the results of several CPD methods for example.
+
+
+## Data artifacts challenge
+
+The folders to consider for the artifacts challenge are `data` which contains the data and `data_extraction_transformation` which contains the necessary code used to extract the data.
+
 
 ## Contact information
 
