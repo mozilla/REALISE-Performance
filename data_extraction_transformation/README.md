@@ -1,6 +1,6 @@
 ***Files definitions***
 
-This folder contains the code to extract and transform performance-related data under `scripts`. The transformations are statistical tranformations such as minmax scaling and transformations to fit the data into a system called [`TCPDBench`](../prediction_generation/original-project) The generated data resides in the `datasets` folder. It also contains notebooks for the data analysis under `notebooks` to durther understand the problematic. The notebooks are self-explanatory.
+This folder contains the code to extract and transform performance-related data under `scripts`. The transformations are statistical tranformations such as minmax scaling. The generated data resides in the `datasets` folder. It also contains notebooks for the data analysis under `notebooks` to durther understand the problematic. The notebooks are self-explanatory.
 The code files directly under `scripts` folder have definitions that is obtained by running `python <python_file_path> --help`
 
 ***Running scripts***
@@ -17,7 +17,7 @@ cd scripts
 1. In order to run the script to extract the alerts, run `extract-alerts.py`
 It will generate the aelrt data CSV (for example `alerts_data.csv`) which will have the performance alerts data from the time of running the script all the waty back to one year before that.
 
-2. Once you have the alerts CSv, you can extract their associated bugs. In order to run the script to extract the bugs, run either `extract-bugs-bugbug.py` or `extract-bugs-api.py`
+2. Once you have the alerts CSv, you can extract their associated bugs. In order to run the script to extract the bugs, run `extract-bugs-api.py`
 It will generate the bugs CSV (for example `bugs_data.csv`) which will have all the bugs associated with the alerts extracted inthe earlier alerts CSV.
 
 3. In order to run the script to extract the timeseries data, make sure to run `extract-timseries.py`
@@ -30,6 +30,4 @@ Note that for the case of autoland, timeseries files were divided across multipl
 
 5. Optional: you can run data transformations on the timeseries (smoothing using `smoothe.py`, minmax scaling using `minmaxscale.py`, aggregation using `aggregate.py`, or a combination of some of them). This will output CSV files same as the previously extracted timeseries ones, with a change only occurring in the measurements
 
-6. Convert the CSV data to JSON format in a way that could be ingested by TCPDBench. You can transform your data using `jsonfy-timeseries.py`.
-
-7. The timeseries data could be extensive and only a subset of it is needed to run it in TCPDBench. So, using `handpick_specific_files.py`, you could isolate only specific timeseries (the script handles isolating their annotations file too).
+6. The timeseries data could be extensive and only a subset of it is needed to run it in TCPDBench. So, using `handpick_specific_files.py`, you could isolate only specific timeseries.
