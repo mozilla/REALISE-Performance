@@ -1,15 +1,11 @@
 ## Overview
 The following part presents the data existing in the replication package\cite{replicationpackage}, which contains the code for extracting the data from the Mozilla systems and the data itself.
 
-`curated_alerts_data.csv` file: It contains the alerts curated and filtered after the refresh of the 'Still Processing' alert summaries.
+`alerts_data.csv` file: It contains the alerts curated and filtered after the refresh of the 'Still Processing' alert summaries.
 
-`all-datasets` folder: It contains the time series data of the signatures related to the alerts described in the curated alerts CSV file. This is the raw data extracted in May 2024. The transformed and processed version of this data exists in `all-datasets-annotated` folder.
+`timeseries-data` folder: It contains the time series data of the signatures related to the alerts described in the curated alerts CSV file. It is cleaned, updated, and cross-referenced with the curated alerts CSV file.
 
-`all-datasets-annotated` folder: It contains the time series data of the signatures related to the alerts described in the curated alerts CSV file. It is cleaned, updated, and cross-referenced with the curated alerts CSV file.
-
-`bugs_data_from_api.csv` file: It contains the bugs data extracted from Mozilla API based on the bugs mentioned in the curated alerts CSV file.
-
-`data_extraction_transformation` folder: It contains the necessary code for extracting the data (not the exact same data as the content will include the data from the last year, for example if the data extraction is being done in March 2025, the data to be obtained is the related to March 2024 up until March 2025). It also contains the analysis notebooks to conduct the analysis (including the code generating some of the graphs in this paper).
+`bugs_data.csv` file: It contains the bugs data extracted from Mozilla API based on the bugs mentioned in the curated alerts CSV file.
 
 ## Alerts/Alert summaries data:
 
