@@ -2,18 +2,14 @@
 
 The performance of large systems is crucial for business efficiency, as unresponsive systems can harm user experience and software quality. Companies, such as Mozilla, invest in performance testing and monitoring. We publish this dataset for the scientific community for them to investigate it and perform studies on it such on performance regression root cause analysis.
 
-## Work done
 
-Currently, the work done has revolved around extracting data from Mozilla system and try different change point detection techniques to detect anomalies in Mozilla data. The work that has been done exists in the folders `data` and `scripts`. Both of them have explanatory README files. Check them out for more details.
+## Artifact structure
 
-## Scripts & notebooks overview
-
-The `scripts` folder contains scripts and notebooks respectively to extract performance-related data from [Treeherder API](https://treeherder.mozilla.org/docs/), transform them, and do preliminary analysis on them. Performance-related alerts are extracted from one year ago (from beginning of May 2023 to the beginning of May 2024).
 
 The artifact is organized like this: 
 
 ```
-repository/
+mozilla-data/
 ├── data/
 │   ├── alerts_data.csv
 │   ├── bugs_data.csv
@@ -55,6 +51,13 @@ repository/
     └── ... (other Python files and notebooks)
 ```
 
+
+## Scripts overview
+
+The `scripts` folder contains scripts and notebooks respectively to extract performance-related data from [Treeherder API](https://treeherder.mozilla.org/docs/), transform them, and do preliminary analysis on them. The scripts can also be used to re-collect and update the dataset to include newer performance measurements and alerts from Mozilla systems.
+
+
+
 ## Data overview
 
-The `data` folder contains the data extracted and curated through the scripts in `scripts`. Please refer to the REAME inside the `data` folder.
+Performance-related data are extracted from one year ago (from beginning of May 2023 to the beginning of May 2024). The `data` folder containing the performance time series data, alerts and alerts summaries, and bugs. Performance time series are further organized into their respective repositories, and we store a single CSV per performance time series. Alerts and bugs, on the other hand, are stored on one CSV file each.  
