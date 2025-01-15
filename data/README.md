@@ -24,13 +24,13 @@ The following definitions describe the attributes in the alerts CSV file. It is 
 - `alert_summary_first_triaged`: The timestamp of the first time the alert summary was triaged by a performance engineer. Untriaged alerts have `NaT` as a value of this attribute.
 - `alert_summary_framework`:  The framework on which the testing ran for the alerts of the given alert summary.
 - `alert_summary_id`: The ID of the alert summary.
-- `alert_summary_issue_tracker`: _  NaN _.
+- `alert_summary_issue_tracker`
 - `alert_summary_notes`: Natural text notes written by performance engineers concerning the given alert summary
-- `alert_summary_prev_push_id`: _ NaN _.
-- `alert_summary_prev_push_revision`: _ NaN _.
-- `alert_summary_related_alerts`: _ NaN _.
+- `alert_summary_prev_push_id`
+- `alert_summary_prev_push_revision`
+- `alert_summary_related_alerts`
 - `alert_summary_triage_due_date`: The due date of triaging the given alert summary. It is generally between 2 and 4 days as it accounts for the weekend (detail stated [here](https://github.com/mozilla/treeherder/blob/master/treeherder/perf/utils.py#L8)).
-- `alert_summary_push_id`: _ NaN _.
+- `alert_summary_push_id`
 - `alert_summary_status` and `single_alert_status` : Mozilla's performance team works to detect regressions and report them for mitigation. Each alert or alert summary has an assigned status. Below are the possible statuses:
 
   - **Untriaged**: These are alert summaries that have not yet been reviewed by the performance team. As such, they are not classified, making it difficult to determine if they are false positives or not.
@@ -64,25 +64,25 @@ The following definitions describe the attributes in the alerts CSV file. It is 
 
 - `single_alert_amount_abs`: The ABS value associated with the alert. It is defined through code [here](https://github.com/mozilla/treeherder/blob/master/treeherder/perf/alerts.py#L38).
 - `single_alert_amount_pct`: The confidence probability associated with the alert. It is defined through code [here](https://github.com/mozilla/treeherder/blob/master/treeherder/perf/alerts.py#L34).
-- `single_alert_backfill_record_context`: _ NaN _.
-- `single_alert_backfill_record_status`: _ NaN _.
-- `single_alert_backfill_record_total_actions_triggered`: _ NaN _.
-- `single_alert_backfill_record_total_backfills_failed`: _ NaN _.
-- `single_alert_backfill_record_total_backfills_in_progress`: _ NaN _.
-- `single_alert_backfill_record_total_backfills_successful`: _ NaN _.
+- `single_alert_backfill_record_context`
+- `single_alert_backfill_record_status`
+- `single_alert_backfill_record_total_actions_triggered`
+- `single_alert_backfill_record_total_backfills_failed`
+- `single_alert_backfill_record_total_backfills_in_progress`
+- `single_alert_backfill_record_total_backfills_successful`
 - `single_alert_classifier`: _ The name of the perofrmance engineer classifying the alert  _.
 - `single_alert_classifier_email`: : _ The email of the perofrmance engineer classifying the alert _.
 - `single_alert_id`: The ID of the given alert.
 - `single_alert_is_regression`: This attribute is `True` if Mozilla's performance anomaly detection system considers the alert presenting a regression and is `False` if it considers the alert as an improvement.
 - `single_alert_manually_created`: is `True` if the alert was manually created by a Performance engineer and `False` if created by Mozilla's performance anomaly detection system.
-- `single_alert_noise_profile`: _ NaN _.
-- `single_alert_prev_profile_url`: _ NaN _.
-- `single_alert_prev_taskcluster_metadata_retry_id`: _ NaN _.
-- `single_alert_prev_taskcluster_metadata_task_id`: _ NaN _.
+- `single_alert_noise_profile`
+- `single_alert_prev_profile_url`
+- `single_alert_prev_taskcluster_metadata_retry_id`
+- `single_alert_prev_taskcluster_metadata_task_id`
 - `single_alert_prev_value`: It is an aggregated value of the performance measurements associated with a specific number of revisions preceding the revision under test. It is defined in code [here](https://github.com/mozilla/treeherder/blob/master/treeherder/perf/alerts.py#L94). 
 - `single_alert_new_value`: It is an aggregated value of the performance measurements of the revision under investigating and a handful of the measurements following it. It is defined in code [here](https://github.com/mozilla/treeherder/blob/master/treeherder/perf/alerts.py#L94).
-- `single_alert_profile_url`: _ NaN _.
-- `single_alert_related_summary_id`: _ NaN _.
+- `single_alert_profile_url`
+- `single_alert_related_summary_id`
 - `single_alert_series_signature_framework_id`: The framework ID associated with the signature from which the alert got triggered.
 - `single_alert_series_signature_suite`: It is the test suite aasociated with the signature of the given alert.
 - `single_alert_series_signature_suite_public_name`: _ It is supposed to present the full name of the test suite aasociated with the signature of the given alert. All its values are NaN _.
@@ -90,8 +90,8 @@ The following definitions describe the attributes in the alerts CSV file. It is 
 - `single_alert_series_signature_test_public_name`: _ It is supposed to present the full name of the test aasociated with the signature of the given alert. All its values are NaN _.
 - `single_alert_starred`: It is set to `True` if the alert is starred (there is a clickable star icon on every alert) by a performance engineer and it is set to `False` it not.
 - `single_alert_summary_id`: It is the same as `alert_summary_id` column.
-- `single_alert_taskcluster_metadata_retry_id`: _ NaN _.
-- `single_alert_taskcluster_metadata_task_id`: _ NaN _.
+- `single_alert_taskcluster_metadata_retry_id`
+- `single_alert_taskcluster_metadata_task_id`
 - `single_alert_t_value`: The value of magnitude of change associated with the alert. It is defined through code [here](https://github.com/mozilla/treeherder/blob/master/treeherder/perfalert/perfalert/__init__.py#L157).
 
 ## Timeseries data
@@ -105,24 +105,24 @@ The timeseries data, also said a signature data, contains the alerts data in the
 - `framework_id`: The ID of the framework associated with the signature. An example of a framework is [Talos](https://firefox-source-docs.mozilla.org/testing/perfdocs/talos.html).
 - `signature_hash`: It is the hash of the signature.
 - `machine_platform`: It is the platform aasociated with the signature. A platform is a combination of software and hardware configuration on which performance tests can run.
-- `should_alert`: _ NaN _.
-- `has_subtests`: _ NaN _.
-- `extra_options`: _ NaN _.
-- `tags`: _ NaN _.
-- `option_collection_hash`: _ NaN _.
+- `should_alert`
+- `has_subtests`
+- `extra_options`
+- `tags`
+- `option_collection_hash`
 - `test`: The name of the test associated with the signature.
 - `suite`: The name of the test suite associated with the signature.
 - `lower_is_better`: It is `True` if the measurement is considered good if it goes down from revision to another and it is `False` otherwise.
-- `name`: _ NaN _.
-- `parent_signature`: _ NaN _.
+- `name`
+- `parent_signature`
 - `repository_id`: The ID of the repository associated with the signature.
 - `measurement_unit`: The measurement unit associated with the signature. It could be something such as milliseconds or byte for example.
 - `application`: It represents the application or product associated with the signature. For example, Firfox cold be considered a product.
-- `job_id`: _ NaN _.
-- `entry_id`: _ NaN _.
+- `job_id`
+- `entry_id`
 - `value`: It represents the given perofrmance measurement. One revision in one signature could have multiple measurements.
 - `revision`: The revision associated with the given measurement.
-- `push_id`: _ NaN _.
+- `push_id`
 
 ## Bugs data
 
