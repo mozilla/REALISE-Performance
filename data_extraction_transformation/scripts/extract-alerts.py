@@ -197,7 +197,7 @@ def main():
     ]
     unique_signatures = set()
     df = pd.DataFrame(columns=columns)
-
+    url = "https://treeherder.mozilla.org/api/performance/alertsummary/"
     while ((comp_time_stamp >= threshold_timestamp) and (url != None)):
         payload = get_json(url)
         '''

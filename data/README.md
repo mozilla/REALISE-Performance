@@ -35,13 +35,9 @@ The following definitions describe the attributes in the alerts CSV file. It is 
 - `alert_summary_id`: The ID of the alert summary.
 - `alert_summary_issue_tracker`: _  NaN _.
 - `alert_summary_notes`: Natural text notes written by performance engineers concerning the given alert summary
-- `alert_summary_performance_tags`: _ NaN _.
 - `alert_summary_prev_push_id`: _ NaN _.
 - `alert_summary_prev_push_revision`: _ NaN _.
-- `alert_summary_push_id`: _ NaN _.
 - `alert_summary_related_alerts`: _ NaN _.
-- `alert_summary_repository`: The repository in which the revision associated with the alert summary exists.
-- `alert_summary_revision`: The revision associated with the alert summary.
 - `alert_summary_triage_due_date`: The due date of triaging the given alert summary. It is generally between 2 and 4 days as it accounts for the weekend (detail stated [here](https://github.com/mozilla/treeherder/blob/master/treeherder/perf/utils.py#L8)).
 - `alert_summary_push_id`: _ NaN _.
 - `alert_summary_status` and `single_alert_status` : Mozilla's performance team works to detect regressions and report them for mitigation. Each alert or alert summary has an assigned status. Below are the possible statuses:
@@ -95,15 +91,8 @@ The following definitions describe the attributes in the alerts CSV file. It is 
 - `single_alert_prev_value`: It is an aggregated value of the performance measurements associated with a specific number of revisions preceding the revision under test. It is defined in code [here](https://github.com/mozilla/treeherder/blob/master/treeherder/perf/alerts.py#L94). 
 - `single_alert_new_value`: It is an aggregated value of the performance measurements of the revision under investigating and a handful of the measurements following it. It is defined in code [here](https://github.com/mozilla/treeherder/blob/master/treeherder/perf/alerts.py#L94).
 - `single_alert_profile_url`: _ NaN _.
-- `single_alert_related_summary_id`
-- `single_alert_series_signature_extra_options`
+- `single_alert_related_summary_id`: _ NaN _.
 - `single_alert_series_signature_framework_id`: The framework ID associated with the signature from which the alert got triggered.
-- `single_alert_series_signature_has_subtests`: _ NaN _.
-- `single_alert_series_signature_lower_is_better`: It is `True` if the measurement is considered good if it goes down from revision to another and it is `False` otherwise.
-- `single_alert_series_signature_machine_platform`: It is the platform aasociated with the signature of the given alert.
-- `single_alert_series_signature_measurement_unit`: The measurement unit associated with the signature of the alert.
-- `single_alert_series_signature_option_collection_hash`
-- `single_alert_series_signature_signature_hash`: It is the hash of the signature of the given alert.
 - `single_alert_series_signature_suite`: It is the test suite aasociated with the signature of the given alert.
 - `single_alert_series_signature_suite_public_name`: _ It is supposed to present the full name of the test suite aasociated with the signature of the given alert. All its values are NaN _.
 - `single_alert_series_signature_tags`: 
@@ -113,7 +102,6 @@ The following definitions describe the attributes in the alerts CSV file. It is 
 - `single_alert_taskcluster_metadata_retry_id`: _ NaN _.
 - `single_alert_taskcluster_metadata_task_id`: _ NaN _.
 - `single_alert_t_value`: The value of magnitude of change associated with the alert. It is defined through code [here](https://github.com/mozilla/treeherder/blob/master/treeherder/perfalert/perfalert/__init__.py#L157).
-- `single_alert_series_signature_test`: It is the test aasociated with the signature of the given alert.
 
 ## Timeseries data
 
