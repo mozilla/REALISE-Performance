@@ -43,7 +43,7 @@ def parse_args():
         "--margin",
         help="Margin for True Positive verification",
         default=5,
-        required=True
+        required=False
     )
     return parser.parse_args()
 

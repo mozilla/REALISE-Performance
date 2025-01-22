@@ -21,7 +21,7 @@ def process_folder(input_folder, folder, columns_to_be_kept):
         if file_path.endswith('.csv'):
             # Read the CSV file into a DataFrame
             df = pd.read_csv(file_path, index_col=False)
-            df = df[df['alert_status_general'].isin(eligible_summary_status)]
+            df = df[df['alert_summary_status_general'].isin(eligible_summary_status)]
             df['push_timestamp'] = pd.to_datetime(df['push_timestamp'])
 
             # Filter the dataframe to keep only the required columns
@@ -41,23 +41,23 @@ def main():
 
     # Define the columns that you want to keep in the final dataframe
     columns_to_be_kept = [
-        'test_new_value', 'test_classifier', 'alert_prev_push_revision', 'alert_id', 'test_amount_pct', 
-        'alert_performance_tags', 'test_prev_value', 'alert_first_triaged', 'test_series_signature_has_subtests', 
-        'alert_framework', 'test_series_signature_framework_id', 'test_series_signature_suite_public_name', 
-        'alert_related_alerts', 'test_taskcluster_metadata_retry_id', 'alert_prev_push_id', 'alert_status', 
-        'alert_push_id', 'test_status', 'alert_assignee_username', 'test_series_signature_signature_hash', 
-        'test_prev_taskcluster_metadata_task_id', 'test_series_signature_machine_platform', 'alert_bug_number', 
-        'alert_repository', 'alert_bug_due_date', 'test_series_signature_test_public_name', 'alert_issue_tracker', 
-        'test_amount_abs', 'test_id', 'test_series_signature_measurement_unit', 'test_taskcluster_metadata_task_id', 
-        'test_backfill_record_total_backfills_successful', 'test_summary_id', 'test_series_signature_option_collection_hash', 
-        'test_prev_taskcluster_metadata_retry_id', 'test_is_regression', 'test_manually_created', 'test_classifier_email', 
-        'test_backfill_record_total_backfills_failed', 'test_backfill_record_total_actions_triggered', 'alert_assignee_email', 
-        'alert_creation_timestamp', 'test_prev_profile_url', 'alert_notes', 'test_series_signature_test', 
-        'test_noise_profile', 'test_series_signature_lower_is_better', 'alert_revision', 'test_related_summary_id', 
-        'alert_bug_updated', 'test_profile_url', 'test_backfill_record_context', 'test_starred', 
-        'test_backfill_record_total_backfills_in_progress', 'test_t_value', 'test_series_signature_suite', 
-        'test_series_signature_extra_options', 'test_backfill_record_status', 'test_series_signature_tags', 
-        'alert_triage_due_date', 'push_timestamp', 'signature_id'
+        'single_alert_new_value', 'single_alert_classifier', 'alert_summary_prev_push_revision', 'alert_summary_id', 'single_alert_amount_pct', 
+        'alert_summary_performance_tags', 'single_alert_prev_value', 'alert_summary_first_triaged', 'single_alert_series_signature_has_subtests', 
+        'alert_summary_framework', 'single_alert_series_signature_framework_id', 'single_alert_series_signature_suite_public_name', 
+        'alert_summary_related_alerts', 'single_alert_taskcluster_metadata_retry_id', 'alert_summary_prev_push_id', 'alert_summary_status', 
+        'alert_summary_push_id', 'single_alert_status', 'alert_summary_assignee_username', 'single_alert_series_signature_signature_hash', 
+        'single_alert_prev_taskcluster_metadata_task_id', 'single_alert_series_signature_machine_platform', 'alert_summary_bug_number', 
+        'alert_summary_repository', 'alert_summary_bug_due_date', 'single_alert_series_signature_test_public_name', 'alert_summary_issue_tracker', 
+        'single_alert_amount_abs', 'single_alert_id', 'single_alert_series_signature_measurement_unit', 'single_alert_taskcluster_metadata_task_id', 
+        'single_alert_backfill_record_total_backfills_successful', 'alert_summary_id', 'single_alert_series_signature_option_collection_hash', 
+        'single_alert_prev_taskcluster_metadata_retry_id', 'single_alert_is_regression', 'single_alert_manually_created', 'single_alert_classifier_email', 
+        'single_alert_backfill_record_total_backfills_failed', 'single_alert_backfill_record_total_actions_triggered', 'alert_summary_assignee_email', 
+        'alert_summary_creation_timestamp', 'single_alert_prev_profile_url', 'alert_summary_notes', 'single_alert_series_signature_test', 
+        'single_alert_noise_profile', 'single_alert_series_signature_lower_is_better', 'alert_summary_revision', 'single_alert_related_summary_id', 
+        'alert_summary_bug_updated', 'single_alert_profile_url', 'single_alert_backfill_record_context', 'single_alert_starred', 
+        'single_alert_backfill_record_total_backfills_in_progress', 'single_alert_t_value', 'single_alert_series_signature_suite', 
+        'single_alert_series_signature_extra_options', 'single_alert_backfill_record_status', 'single_alert_series_signature_tags', 
+        'alert_summary_triage_due_date', 'push_timestamp', 'signature_id'
     ]
 
     # Mapping of projects to folders
@@ -86,10 +86,10 @@ def main():
 
     # Concatenate all dataframes into one final dataframe
     final_df = pd.concat(all_data, ignore_index=True)
-    final_df = final_df.rename(columns={
-        'push_timestamp': 'alert_push_timestamp',
-        'signature_id': 'test_series_signature_id'
-    })
+    # final_df = final_df.rename(columns={
+    #     'push_timestamp': 'alert_summary_push_timestamp',
+    #     'signature_id': 'single_alert_series_signature_id'
+    # })
     final_df = final_df.drop_duplicates()
 
     output_file = os.path.join(output_folder, "curated_alerts_data.csv")
