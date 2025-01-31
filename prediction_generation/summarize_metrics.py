@@ -1,8 +1,7 @@
 import os
 import json
 import argparse
-import pandas as pd
-
+import shutil
 
 class MethodMeasurement:
     def __init__(self, f1_default=None, precision_default=None, recall_default=None, 
@@ -42,13 +41,31 @@ def parse_args():
         default=0.05,
         required=False,
     )
+    parser.add_argument(
+        "-i",
+        "--input-directory",
+        help="Directory with all raw results files of all datasets/methods",
+        required=False,
+    )
+    parser.add_argument(
+        "-o",
+        "--output-directory",
+        help="Directory in which to include the handpicked results files",
+        required=False,
+    )
     return parser.parse_args()
 
  
-summaries_folder_path = parse_args().summary_dir
+args = parse_args()
+summaries_folder_path = args.summary_dir
+failure_threshold_decimal = args.failure_threshold
+input_directory = args.input_directory
+output_directory = args.output_directory
 
 # It will contain all the summaries from the summary directory. A summary is specific to one dataset. It has the results of running that dataset on all hyper parameters in all methods.
 datasets_metrics = []
+best_paths = []
+default_paths = []
 
 for filename in os.listdir(summaries_folder_path):
     if filename.endswith('.json'):
@@ -57,7 +74,6 @@ for filename in os.listdir(summaries_folder_path):
             data = json.load(file)
             datasets_metrics.append(data)
 
-failure_threshold_decimal = parse_args().failure_threshold
 nb_datasets_threshold = len(datasets_metrics) * (1.0 - failure_threshold_decimal)
 methods = set()
 
@@ -95,7 +111,10 @@ def process_default(method):
             MethodsMeasurements[stripped_method].recall_default = default_recall / nb_success
         else:
             MethodsMeasurements[stripped_method].recall_default = None
-
+    for dataset_metrics in datasets_metrics:
+        signature_id = dataset_metrics["dataset"]
+        default_conf_file_name = dataset_metrics["results"][method][0]["task_file"]
+        default_paths.append(signature_id + "/" + method + "/" + default_conf_file_name)
 
 def process_best(method):
     hyperparams = dict()
@@ -124,17 +143,6 @@ def process_best(method):
     dict_f1 = {key: sum(value['f1']) / len(value['f1']) for key, value in hyperparams.items() if len(value['f1']) > nb_datasets_threshold}
     dict_precision = {key: sum(value['precision']) / len(value['precision']) for key, value in hyperparams.items() if len(value['precision']) > nb_datasets_threshold}
     dict_recall = {key: sum(value['recall']) / len(value['recall']) for key, value in hyperparams.items() if len(value['recall']) > nb_datasets_threshold}
-    all_keys = set(dict_precision.keys()).union(set(dict_recall.keys())).union(set(dict_f1.keys()))
-
-    # Save all configurations to CSV for debugging purposes
-    data = {
-        'Key': list(all_keys),
-        'Precision': [dict_precision.get(key, float('nan')) for key in all_keys],
-        'Recall': [dict_recall.get(key, float('nan')) for key in all_keys],
-        'F1 Score': [dict_f1.get(key, float('nan')) for key in all_keys]
-    }
-    df = pd.DataFrame(data)
-    df.to_csv('/TCPDBench/analysis/metrics_of_'+ method + '.csv', index=False)
 
     try:
         max_f1 = dict_f1[max(dict_f1, key=dict_f1.get)]
@@ -161,7 +169,15 @@ def process_best(method):
     MethodsMeasurements[stripped_method].recall_best = max_recall
     MethodsMeasurements[stripped_method].precision_f1_best = precision_max_f1
     MethodsMeasurements[stripped_method].recall_f1_best = recall_max_f1
-
+    if max_f1:
+        best_f1_conf = max(dict_f1, key=dict_f1.get)
+        for dataset_metrics in datasets_metrics:
+            signature_id = dataset_metrics["dataset"]
+            best_conf_file_names = [conf["task_file"] for conf in dataset_metrics["results"][method] if json.dumps(conf["args"], sort_keys=True)  == best_f1_conf]
+            for file_name in best_conf_file_names:
+                best_paths.append(signature_id + "/" + method + "/" + file_name)
+        
+    
 
 def process_oracle(method):
     metrics_dict = {'f1': [], 'recall': [], 'precision': []}
@@ -193,6 +209,17 @@ def process_oracle(method):
     if len(metrics_dict["recall"]) > 0:
         MethodsMeasurements[stripped_method].recall_oracle = sum(metrics_dict["recall"]) / len(metrics_dict["recall"])
 
+
+def copy_file(input_path: str, output_path: str):
+    try:
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)  # Ensure directories exist
+        shutil.copy2(input_path, output_path)
+    except FileNotFoundError:
+        print(f"Error: Input file '{input_path}' not found.")
+    except PermissionError:
+        print("Error: Permission denied.")
+    except Exception as e:
+        print(f"Error copying file: {e}")
 
 for method in default_methods:
     process_default(method)
@@ -240,5 +267,16 @@ for method, metrics in sorted_methods:
     latex_table += " \\\\\n"
 
 latex_table += "\\hline\n\\end{tabular}%%\n}\n\\caption{Performance Metrics for Methods}\n\\end{table*}"
+
+for path in best_paths:
+    input_path = input_directory + "/" + path
+    output_path = output_directory + "/" + path
+    copy_file(input_path, output_path)
+
+for path in default_paths:
+    input_path = input_directory + "/" + path
+    output_path = output_directory + "/" + path
+    copy_file(input_path, output_path)
+
 
 print(latex_table)

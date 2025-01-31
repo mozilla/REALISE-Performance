@@ -17,7 +17,7 @@ def main():
     output_folder = args.output_folder
     alerts_file = args.alerts_file
     true_alerting_mapping = ['TP', 'FN']
-    y_column = 'alert_status_general'
+    y_column = 'alert_summary_status_general'
 
     df_alerts = pd.read_csv(alerts_file, index_col=False)
     projects_folders = ["autoland1", "autoland2", "autoland3", "autoland4", "firefox-android", "mozilla-beta", "mozilla-central", "mozilla-release"]
