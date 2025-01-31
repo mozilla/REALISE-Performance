@@ -71,92 +71,38 @@ DATASET_NAMES = {k: k for k in DATASETS}
 
 '''
 METHODS = [
-    "best_bocpd",
-    "best_cpnp", # DONE
-    "best_pelt", # DONE
-    "best_amoc", # DONE
+    "best_bocpd", # EN COURS (local macmini)
+    "best_cpnp", # EN COURS (local macmini)
+    "best_pelt", # EN COURS (local macmini)
+    "best_amoc", # EN COURS (local macmini)
     "best_segneigh",
-    "best_binseg", # DONE
-    "best_rfpop", # DONE
-    "best_ecp", # DONE
-    "best_kcpa", # DONE
-    "best_wbs", # DONE
+    "best_binseg", FINIS (remote macmini)
+    "best_rfpop", # FINIS (remote macmini)
+    "best_ecp", # EN COURS (local macmini)
+    "best_kcpa", # FINIS (remote macmini)
+    "best_wbs", # EN COURS (local macmini)
     "best_prophet",
-    "best_zero", # DONE
-    "best_mongodb",
-    "default_bocpd",
-    "default_cpnp", # DONE
-    "default_pelt", # DONE
-    "default_amoc", # DONE
+    "best_zero", # EN COURS (local macmini)
+    "best_mongodb", # FINIS (remote macmini)
+    "default_bocpd", # EN COURS (local macmini)
+    "default_cpnp", # EN COURS (local macmini)
+    "default_pelt", # EN COURS (local macmini)
+    "default_amoc", # EN COURS (local macmini)
     "default_segneigh",
-    "default_binseg", # DONE
-    "default_rfpop", # DONE
-    "default_ecp", # DONE
-    "default_kcpa", # DONE
-    "default_wbs", # DONE
+    "default_binseg", FINIS (remote macmini)
+    "default_rfpop", # FINIS (remote macmini)
+    "default_ecp", # EN COURS (local macmini)
+    "default_kcpa", # FINIS (remote macmini)
+    "default_wbs", # EN COURS (local macmini)
     "default_prophet",
-    "default_zero", # DONE
-    "default_mongodb",
+    "default_zero", # EN COURS (local macmini)
+    "default_mongodb", # FINIS (remote macmini)
 ]
 
-METHODS = [
-    "default_binseg",
-    "default_pelt",
-    "default_amoc",
-    "default_bocpd",
-    "default_cpnp",
-    "default_kcpa",
-    "default_mongodb",
-    "default_rfpop",
-    "default_wbs",
-    "default_zero",
-    "best_binseg",
-    "best_pelt",
-    "best_amoc",
-    "best_bocpd",
-    "best_cpnp",
-    "best_kcpa",
-    "best_mongodb",
-    "best_rfpop",
-    "best_wbs",
-    "best_zero",
-]
-
-METHODS = [
-    "default_amoc",
-    "default_binseg",
-    "default_pelt", 
-    "default_rfpop",
-    "default_wbs",   
-    "best_amoc",
-    "best_binseg",
-    "best_pelt",
-    "best_rfpop",
-    "best_wbs", 
-]
 '''
-
 METHODS = [
-    "best_amoc",
-    "best_binseg",
-    "best_bocpd",
-    "best_cpnp",
-    "best_kcpa",
-    "best_mongodb",
-    "best_pelt",
-    "best_rfpop",
-    "best_wbs",
-    "best_zero",
-    "default_amoc",
-    "default_binseg",
-    "default_bocpd",
-    "default_cpnp",
-    "default_kcpa",
-    "default_mongodb",
-    "default_pelt",
-    "default_rfpop",
-    "default_wbs",
-    "default_zero"
+    "best_mozilla_rep",
+    "default_mozilla_rep",
 ]
 
 
@@ -230,6 +176,7 @@ PARAMS = {
         "pvalue": [0.01, 0.05],
         "permutations": [10, 20, 50, 100, 150, 200],
     },
+    "best_mozilla_rep": {"no_param": [0]},
     "default_bocpd": {"no_param": [0]},
     "default_cpnp": {"no_param": [0]},
     "default_pelt": {"no_param": [0]},
@@ -242,7 +189,8 @@ PARAMS = {
     "default_wbs": {"no_param": [0]},
     "default_prophet": {"no_param": [0]},
     "default_zero": {"no_param": [0]},
-    "default_mongodb": {"no_param": [0]}
+    "default_mongodb": {"no_param": [0]},
+    "default_mozilla_rep": {"no_param": [0]}
 }
 
 '''
@@ -263,6 +211,7 @@ COMMANDS = {
     "best_bocpd": "Rscript --no-save --slave {execdir}/R/cpdbench_ocp.R -i {datadir}/{dataset}.json -l {intensity} --prior-a {prior_a} --prior-b {prior_b} --prior-k {prior_k}",
     "best_zero": "python3.9 {execdir}/python/cpdbench_zero.py -i {datadir}/{dataset}.json",
     "best_mongodb": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_mongodb.py -i {datadir}/{dataset}.json --pvalue {pvalue} --permutations {permutations}",
+    "best_mozilla_rep": "python3.9 {execdir}/python/cpdbench_mozilla_rep.py -i {datadir}/{dataset}.json",
     "default_amoc": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p MBIC -f mean -t Normal -m AMOC",
     "default_binseg": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p MBIC -f mean -t Normal -m BinSeg -Q default",
     "default_cpnp": "Rscript --no-save --slave {execdir}/R/cpdbench_changepointnp.R -i {datadir}/{dataset}.json -p MBIC -q 10",
@@ -276,6 +225,7 @@ COMMANDS = {
     "default_bocpd": "Rscript --no-save --slave {execdir}/R/cpdbench_ocp.R -i {datadir}/{dataset}.json -l 100 --prior-a 1.0 --prior-b 1.0 --prior-k 1.0",
     "default_zero": "python3.9 {execdir}/python/cpdbench_zero.py -i {datadir}/{dataset}.json",
     "default_mongodb": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_mongodb.py -i {datadir}/{dataset}.json",
+    "default_mozilla_rep": "python3.9 {execdir}/python/cpdbench_mozilla_rep.py -i {datadir}/{dataset}.json",
 }
 
 

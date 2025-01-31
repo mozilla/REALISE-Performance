@@ -12,6 +12,7 @@ COPY ${PROJECT_FOLDER}/summarize_metrics.py /TCPDBench/analysis/scripts/summariz
 COPY ${PROJECT_FOLDER}/utils.R /TCPDBench/execs/R/utils.R
 COPY ${PROJECT_FOLDER}/cpdbench_wbs.R /TCPDBench/execs/R/cpdbench_wbs.R
 COPY ${PROJECT_FOLDER}/cpdbench_prophet.py /TCPDBench/execs/python/cpdbench_prophet.py
+COPY ${PROJECT_FOLDER}/cpdbench_mozilla_rep.py /TCPDBench/execs/python/cpdbench_mozilla_rep.py
 RUN python3.9 -m venv /TCPDBench/execs/python/venv
 COPY ${PROJECT_FOLDER}/requirements-venv.txt /TCPDBench/execs/python/venv/requirements.txt
 RUN apt-get install nano
@@ -30,3 +31,5 @@ COPY ${PROJECT_FOLDER}/abed_conf.py /TCPDBench/abed_conf.py
 ADD ${DATASETS_PATH} /TCPDBench/datasets
 COPY ${ANNOTATIONS_PATH} /TCPDBench/analysis/annotations/
 RUN chmod +x utils/setup_datasets.sh && ./utils/setup_datasets.sh
+
+# docker build --build-arg DATASETS_PATH=data/195_non_sp_at_least_one_fp_fn_samples_json_aggregated --build-arg ANNOTATIONS_PATH=data/195_non_sp_at_least_one_fp_fn_samples_json_aggregated/annotations.json -t non_sp_at_least_one_fn_fp -f prediction_generation/Dockerfile .

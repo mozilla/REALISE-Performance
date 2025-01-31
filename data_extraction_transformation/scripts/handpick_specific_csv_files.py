@@ -28,6 +28,7 @@ def main():
 
 
     subfolders = [os.path.join(main_dir, folder) for folder in os.listdir(main_dir) if os.path.isdir(os.path.join(main_dir, folder))]
+    print(subfolders)
     if not os.path.exists(dest):
         os.makedirs(dest)
     counter = 0
