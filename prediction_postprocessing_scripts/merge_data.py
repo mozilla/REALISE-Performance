@@ -2,14 +2,13 @@ import os
 import shutil
 
 # Define the base folder and the subfolders you want to merge
-base_dir = "../data/copy_results_average_aggregated_195"
-ding_dir = os.path.join(base_dir, "all_fixed")
+base_dir = "../data/temp_data/copy_results_average_aggregated_195"
+ding_dir = os.path.join(base_dir, "all_best_default_mixed_5_cpd")
 os.makedirs(ding_dir, exist_ok=True)
 
 # List of subfolders to merge into 'ding'
-# folders_to_merge = ["bocpd", "kcp_rfpop", "mongodb_wbs", "pelt", "cpnp", "zero", "mozilla"]
-folders_to_merge = ["union_kcpa_bocpd",
-                    "union_mongodb_bocpd","union_mongodb_kcpa","union_mongodb_pelt","union_pelt_bocpd","union_pelt_kcpa"]
+folders_to_merge = ["all_best_default"]
+# folders_to_merge = ["union_kcpa_bocpd", "union_mongodb_bocpd","union_mongodb_kcpa","union_mongodb_pelt","union_pelt_bocpd","union_pelt_kcpa"]
 # Helper function to merge the contents of two directories
 def merge_folders(src_dir, dest_dir):
     for root, dirs, files in os.walk(src_dir):

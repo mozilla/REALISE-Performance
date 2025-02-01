@@ -1,0 +1,37 @@
+{
+    "error": null,
+    "command": "no_command",
+    "script": "no_script",
+    "script_md5": "no_script",
+    "hostname": "no_host",
+    "dataset": "4722823",
+    "dataset_md5": "4722823_md5",
+    "status": "SUCCESS",
+    "parameters": {
+        "method": "Mozilla"
+    },
+    "result": {
+        "cplocations": [
+            82,
+            169,
+            297,
+            361,
+            378,
+            626,
+            905,
+            1217,
+            1327,
+            1442,
+            1485,
+            1553,
+            1626,
+            1939,
+            2014,
+            2020
+        ],
+        "runtime": 0
+    },
+    "args": {
+        "method": "Mozilla"
+    }
+}

@@ -1,0 +1,26 @@
+{
+	"args": {
+		"permutations": 150,
+		"pvalue": 0.01
+	},
+	"command": "/TCPDBench/execs/python/cpdbench_mongodb.py -i /TCPDBench/datasets/3777025.json --pvalue 0.01 --permutations 150",
+	"dataset": "3777025",
+	"dataset_md5": "31ca6fed0183b4d69f83138561363fd9",
+	"error": null,
+	"hostname": "5e18e3e0ef3f",
+	"parameters": {},
+	"result": {
+		"cplocations": [
+			945,
+			114,
+			1774,
+			2100,
+			1634,
+			1339
+		],
+		"runtime": 22.592990398406982
+	},
+	"script": "/TCPDBench/execs/python/cpdbench_mongodb.py",
+	"script_md5": "184cb980dcf56d53396e0141d684c9ef",
+	"status": "SUCCESS"
+}
