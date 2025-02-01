@@ -1,0 +1,16 @@
+{
+	"args": {},
+	"command": "/TCPDBench/execs/python/cpdbench_zero.py -i /TCPDBench/datasets/4609860.json",
+	"dataset": "4609860",
+	"dataset_md5": "b07742d09f2ed332dff19ab1f0798731",
+	"error": null,
+	"hostname": "8ed1f942a27a",
+	"parameters": {},
+	"result": {
+		"cplocations": [],
+		"runtime": 1.6689300537109375e-06
+	},
+	"script": "/TCPDBench/execs/python/cpdbench_zero.py",
+	"script_md5": "95b65ddd5669b41385966a4aad387118",
+	"status": "SUCCESS"
+}

@@ -1,3 +1,4 @@
+# python3.9 ./analysis/scripts/summarize_metrics.py -s ./analysis/output/summaries -i abed_results -o only_best_plus_default
 import os
 import json
 import argparse

@@ -14,6 +14,7 @@ import copy
 import numpy as np
 from cpdbench_utils import load_dataset, exit_success, exit_with_error
 from collections import defaultdict
+from django.db import transaction
 
 
 
@@ -211,6 +212,19 @@ def parse_args():
     parser.add_argument('-i', '--input', help="Path to the input JSON dataset file.")
     return parser.parse_args()
 
+def get_alert_properties(prev_value, new_value, lower_is_better):
+    AlertProperties = namedtuple(
+        "AlertProperties", "pct_change delta is_regression prev_value new_value"
+    )
+    if prev_value != 0:
+        pct_change = 100.0 * abs(new_value - prev_value) / float(prev_value)
+    else:
+        pct_change = 0.0
+    delta = new_value - prev_value
+    is_regression = (delta > 0 and lower_is_better) or (delta < 0 and not lower_is_better)
+    return AlertProperties(pct_change, delta, is_regression, prev_value, new_value)
+
+
 
 def main():
     args = parse_args()
@@ -227,8 +241,11 @@ def main():
             grouped_data[ts].append(value)
         data = [RevisionDatum(ts, ts, grouped_data[ts]) for ts in grouped_data]
         data_sorted = sorted(data)
-        
-        
+        # These values are taken fron the Mozilla code
+        min_back_window=12
+        max_back_window=24
+        fore_window=12
+        alert_threshold=2
         
         analyzed_series = detect_changes(
             data,
@@ -236,19 +253,6 @@ def main():
             max_back_window=max_back_window,
             fore_window=fore_window,
         )
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         
         transformed_data = np.array(series).reshape(-1, 1)

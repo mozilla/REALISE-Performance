@@ -1,0 +1,34 @@
+{
+	"error" : null,
+	"command" : "/usr/lib/R/bin/exec/R --slave --no-restore --no-save --slave --file=/TCPDBench/execs/R/cpdbench_changepoint.R --args -i /TCPDBench/datasets/4967272.json -p MBIC -f mean -t Normal -m BinSeg -Q default",
+	"script" : "/TCPDBench/execs/R/cpdbench_changepoint.R",
+	"script_md5" : "c5a9eb6b79b918fc674b55b669629f44",
+	"hostname" : "1e5c5dd4478c",
+	"dataset" : "4967272",
+	"dataset_md5" : "df7797a3dfa676e88644813a373f473b",
+	"status" : "SUCCESS",
+	"parameters" : {
+		"Q" : 5,
+		"pen.value" : 0,
+		"func" : "mean",
+		"max_cp" : "default",
+		"method" : "BinSeg",
+		"penalty" : "MBIC",
+		"test_statistic" : "Normal"
+	},
+	"result" : {
+		"cplocations" : [
+			286,
+			592,
+			1093
+		],
+		"runtime" : 0.003680468
+	},
+	"args" : {
+		"func" : "mean",
+		"max_cp" : "default",
+		"method" : "BinSeg",
+		"penalty" : "MBIC",
+		"test_statistic" : "Normal"
+	}
+} 

@@ -1,0 +1,33 @@
+{
+	"error" : null,
+	"command" : "/usr/lib/R/bin/exec/R --slave --no-restore --no-save --slave --file=/TCPDBench/execs/R/cpdbench_rfpop.R --args -i /TCPDBench/datasets/4654029.json -l Outlier",
+	"script" : "/TCPDBench/execs/R/cpdbench_rfpop.R",
+	"script_md5" : "2f03af466dc0f0ad80030e1b41f955f8",
+	"hostname" : "b2b3534b7c26",
+	"dataset" : "4654029",
+	"dataset_md5" : "3e25ffb34be2ddecef61dd54ce4825e5",
+	"status" : "SUCCESS",
+	"parameters" : {
+		"lambda" : 12.78718,
+		"lthreshold" : 3,
+		"loss" : "Outlier"
+	},
+	"result" : {
+		"cplocations" : [
+			50,
+			87,
+			198,
+			213,
+			286,
+			331,
+			365,
+			453,
+			479,
+			582
+		],
+		"runtime" : 0.00276351
+	},
+	"args" : {
+		"loss" : "Outlier"
+	}
+} 
