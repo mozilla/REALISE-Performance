@@ -224,7 +224,7 @@ def main():
         "push_id"
     ]
 
-
+    mentionned_projects = alerts_df['repository_name'].unique().tolist()
     for project in mentionned_porjects:
         if not os.path.exists(output_folder + '/' + project):
             os.makedirs(output_folder + '/' + project, exist_ok=True)

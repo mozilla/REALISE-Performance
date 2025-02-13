@@ -27,4 +27,4 @@ for filename in os.listdir(folder_path):
                     }
                     df_dict[sorted_cluster] = appendable_elem
 df = pd.DataFrame.from_dict(df_dict, orient='index')
-df.to_csv('karlchebba2.csv')
+df.to_csv('results_extracted.csv')

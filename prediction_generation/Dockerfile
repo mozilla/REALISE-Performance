@@ -3,6 +3,7 @@ FROM simoneismann/tcpdbench:latest
 ENV PROJECT_FOLDER='prediction_generation'
 ARG ANNOTATIONS_PATH='annotations.json'
 ARG DATASETS_PATH='datasets'
+ARG SIG_ATTIBUTES='signatures_attributes.json'
 WORKDIR TCPDBench
 COPY ${PROJECT_FOLDER}/make_table.py /TCPDBench/analysis/scripts/make_table.py
 COPY ${PROJECT_FOLDER}/aggregate_table_wide.py /TCPDBench/analysis/scripts/aggregate_table_wide.py
@@ -30,6 +31,7 @@ COPY ${PROJECT_FOLDER}/cpdbench_kcpa.py /TCPDBench/execs/python/cpdbench_kcpa.py
 COPY ${PROJECT_FOLDER}/abed_conf.py /TCPDBench/abed_conf.py
 ADD ${DATASETS_PATH} /TCPDBench/datasets
 COPY ${ANNOTATIONS_PATH} /TCPDBench/analysis/annotations/
+COPY ${SIG_ATTIBUTES} /TCPDBench/analysis/annotations/
 RUN chmod +x utils/setup_datasets.sh && ./utils/setup_datasets.sh
 
-# docker build --build-arg DATASETS_PATH=data/195_non_sp_at_least_one_fp_fn_samples_json_aggregated --build-arg ANNOTATIONS_PATH=data/195_non_sp_at_least_one_fp_fn_samples_json_aggregated/annotations.json -t non_sp_at_least_one_fn_fp -f prediction_generation/Dockerfile .
+# docker build --build-arg DATASETS_PATH=data/195_non_sp_at_least_one_fp_fn_samples_json_aggregated --build-arg ANNOTATIONS_PATH=data/195_non_sp_at_least_one_fp_fn_samples_json_aggregated/annotations.json --build-arg SIG_ATTIBUTES=data/temp_data/195_non_sp_at_least_one_fp_fn_samples_attribute.json -t non_sp_at_least_one_fn_fp -f prediction_generation/Dockerfile .
