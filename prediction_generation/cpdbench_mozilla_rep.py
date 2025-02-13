@@ -15,8 +15,13 @@ import numpy as np
 from datetime import datetime
 from cpdbench_utils import load_dataset, exit_success, exit_with_error
 from collections import defaultdict
-from django.db import transaction
+#from django.db import transaction
 import moz_measure_noise
+import json
+import os
+from collections import namedtuple
+import newrelic.agent
+import logging
 
 def analyze(revision_data, weight_fn=None):
     """Returns the average and sample variance (s**2) of a list of floats.
@@ -54,6 +59,12 @@ def analyze(revision_data, weight_fn=None):
 
     return {"avg": weighted_avg, "n": len(all_data), "variance": variance}
 
+
+
+def geomean(iterable):
+    # Returns a geomean of a list of values.
+    a = np.array(iterable)
+    return a.prod() ** (1.0 / len(a))
 
 def default_weights(i, n):
     """A window function that weights all points uniformly."""
@@ -205,11 +216,13 @@ def detect_changes(data, min_back_window=12, max_back_window=24, fore_window=12,
 
     return data
 
-
+#  -a /TCPDBench/analysis/annotations/signatures_attributes.json
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Run Mozilla algorithm on a time series dataset.")
     parser.add_argument('-i', '--input', help="Path to the input JSON dataset file.")
+    parser.add_argument("-o", "--output", help="path to the output file")
+    parser.add_argument("-a", "--signatures-attributes", help="JSON file of signatures attributes")
     return parser.parse_args()
 
 def get_alert_properties(prev_value, new_value, lower_is_better):
@@ -224,123 +237,117 @@ def get_alert_properties(prev_value, new_value, lower_is_better):
     is_regression = (delta > 0 and lower_is_better) or (delta < 0 and not lower_is_better)
     return AlertProperties(pct_change, delta, is_regression, prev_value, new_value)
 
-
-
 def main():
+    logger = logging.getLogger(__name__)
     args = parse_args()
     data, mat = load_dataset(args.input)
+    raw_data = data.copy()
     start_time = time.time()
-    # print(len(data['time']['raw']))
-    # print(len(data['series'][0]['raw']))
+    with open(args.signatures_attributes, 'r') as file:
+        signatures_attributes = json.load(file)
+    signature_id = os.path.splitext(os.path.basename(args.input))[0]
+    signature_attributes = signatures_attributes[signature_id]
+    Signature = namedtuple('Signature', signature_attributes.keys())
+    signature = Signature(**signature_attributes)
     raw_args = copy.deepcopy(args)
-    try:
-        series = data['series'][0]['raw']
-        push_timestamp = data['time']['raw']
-        push_timestamp = [datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") for ts in push_timestamp]
-        unique_push_timestamp = sorted(set(datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") for ts in timestamps))
-        grouped_data = defaultdict(list)
-        for ts, value in zip(push_timestamp, series):
-            grouped_data[ts].append(value)
-        data = [RevisionDatum(ts, ts, grouped_data[ts]) for ts in grouped_data]
-        # data_sorted = sorted(data)
-        # These values are taken fron the Mozilla code
-        min_back_window=12
-        max_back_window=24
-        fore_window=12
-        alert_threshold=2
-        
+    #try:
+    series = data['series'][0]['raw']
+    push_timestamp = data['time']['raw']
+    push_timestamp = [datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") for ts in push_timestamp]
+    #unique_push_timestamp = sorted(set(datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") for ts in push_timestamp))
+    unique_push_timestamp = sorted(set(push_timestamp))
+    grouped_data = defaultdict(list)
+    for ts, value in zip(push_timestamp, series):
+        grouped_data[ts].append(value)
+    data = [RevisionDatum(ts, ts, grouped_data[ts]) for ts in grouped_data]
+    # data_sorted = sorted(data)
+    # These values are the default taken from the Mozilla code, Note that min_back_window, max_back_window, and fore_window come from class Performancesignature, I did not find them on record in the signatures data we have o we will be using the defaults
+    min_back_window=12
+    max_back_window=24
+    fore_window=12
+    alert_threshold=2
+    locations = []
+
+
+    selected_data = data
+    alert_detected_in_prev_iteration = True
+    while alert_detected_in_prev_iteration:
+        temp_locations = []
+        temp_timestamps = []
         analyzed_series = detect_changes(
-            data,
+            selected_data,
             min_back_window=min_back_window,
             max_back_window=max_back_window,
             fore_window=fore_window,
         )
-        locations = []
-        with transaction.atomic():
-            for prev, cur in zip(analyzed_series, analyzed_series[1:]):
-                if cur.change_detected:
-                    prev_value = cur.historical_stats["avg"]
-                    new_value = cur.forward_stats["avg"]
-                    alert_properties = get_alert_properties(
-                        prev_value, new_value, signature.lower_is_better
-                    )
+        for prev, cur in zip(analyzed_series, analyzed_series[1:]):
+            if cur.change_detected:
+                prev_value = cur.historical_stats["avg"]
+                new_value = cur.forward_stats["avg"]
+                alert_properties = get_alert_properties(
+                    prev_value, new_value, signature.lower_is_better
+                )
+                noise_profile = "N/A"
+                try:
+                    # Gather all data up to the current data point that
+                    # shows the regression and obtain a noise profile on it.
+                    # This helps us to ignore this alert and others in the
+                    # calculation that could influence the profile.
+                    noise_data = []
+                    for point in analyzed_series:
+                        if point == cur:
+                            break
+                        noise_data.append(geomean(point.values))
 
-                    noise_profile = "N/A"
-                    try:
-                        # Gather all data up to the current data point that
-                        # shows the regression and obtain a noise profile on it.
-                        # This helps us to ignore this alert and others in the
-                        # calculation that could influence the profile.
-                        noise_data = []
-                        for point in analyzed_series:
-                            if point == cur:
-                                break
-                            noise_data.append(geomean(point.values))
-
-                        noise_profile, _ = moz_measure_noise.deviance(noise_data)
-
-                        if not isinstance(noise_profile, str):
-                            raise Exception(
-                                f"Expecting a string as a noise profile, got: {type(noise_profile)}"
-                            )
-                    except Exception:
-                        # Fail without breaking the alert computation
-                        newrelic.agent.notice_error()
-                        logger.error("Failed to obtain a noise profile.")
-
-                    # ignore regressions below the configured regression
-                    # threshold
-                    if (
-                        (
-                            signature.alert_change_type is None
-                            or signature.alert_change_type == PerformanceSignature.ALERT_PCT
+                    noise_profile, _ = moz_measure_noise.deviance(noise_data)
+                    if not isinstance(noise_profile, str):
+                        raise Exception(
+                            f"Expecting a string as a noise profile, got: {type(noise_profile)}"
                         )
-                        and alert_properties.pct_change < alert_threshold
-                    ) or (
-                        signature.alert_change_type == PerformanceSignature.ALERT_ABS
-                        and abs(alert_properties.delta) < alert_threshold
-                    ):
-                        continue
+                except Exception:
+                    # Fail without breaking the alert computation
+                    newrelic.agent.notice_error()
+                    logger.error("Failed to obtain a noise profile.")
 
-                    # summary, _ = PerformanceAlertSummary.objects.get_or_create(
-                    #     repository=signature.repository,
-                    #     framework=signature.framework,
-                    #     push_id=cur.push_id,
-                    #     prev_push_id=prev.push_id,
-                    #     defaults={
-                    #         "manually_created": False,
-                    #         "created": datetime.utcfromtimestamp(cur.push_timestamp),
-                    #     },
-                    # )
+                # ignore regressions below the configured regression threshold
 
-                    # django/mysql doesn't understand "inf", so just use some
-                    # arbitrarily high value for that case
-                    t_value = cur.t
-                    if t_value == float("inf"):
-                        t_value = 1000
+                # ALERT_PCT, ALERT_ABS, and ALERT_CHANGE_TYPES come from the PerformanceSignature class in the Treeherder code
+                ALERT_PCT = 0
+                ALERT_ABS = 1
+                ALERT_CHANGE_TYPES = ((ALERT_PCT, "percentage"), (ALERT_ABS, "absolute"))
+                if (
+                    (
+                        signature.alert_change_type is None
+                        or signature.alert_change_type == ALERT_PCT
+                    )
+                    and alert_properties.pct_change < alert_threshold
+                ) or (
+                    signature.alert_change_type == ALERT_ABS
+                    and abs(alert_properties.delta) < alert_threshold
+                ):
+                    continue
 
+                # django/mysql doesn't understand "inf", so just use some
+                # arbitrarily high value for that case
+                t_value = cur.t
+                if t_value == float("inf"):
+                    t_value = 1000
 
+                # This is where we create the alert aka append its index in the locations list
+                temp_locations += [i for i, ts in enumerate(unique_push_timestamp) if ts == cur.push_timestamp]
+                temp_timestamps += [ts for i, ts in enumerate(unique_push_timestamp) if ts == cur.push_timestamp]
+        if len(temp_locations) == 0:
+            alert_detected_in_prev_iteration = False
+        else:
+            earliest_alert_timestamp = sorted(temp_timestamps)[0]
+            earliest_alert_index = sorted(temp_locations)[0]
+            selected_data = [rev for rev in selected_data if rev.push_timestamp > earliest_alert_timestamp]
+            locations += [earliest_alert_index]
 
-                    # This is where we create the alert aka append its index in the locations list
-                    locations += [i for i, ts in enumerate(unique_push_timestamp) if ts == target]
-                    # PerformanceAlert.objects.update_or_create(
-                    #     summary=summary,
-                    #     series_signature=signature,
-                    #     defaults={
-                    #         "noise_profile": noise_profile,
-                    #         "is_regression": alert_properties.is_regression,
-                    #         "amount_pct": alert_properties.pct_change,
-                    #         "amount_abs": alert_properties.delta,
-                    #         "prev_value": prev_value,
-                    #         "new_value": new_value,
-                    #         "t_value": t_value,
-                    #     },
-                    # )
-
-        stop_time = time.time()
-        runtime = stop_time - start_time
-        exit_success(data, raw_args, vars(args), locations, runtime, __file__)
-    except Exception as e:
-        exit_with_error(data, raw_args, vars(args), str(e), __file__)
+    stop_time = time.time()
+    runtime = stop_time - start_time
+    exit_success(raw_data, raw_args, vars(args), locations, runtime, __file__)
+    # except Exception as e:
+    #     exit_with_error(raw_data, raw_args, vars(args), str(e), __file__)
 if __name__ == "__main__":
     main()

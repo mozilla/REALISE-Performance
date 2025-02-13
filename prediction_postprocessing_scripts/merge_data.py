@@ -3,7 +3,7 @@ import shutil
 
 # Define the base folder and the subfolders you want to merge
 base_dir = "../data/temp_data/copy_results_average_aggregated_195"
-ding_dir = os.path.join(base_dir, "all_best_default_mixed_5_cpd")
+ding_dir = os.path.join(base_dir, "all_best_default_mixed_4_cpd")
 os.makedirs(ding_dir, exist_ok=True)
 
 # List of subfolders to merge into 'ding'

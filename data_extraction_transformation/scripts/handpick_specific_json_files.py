@@ -29,6 +29,9 @@ def main():
 
 
     subfolders = [os.path.join(main_dir, folder) for folder in os.listdir(main_dir) if os.path.isdir(os.path.join(main_dir, folder))]
+    if not subfolders:
+        subfolders = [main_dir]  # Add main_dir if no subfolders exist
+
     annotations_file_path = os.path.join(main_dir, "annotations.json")
 
 
