@@ -32,20 +32,16 @@ def process_folder(input_folder, output_folder, sigma):
 
 def main():
     parser = argparse.ArgumentParser(description="Apply Gaussian smoothing to time series data.")
-    parser.add_argument('--input_folder', type=str, required=True, help="Input folder containing CSV files")
-    parser.add_argument('--output_folder', type=str, required=True, help="Output folder to save smoothed CSV files")
-    parser.add_argument('--sigma', type=float, default=1.0, help="Standard deviation for Gaussian smoothing")
+    parser.add_argument('-i', '--input_folder', type=str, required=True, help="Input folder containing CSV files")
+    parser.add_argument('-o' ,'--output_folder', type=str, required=True, help="Output folder to save smoothed CSV files")
+    parser.add_argument('-s' ,'--sigma', type=float, default=1.0, help="Standard deviation for Gaussian smoothing")
 
     args = parser.parse_args()
 
-    # Example folder structure to iterate over project folders
-    projects_folders_mapping = {
-        "autoland": ["autoland1", "autoland2", "autoland3", "autoland4"], 
-        "firefox-android": ["firefox-android"],
-        "mozilla-beta": ["mozilla-beta"],
-        , "mozilla-release": ["mozilla-release"],
-        "mozilla-central": ["mozilla-central"]
-    }
+    # The following usage projects_folders_mapping in case the names of the subfolders does not reflect the names of the projects. The code is designed to handle this change.
+    #projects_folders_mapping = {"autoland": ["autoland1", "autoland2", "autoland3", "autoland4"], "firefox-android": ["firefox-android"], "mozilla-beta": ["mozilla-beta"], "mozilla-release": ["mozilla-release"], "mozilla-central": ["mozilla-central"]}
+
+    projects_folders_mapping = {name: [name] for name in os.listdir(args.input_folder) if os.path.isdir(os.path.join(args.input_folder, name))}
 
     # Process each subfolder
     for project in projects_folders_mapping:

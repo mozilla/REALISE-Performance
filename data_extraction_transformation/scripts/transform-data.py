@@ -80,11 +80,17 @@ def main():
     }
     problematic_signatures = []
 
-    projects_folders_mapping = {"autoland": ["autoland1", "autoland2", "autoland3", "autoland4"], "firefox-android": ["firefox-android"], "mozilla-beta": ["mozilla-beta"], "mozilla-release": ["mozilla-release"], "mozilla-central": ["mozilla-central"]}
+    # The following usage projects_folders_mapping in case the names of the subfolders does not reflect the names of the projects. The code is designed to handle this change.
+    #projects_folders_mapping = {"autoland": ["autoland1", "autoland2", "autoland3", "autoland4"], "firefox-android": ["firefox-android"], "mozilla-beta": ["mozilla-beta"], "mozilla-release": ["mozilla-release"], "mozilla-central": ["mozilla-central"]}
+
+    projects_folders_mapping = {name: [name] for name in os.listdir(input_folder) if os.path.isdir(os.path.join(input_folder, name))}
+
     df_alerts = pd.read_csv(alerts_file, index_col=False)
+    # df_alerts['push_timestamp'] = pd.to_datetime(df_alerts['push_timestamp'], format='%Y-%m-%dT%H:%M:%S', errors='coerce')
+    df_alerts['push_timestamp'] = pd.to_datetime(df_alerts['push_timestamp'], unit="s")
     cutoff_date_time = df_alerts['push_timestamp'].max()
     df_alerts = df_alerts.drop(columns=['push_timestamp'])
-    df_alerts['alert_summary_status_general'] = df_alerts['alert_summary_status'].map(alert_summary_status_mappingg)
+    df_alerts['alert_summary_status_general'] = df_alerts['alert_summary_status'].map(alert_summary_status_mapping)
     df_alerts["alert_summary_status_general"] = df_alerts["alert_summary_status_general"].replace(category_mapping)
 
     os.makedirs(output_folder, exist_ok=True)
