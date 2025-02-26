@@ -71,9 +71,10 @@ def extract_data(json_data):
 
 def extract_timeseries(output_folder, project):
     global filtered_sig_ids
+    global columns
     signature_url = "https://treeherder.mozilla.org/api/project/" + project + "/performance/signatures/"
     signatures_json = get_json(signature_url)
-    cond = lambda x: str(x[1]["id"]) in filtered_sig_ids
+    cond = lambda x: x[1]["id"] in filtered_sig_ids
     signatures_json = dict(filter(cond, signatures_json.items()))
     # The purpose of this code is to avoid re-extracting time series that have already been extracted.
     # This is necessary because running the script in one go is not feasible due to the long time
@@ -125,6 +126,9 @@ def extract_timeseries(output_folder, project):
 
 
 
+
+
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Fetch timeseires details from an API and save to a folder of CSV files organized into separate folders per project.")
     parser.add_argument('-o', '--output-folder', help="Path to the output folder of time series CSV files.")
@@ -136,6 +140,7 @@ def parse_args():
 
 def main():
     global filtered_sig_ids
+    global columns
     args = parse_args()
     output_folder = args.output_folder
     alerts_file = args.alerts_file
@@ -224,8 +229,8 @@ def main():
         "push_id"
     ]
 
-    mentionned_projects = alerts_df['repository_name'].unique().tolist()
-    for project in mentionned_porjects:
+
+    for project in mentionned_projects:
         if not os.path.exists(output_folder + '/' + project):
             os.makedirs(output_folder + '/' + project, exist_ok=True)
         extract_timeseries(output_folder, project)
