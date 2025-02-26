@@ -17,21 +17,21 @@ def main():
     output_folder = args.output_folder
     alerts_file = args.alerts_file
     true_alerting_mapping = ['TP', 'FN']
-    y_column = 'alert_status_general'
+    y_column = 'alert_summary_status_general'
 
     df_alerts = pd.read_csv(alerts_file, index_col=False)
-    projects_folders = ["autoland1", "autoland2", "autoland3", "autoland4", "firefox-android", "mozilla-beta", "mozilla-central", "mozilla-release"]
+    projects_folders = [name for name in os.listdir(input_folder) if os.path.isdir(os.path.join(input_folder, name))]
     
     os.makedirs(output_folder, exist_ok=True)
 
 
-    speedometer3_signatures = df_alerts[df_alerts['test_series_signature_suite'] == 'speedometer3']['test_series_signature_id'].unique().tolist()
+    speedometer3_signatures = df_alerts[df_alerts['single_alert_series_signature_suite'] == 'speedometer3']['signature_id'].unique().tolist()
 
 
     desktop_list = ["amazon", "bing-search", "buzzfeed", "cnn", "docomo", "ebay", "espn", "expedia", "facebook", "fandom", "google-docs", "google-mail", "google-search", "google-slides", "imdb", "imgue", "instagram", "linkedin", "microsoft", "netflix", "nytimes", "office", "openai", "outlook", "paypal", "pinterest", "reddit", "samsung", "tiktok", "tumblr", "twitch", "twitter", "weather", "wikia", "wikipedia", "yahoo-mail", "youtube"]
     mobile_list = ["allrecipes", "amazon", "amazon-search", "bild-de", "bing", "bing-search-restaurants", "booking", "cnn", "cnn-ampstories", "dailymail", "ebay-kleinanzeigen", "ebay-kleinanzeigen-search", "espn", "facebook", "facebook-cristiano", "google", "google-maps", "google-search-restaurants", "imdb", "instagram", "microsoft-support", "reddit", "sina", "stackoverflow", "wikipedia", "youtube", "youtube-watch"]
     tp6_suites_list = list(set(desktop_list + mobile_list))
-    tp6_signatures = df_alerts[df_alerts['test_series_signature_suite'].isin(tp6_suites_list)]['test_series_signature_id'].unique().tolist()
+    tp6_signatures = df_alerts[df_alerts['single_alert_series_signature_suite'].isin(tp6_suites_list)]['signature_id'].unique().tolist()
 
     filtered_signatures = speedometer3_signatures + tp6_signatures
     filtered_signatures = [str(i) for i in filtered_signatures]
