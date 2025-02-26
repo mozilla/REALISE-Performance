@@ -37,14 +37,10 @@ def main():
     input_folder = args.input_folder
     output_folder = args.output_folder
     aggregation_method = args.aggregation_method
-    # Define folders mapping
-    projects_folders_mapping = {
-        "autoland": ["autoland1", "autoland2", "autoland3", "autoland4"],
-        "firefox-android": ["firefox-android"],
-        "mozilla-beta": ["mozilla-beta"],
-        "mozilla-central": ["mozilla-central"],
-        "mozilla-release": ["mozilla-release"],
-    }
+    # The following usage projects_folders_mapping in case the names of the subfolders does not reflect the names of the projects. The code is designed to handle this change.
+    #projects_folders_mapping = {"autoland": ["autoland1", "autoland2", "autoland3", "autoland4"], "firefox-android": ["firefox-android"], "mozilla-beta": ["mozilla-beta"], "mozilla-release": ["mozilla-release"], "mozilla-central": ["mozilla-central"]}
+
+    projects_folders_mapping = {name: [name] for name in os.listdir(input_folder) if os.path.isdir(os.path.join(input_folder, name))}
     # Process each project and folder
     for project in projects_folders_mapping:
         for folder in projects_folders_mapping[project]:

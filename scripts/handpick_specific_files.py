@@ -9,7 +9,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Handpick specific timeseries JSON files along with their annotations.json to run them on TCPCBench.")
     parser.add_argument('-o', '--output-folder', help="Path to the output folder of time series JSON files.")
     parser.add_argument('-i', '--input-folder', help="Path to the input folder of time series JSON files.")
-    parser.add_argument('-f', '--filtered-singatures-file', help="Path to the CSV file with the signatures to handpick (it has to have a column signature_id).")
+    parser.add_argument('-f', '--filtered-signatures-file', help="Path to the CSV file with the signatures to handpick (it has to have a column signature_id).")
 
     return parser.parse_args()
 

@@ -1,6 +1,6 @@
 ***Files definitions***
 
-This folder contains the code to extract and transform performance-related data under `scripts`. The transformations are statistical tranformations such as minmax scaling. The generated data resides in the `datasets` folder. It also contains notebooks for the data analysis under `notebooks` to durther understand the problematic. The notebooks are self-explanatory.
+This folder contains the code to extract, transform, and analyze performance-related data under `scripts`. The transformations are statistical tranformations such as minmax scaling. The generated data resides in the `datasets` folder.
 The code files directly under `scripts` folder have definitions that is obtained by running `python <python_file_path> --help`
 
 ***Running scripts***
@@ -8,10 +8,6 @@ The code files directly under `scripts` folder have definitions that is obtained
 0. In order to run the scripts, make sure to have Python 3.12 or above as well as pip in the running environment (Python 3.12.2 was used during scripts development). Afterwards, make sure to run : 
 ```
 pip install -r requirements.txt
-```
-Also, you need to access the `scripts` folder under this folder : 
-```
-cd scripts
 ```
 
 1. In order to run the script to extract the alerts, run `extract-alerts.py`
