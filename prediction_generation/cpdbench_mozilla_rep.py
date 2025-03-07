@@ -216,7 +216,7 @@ def detect_changes(data, min_back_window=12, max_back_window=24, fore_window=12,
 
     return data
 
-#  -a /TCPDBench/analysis/annotations/signatures_attributes.json
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Run Mozilla algorithm on a time series dataset.")
@@ -237,6 +237,8 @@ def get_alert_properties(prev_value, new_value, lower_is_better):
     is_regression = (delta > 0 and lower_is_better) or (delta < 0 and not lower_is_better)
     return AlertProperties(pct_change, delta, is_regression, prev_value, new_value)
 
+
+
 def main():
     logger = logging.getLogger(__name__)
     args = parse_args()
@@ -249,6 +251,8 @@ def main():
     signature_attributes = signatures_attributes[signature_id]
     Signature = namedtuple('Signature', signature_attributes.keys())
     signature = Signature(**signature_attributes)
+    # print(len(data['time']['raw']))
+    # print(len(data['series'][0]['raw']))
     raw_args = copy.deepcopy(args)
     #try:
     series = data['series'][0]['raw']
@@ -265,84 +269,96 @@ def main():
     min_back_window=12
     max_back_window=24
     fore_window=12
-    alert_threshold=2
+    alert_threshold=2    
+    analyzed_series = detect_changes(
+        data,
+        min_back_window=min_back_window,
+        max_back_window=max_back_window,
+        fore_window=fore_window,
+    )
     locations = []
+    #with transaction.atomic():
+    for prev, cur in zip(analyzed_series, analyzed_series[1:]):
+        if cur.change_detected:
+            prev_value = cur.historical_stats["avg"]
+            new_value = cur.forward_stats["avg"]
+            alert_properties = get_alert_properties(
+                prev_value, new_value, signature.lower_is_better
+            )
+            noise_profile = "N/A"
+            try:
+                # Gather all data up to the current data point that
+                # shows the regression and obtain a noise profile on it.
+                # This helps us to ignore this alert and others in the
+                # calculation that could influence the profile.
+                noise_data = []
+                for point in analyzed_series:
+                    if point == cur:
+                        break
+                    noise_data.append(geomean(point.values))
 
-
-    selected_data = data
-    alert_detected_in_prev_iteration = True
-    while alert_detected_in_prev_iteration:
-        temp_locations = []
-        temp_timestamps = []
-        analyzed_series = detect_changes(
-            selected_data,
-            min_back_window=min_back_window,
-            max_back_window=max_back_window,
-            fore_window=fore_window,
-        )
-        for prev, cur in zip(analyzed_series, analyzed_series[1:]):
-            if cur.change_detected:
-                prev_value = cur.historical_stats["avg"]
-                new_value = cur.forward_stats["avg"]
-                alert_properties = get_alert_properties(
-                    prev_value, new_value, signature.lower_is_better
-                )
-                noise_profile = "N/A"
-                try:
-                    # Gather all data up to the current data point that
-                    # shows the regression and obtain a noise profile on it.
-                    # This helps us to ignore this alert and others in the
-                    # calculation that could influence the profile.
-                    noise_data = []
-                    for point in analyzed_series:
-                        if point == cur:
-                            break
-                        noise_data.append(geomean(point.values))
-
-                    noise_profile, _ = moz_measure_noise.deviance(noise_data)
-                    if not isinstance(noise_profile, str):
-                        raise Exception(
-                            f"Expecting a string as a noise profile, got: {type(noise_profile)}"
-                        )
-                except Exception:
-                    # Fail without breaking the alert computation
-                    newrelic.agent.notice_error()
-                    logger.error("Failed to obtain a noise profile.")
-
-                # ignore regressions below the configured regression threshold
-
-                # ALERT_PCT, ALERT_ABS, and ALERT_CHANGE_TYPES come from the PerformanceSignature class in the Treeherder code
-                ALERT_PCT = 0
-                ALERT_ABS = 1
-                ALERT_CHANGE_TYPES = ((ALERT_PCT, "percentage"), (ALERT_ABS, "absolute"))
-                if (
-                    (
-                        signature.alert_change_type is None
-                        or signature.alert_change_type == ALERT_PCT
+                noise_profile, _ = moz_measure_noise.deviance(noise_data)
+                if not isinstance(noise_profile, str):
+                    raise Exception(
+                        f"Expecting a string as a noise profile, got: {type(noise_profile)}"
                     )
-                    and alert_properties.pct_change < alert_threshold
-                ) or (
-                    signature.alert_change_type == ALERT_ABS
-                    and abs(alert_properties.delta) < alert_threshold
-                ):
-                    continue
+            except Exception:
+                # Fail without breaking the alert computation
+                newrelic.agent.notice_error()
+                logger.error("Failed to obtain a noise profile.")
 
-                # django/mysql doesn't understand "inf", so just use some
-                # arbitrarily high value for that case
-                t_value = cur.t
-                if t_value == float("inf"):
-                    t_value = 1000
+            # ignore regressions below the configured regression
+            # threshold
 
-                # This is where we create the alert aka append its index in the locations list
-                temp_locations += [i for i, ts in enumerate(unique_push_timestamp) if ts == cur.push_timestamp]
-                temp_timestamps += [ts for i, ts in enumerate(unique_push_timestamp) if ts == cur.push_timestamp]
-        if len(temp_locations) == 0:
-            alert_detected_in_prev_iteration = False
-        else:
-            earliest_alert_timestamp = sorted(temp_timestamps)[0]
-            earliest_alert_index = sorted(temp_locations)[0]
-            selected_data = [rev for rev in selected_data if rev.push_timestamp > earliest_alert_timestamp]
-            locations += [earliest_alert_index]
+            # ALERT_PCT, ALERT_ABS, and ALERT_CHANGE_TYPES come from the PerformanceSignature class in the Treeherder code
+            ALERT_PCT = 0
+            ALERT_ABS = 1
+            ALERT_CHANGE_TYPES = ((ALERT_PCT, "percentage"), (ALERT_ABS, "absolute"))
+            if (
+                (
+                    signature.alert_change_type is None
+                    or signature.alert_change_type == ALERT_PCT
+                )
+                and alert_properties.pct_change < alert_threshold
+            ) or (
+                signature.alert_change_type == ALERT_ABS
+                and abs(alert_properties.delta) < alert_threshold
+            ):
+                continue
+            # summary, _ = PerformanceAlertSummary.objects.get_or_create(
+            #     repository=signature.repository,
+            #     framework=signature.framework,
+            #     push_id=cur.push_id,
+            #     prev_push_id=prev.push_id,
+            #     defaults={
+            #         "manually_created": False,
+            #         "created": datetime.utcfromtimestamp(cur.push_timestamp),
+            #     },
+            # )
+
+            # django/mysql doesn't understand "inf", so just use some
+            # arbitrarily high value for that case
+            t_value = cur.t
+            if t_value == float("inf"):
+                t_value = 1000
+
+
+
+            # This is where we create the alert aka append its index in the locations list
+            locations += [str(i) + "/t_value/" + str(cur.t) + "/pct_value/" + str(alert_properties.pct_change) + "/prev_value/" + str(prev_value) + "/new_value/" + str(new_value) for i, ts in enumerate(unique_push_timestamp) if ts == cur.push_timestamp]
+            # PerformanceAlert.objects.update_or_create(
+            #     summary=summary,
+            #     series_signature=signature,
+            #     defaults={
+            #         "noise_profile": noise_profile,
+            #         "is_regression": alert_properties.is_regression,
+            #         "amount_pct": alert_properties.pct_change,
+            #         "amount_abs": alert_properties.delta,
+            #         "prev_value": prev_value,
+            #         "new_value": new_value,
+            #         "t_value": t_value,
+            #     },
+            # )
 
     stop_time = time.time()
     runtime = stop_time - start_time

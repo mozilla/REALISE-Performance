@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ bootstrap_find_resource('css/jquery.dataTables.css', cdn='datatables', use_minified=True) }}">
+{% endblock %}
+
+{% block app_content %}
+<h1>View Annotations</h1>
+<div class="row">
+	<div class="col-md-4">
+		{{ wtf.quick_form(form) }}
+	</div>
+</div>
+<br>
+<article class="overview">
+  <a href="./annotations/download">Download as CSV</a>
+  <br>
+  <br>
+	<table id="annotations-table" class="table table-striped">
+		<thead class="thead-dark">
+      <th scope="col">Dataset</th>
+			<th scope="col">Username</th>
+      <th scope="col">Changepoint Index</th>
+    </thead>
+    {% for ann in annotations %}
+		<tr>
+      <td>{{ ann.task.dataset.name }}</td>
+      <td>{{ ann.task.user.username }}</td>
+      <td>{% if ann.cp_index is none %}No CP{% else %}{{ ann.cp_index }}{% endif %}</td>
+    </tr>
+		{% endfor %}
+		</tr>
+	</table>
+</article>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ bootstrap_find_resource('js/jquery.dataTables.js', cdn='datatables', use_minified=True) }}"></script>
+<script>
+	$(document).ready(function() {
+		$('#annotations-table').DataTable({
+        "pageLength": 25
+      });
+	});
+</script>
+{% endblock scripts %}

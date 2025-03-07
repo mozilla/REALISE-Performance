@@ -1,0 +1,58 @@
+#graph {
+	margin: 0 auto;
+	text-align: center;
+}
+
+.line {
+	fill: none;
+	stroke: blue;
+	clip-path: url(#clip);
+}
+
+.z-line line {
+	stroke: #ccc;
+	shape-rendering: crispEdges;
+}
+
+circle {
+	clip-path: url(#clip);
+	fill: blue;
+}
+
+rect {
+	fill: white;
+	opacity: 0;
+}
+
+#rubric {
+	text-align: left;
+	padding-bottom: 20px;
+	padding-top: 10px;
+	width: 80%;
+	font-size: 16px;
+}
+
+#usage {
+	font-size: 16px;
+	font-style: italic;
+}
+
+#difficulty {
+    text-align: center;
+    padding-bottom: 20px;
+    font-size: 16px;
+}
+#difficulty span{
+    padding-right: 10px;
+}
+#difficulty label {
+    padding-right: 6px;
+}
+
+h1 .btn {
+    margin-left: 25px;
+}
+
+#report {
+    text-align: center;
+}

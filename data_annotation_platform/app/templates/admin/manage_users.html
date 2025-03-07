@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% import "_partials/modals.html" as modals %}
+
+{% block styles %}
+{{ super() }}
+  <link rel="stylesheet" href="{{ bootstrap_find_resource('css/jquery.dataTables.css', cdn='datatables', use_minified=True) }}">
+{% endblock %}
+
+{% block app_content %}
+  <h1>Manage Users</h1>
+
+  <div class="col-lg-3">
+    <div class="row">
+      <form class="form" action="" method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.user  }}
+        {{ form.delete(hidden='true', id='form-submit') }}
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+          Delete
+        </button>
+      </form>
+    </div>
+  </div>
+
+  {{ modals.confirm("delete", "Delete User", "You are about to delete the user 
+  <b>and</b> all associated tasks and annotations. Are you sure?") }}
+
+  <br>
+  <h1>User Overview</h1>
+  <article class="overview">
+    <table id="user-table" class="table table-striped">
+      <thead class="thead-dark">
+        <th scope="col">ID</th>
+        <th scope="col">Username</th>
+        <th scope="col">Email</th>
+        <th scope="col">Confirmed?</th>
+        <th scope="col">Introduced?</th>
+        <th scope="col">Last Active (UTC)</th>
+        <th scope="col">Requested Update?</th>
+        <th scope="col">Requested Credit?</th>
+        <th scope="col">Admin?</th>
+        <th scope="col">Annotated</th>
+      </thead>
+      {% for user in users %}
+        <tr>
+          <th scope="row">{{ user.id }}</th>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{% if user.is_confirmed %}Yes{% else %}No{% endif %}</td>
+          <td>{% if user.is_introduced %}Yes{% else %}No{% endif %}</td>
+          <td>{{ user.last_active }}</td>
+          <td>{% if user.wants_updates %}Yes{% else %}{% endif %}</td>
+          <td>{% if user.wants_credit %}Yes{% else %}{% endif %}</td>
+          <td>{% if user.is_admin %}Yes{% else %}{% endif %}</td>
+          <td>{{ user.annotated }}</td>
+        </tr>
+      {% endfor %}
+      </tr>
+    </table>
+  </article>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ bootstrap_find_resource('js/jquery.dataTables.js', cdn='datatables', use_minified=True) }}"></script>
+<script>
+	$(document).ready(function() {
+    $('#user-table').DataTable({
+      "pageLength": 25
+    });
+	});
+</script>
+<script>
+	var conf = document.getElementById("modal-confirm");
+	conf.onclick = function() {
+		document.getElementById("form-submit").click();
+	};
+</script>
+{% endblock scripts %}

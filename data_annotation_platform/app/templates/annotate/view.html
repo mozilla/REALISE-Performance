@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/admin/view_annotation.css')}}">
+{% endblock %}
+
+{% block app_content %}
+  <h1>View Annotations <a class="btn btn-warning" href="/annotate/{{ task_id }}">Re-annotate</a></h1>
+  <div id="graph"></div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ bootstrap_find_resource('d3.v5.js', cdn='d3', use_minified=True) }}"></script>
+  {% if is_multi %}
+  <script src="{{ url_for('static', filename='js/makeChartMulti.js') }}"></script>
+  {% else %}
+  <script src="{{ url_for('static', filename='js/makeChart.js') }}"></script>
+  {% endif %}
+  <script>adminViewAnnotations(
+    '#graph',
+    {{ data.chart_data | tojson }},
+    {{ data.annotations | tojson }}
+    );
+  </script>
+{% endblock scripts %}

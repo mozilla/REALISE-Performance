@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/index.css')}}">
+  <link rel="stylesheet" href="{{ bootstrap_find_resource('css/jquery.dataTables.css', cdn='datatables', use_minified=True) }}">
+{% endblock %}
+
+{% block app_content %}
+  {% if current_user.is_authenticated %}
+    <h1>Hi, {{ current_user.username }}!</h1>
+  {% endif %}
+  <p>
+    Welcome to <i>AnnotateChange</i>, a tool for annotating time series data 
+    for changepoint analysis.
+  </p>
+  {% if not current_user.is_authenticated %}
+  <br>
+  <p>
+    Please <a href="{{ url_for('auth.login') }}">log in</a> or 
+    <a href="{{ url_for('auth.register') }}">register</a> to get started.
+  </p>
+  {% endif %}
+  {% if current_user.is_authenticated %}
+    <h3>Introduction</h3>
+    {% if not current_user.is_introduced %}
+      <a href="{{ url_for('main.demo') }}">Click here to start the introduction to AnnotateChange.</a>
+      {% if tasks_todo|length == 0 and tasks_done|length == 0 %}
+      <br>
+      <br>
+      <p>
+        Once you have finished the introduction you will be able to annotate real datasets.
+      </p>
+      {% endif %}
+    {% else %}
+    <p>
+      Thank you for completing the introduction. If you want to revisit 
+      it, you can do so by <a href="{{ url_for('main.demo') }}">clicking here</a>.
+    </p>
+    {% endif %}
+    {% if current_user.is_introduced %}
+      <h3>Doing Annotations</h3>
+      {% if tasks_done|length == 0 %}
+        <p>Click the button below to start annotating!</p>
+      {% else %}
+        <p>Click the button below to do some more annotations!</p>
+      {% endif %}
+      <p>So far, you annotated <strong>{{ tasks_done|length }}</strong> time series! <strong>{{ tasks_potential|length }}</strong> to go!</p>
+      <div id="annotate-button">
+        <a class="btn btn-primary btn-lg btn-block" href="{{ url_for('main.assign') }}" role="button">
+          Click here to annotate a time series!
+        </a>
+      </div>
+    {% endif %}
+    {% if tasks_done %}
+      <h3>Completed Annotations</h3>
+      <p>Below are the time series that you've annotated so far. Thanks so much for your help!</p>
+      <div class="tasks-done">
+        <table class="table table-striped" id="annotated-table">
+          <thead>
+            <th scope="col">Name</th>
+            <th scope="col">Completed On</th>
+            <th scope="col" class="no-sort"></th>
+          </thead>
+          {% for task in tasks_done %}
+            <tr>
+              {#
+              {% if current_user.is_admin %}
+              <td>{{ task.dataset.name | title }}</td>
+              {% else %}
+              #}
+              <td>Dataset {{ task.dataset.id | title }}</td>
+              {#
+              {% endif %}
+              #}
+              <td>{{ task.annotated_on }}</td>
+              <td>
+                  <a class="btn btn-warning float-md-right" href="/annotate/{{ task.id }}">Re-annotate</a>
+                  <a class="btn btn-success float-md-right" href="/view_annotations/{{ task.id }}">View</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+    {% endif %}
+  {% endif %}
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ bootstrap_find_resource('js/jquery.dataTables.js', cdn='datatables', use_minified=True) }}"></script>
+<script>
+	$(document).ready(function() {
+      $('#annotated-table').DataTable({
+        pageLength: 25,
+        order: [[1, 'desc']],
+        columnDefs: [
+          { targets: 'no-sort', orderable: false }
+        ],
+      });
+	});
+</script>
+{% endblock scripts %}

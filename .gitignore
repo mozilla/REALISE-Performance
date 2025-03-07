@@ -1,2 +1,14 @@
 */scripts/__pycache__
 data/temp_data
+*/app/__pycache__
+*/migrations/__pycache__
+*/__pycache__/
+*/.env.development
+*/.env
+*/.env.production
+*/instance/
+*/venv/
+*/app.db
+*/*.egg-info
+*/*.swp
+*/persist
