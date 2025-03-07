@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% import "_partials/modals.html" as modals %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ bootstrap_find_resource('css/jquery.dataTables.css', cdn='datatables', use_minified=True) }}">
+{% endblock %}
+
+{% block app_content %}
+<h1>Manage Datasets</h1>
+
+<div class="col-lg-3">
+    <div class="row">
+        <form class="form" action="" method="POST">
+            {{ form.hidden_tag() }}
+            {{ form.dataset  }}
+            {{ form.delete(hidden='true', id='form-submit') }}
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+            Delete
+            </button>
+        </form>
+    </div>
+</div>
+
+{{ modals.confirm("delete", "Delete Dataset", "You are about to delete the 
+dataset <b>and</b> all associated tasks and annotations. Are you sure?") }}
+
+<br>
+<h1>Task Completion Overview</h1>
+<article class="overview">
+	<table id="datasets-table" class="table table-striped">
+		<thead class="thead-dark">
+			<th scope="col">ID</th>
+			<th scope="col">Name</th>
+			<th scope="col">Demo</th>
+			<th scope="col">Assigned Tasks</th>
+			<th scope="col">Completed Tasks</th>
+			<th scope="col">Target Reached (%)</th>
+		</thead>
+		{% for entry in overview %}
+		<tr>
+			<th scope="row">{{ entry['id'] }}</th>
+			<td>{{ entry['name'] }}</td>
+			<td>{% if entry['demo'] %}Yes{% else %}No{% endif %}</td>
+			<td>{{ entry['assigned'] }}</td>
+			<td>{{ entry['completed'] }}</td>
+			<td>{{ entry['percentage'] }}</td>
+		</tr>
+		{% endfor %}
+		</tr>
+	</table>
+</article>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ bootstrap_find_resource('js/jquery.dataTables.js', cdn='datatables', use_minified=True) }}"></script>
+<script>
+	$(document).ready(function() {
+    $('#datasets-table').DataTable({
+      "pageLength": 25
+    });
+	});
+</script>
+<script>
+	var conf = document.getElementById("modal-confirm");
+	conf.onclick = function() {
+		document.getElementById("form-submit").click();
+	};
+</script>
+
+{% endblock scripts %}

@@ -1,0 +1,20 @@
+
+#done {
+	margin: 0 auto;
+	text-align: center;
+}
+
+#done span {
+	font-size: 18px;
+}
+
+#done img {
+	margin: 0 auto;
+	text-align: center;
+	width: 40%;
+	display: block;
+}
+
+.tasks-done .btn {
+    padding: 0px 12px !important;
+}

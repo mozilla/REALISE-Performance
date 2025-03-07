@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% import "_partials/modals.html" as modals %}
+
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/main/annotate.css')}}">
+{% endblock %}
+
+{% block app_content %}
+  <h1>{{ title }}</h1>
+
+  <div id="rubric" class="row">
+  	<div class="col-md-12">
+  		<p>{{ rubric | safe }}</p>
+  	</div>
+  </div>
+  
+  
+  
+  <div id="characteristics-banner" style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; text-align: left; font-size: 18px; font-weight: bold; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); margin-bottom: 15px; display: block;">
+      {% set characteristics = data.chart_data.characteristics if data.chart_data.characteristics else {} %}
+      {% set repository = characteristics.get("repository", "N/A") %}
+      {% set framework = characteristics.get("framework", "N/A") %}
+      {% set application = characteristics.get("application", "N/A") %}
+      {% set platform = characteristics.get("platform", "N/A") %}
+      {% set test = characteristics.get("test", "N/A") %}
+      {% set suite = characteristics.get("suite", "N/A") %}
+      {% set tags = characteristics.get("tags", "N/A") %}
+      {% set lower_is_better = characteristics.get("lower_is_better", "N/A") %}
+      <ul>
+          <li><strong>💻 Platform:</strong> {{ platform }}</li>
+          <li><strong>🧪 Test:</strong> {{ test }}</li>
+          <li><strong>📂 Suite:</strong> {{ suite }}</li>
+          <li><strong>📦 Repository:</strong> {{ repository }}</li>
+          <li><strong>⚙️ Framework:</strong> {{ framework }}</li>
+          <li><strong>🏷️ Tags:</strong> {{ tags }}</li>
+          <li><strong>📉 Lower Is Better?</strong> {{ lower_is_better }}</li>
+      </ul>
+  </div>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      let checkbox = document.getElementById("toggleBanner");
+      let banner = document.getElementById("characteristics-banner");
+  
+      checkbox.addEventListener("change", function () {
+        banner.style.display = this.checked ? "block" : "none";
+      });
+  
+      // Ensure correct initial state
+      banner.style.display = checkbox.checked ? "block" : "none";
+    });
+  </script>
+  
+  
+
+
+  <div id="graph"></div>
+
+  <div id="difficulty">
+      <span>Difficulty:</span>
+      <input type="radio" id="1" name="difficulty" value="1">
+      <label for="1">1 - trivial</label>
+      <input type="radio" id="2" name="difficulty" value="2">
+      <label for="2">2 - easy</label>
+      <input type="radio" id="3" name="difficulty" value="3">
+      <label for="3">3 - doable</label>
+      <input type="radio" id="4" name="difficulty" value="4">
+      <label for="4">4 - unsure</label>
+      <input type="radio" id="5" name="difficulty" value="5">
+      <label for="5">5 - impossible</label>
+  </div>
+
+  <div id="report">
+      <input type="checkbox" id="problem" name="problem">
+      <label for="problem">Report a problem with this dataset.</label>
+  </div>
+  <div id="report">
+    <label>
+      <input type="checkbox" id="toggleLines" checked> Show Lines
+    </label>
+  </div>
+
+  <div id="report">
+    <label>
+      <input type="checkbox" id="toggleBanner" checked> Show Characteristics
+    </label>
+  </div>
+
+  <div id="wrap-buttons" class="row">
+  	<div class="col-md-3 text-left">
+  		<button class="btn btn-primary float-md-left" type="button" 
+  			id="btn-reset">Reset</button>
+  	</div>
+    <div class="col-md-6 text-center">
+      <p id="usage">You can zoom in and pan the graph if needed.</p>
+    </div>
+    
+    <script>
+      document.getElementById("toggleLines").addEventListener("change", function () {
+        let lines = document.querySelectorAll("[class^='line line-']");
+        
+        lines.forEach(line => {
+          line.style.display = this.checked ? "block" : "none";
+        });
+      });
+    </script>
+    
+  	<div class="col-md-3 text-right">
+  		<button class="btn btn-warning float-md-right" type="button" 
+  			id="btn-none">No change points</button>
+  		<button class="btn btn-success float-md-right" id="btn-submit" 
+  			type="button">Submit</button>
+  	</div>
+  </div>
+  <br>
+
+  {{ modals.info("submitNoCP", "No Change Points Selected", "Please use the 
+  \"No Change Points\" button when you think there are no change points in the 
+  time series.") }}
+
+  {{ modals.info("NoCPYesCP", "Change Points Selected", "There are selected 
+  change points, please click the Reset button before clicking the \"No change 
+  points\" button.") }}
+
+  {{ modals.info("NoDifficulty", "No difficulty selected", "Please, select a
+  difficulty option.") }}
+
+  {{ modals.report("ReportProblem", "Report a problem", "Please, briefly
+  describe the problem you encountered with this dataset.") }}
+
+  <h3>Selected Changepoints</h3>
+  <div id="changepoint-table">
+  	<table id="cp-table" class="table table-striped">
+  	</table>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ bootstrap_find_resource('d3.v5.js', cdn='d3', use_minified=True) }}"></script>
+  <script src="{{ url_for('static', filename='js/updateTable.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/buttons.js') }}"></script>
+  {% if is_multi  %}
+  <script src="{{ url_for('static', filename='js/makeChartMulti.js') }}"></script>
+  {% else %}
+  <script src="{{ url_for('static', filename='js/makeChart.js') }}"></script>
+  {% endif %}
+  <script>annotateChart("#graph", {{ data.chart_data | tojson }});</script>
+  <script>
+    // starting time
+    var startTime = new Date();
+    // reset button
+    var reset = document.getElementById("btn-reset");
+    reset.onclick = resetOnClick;
+    // no changepoint button
+    var nocp = document.getElementById("btn-none");
+    nocp.onclick = function() {
+       noCPOnClick({{ identifier }}, startTime);
+    };
+    // submit button
+    var submit = document.getElementById("btn-submit");
+    submit.onclick = function() {
+       submitOnClick({{ identifier }}, startTime);
+    };
+  </script>
+{% endblock scripts %}

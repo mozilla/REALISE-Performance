@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{url_for('static', filename='css/demo/evaluate.css')}}">
+{% endblock %}
+
+{% block app_content %}
+<h1>{{ title }}</h1>
+
+<div id="lesson" class="row">
+  <div class="col-md-8">
+    {{ text | safe }}
+  </div>
+  <div class="col-md-8">
+    {{ feedback | safe }}
+  </div>
+</div>
+
+<div class="graph-wrapper">
+	<div class="row">
+		<p><b>Your annotation:</b></p>
+	</div>
+	<div id="graph_user"></div>
+	<div class="row">
+		<p><b>Ground truth:</b></p>
+	</div>
+	<div id="graph_true"></div>
+</div>
+
+<div class="row">
+  <div id="next-btn" class="col-md-10">
+    {{ wtf.quick_form(form, button_map={'submit': 'primary'}) }}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ bootstrap_find_resource('d3.v5.js', cdn='d3', use_minified=True) }}"></script>
+  {% if is_multi %}
+  <script src="{{ url_for('static', filename='js/makeChartMulti.js') }}"></script>
+  {% else %}
+  <script src="{{ url_for('static', filename='js/makeChart.js') }}"></script>
+  {% endif %}
+  <script>viewAnnotations(
+    "#graph_user",
+    {{ data.chart_data | tojson }},
+    {{ annotations_user | tojson }}
+  );
+  </script>
+  <script>
+    viewAnnotations(
+      "#graph_true",
+      {{ data.chart_data | tojson }},
+      {{ annotations_true | tojson }}
+    );
+  </script>
+{% endblock %}
