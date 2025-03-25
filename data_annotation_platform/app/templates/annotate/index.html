@@ -26,7 +26,6 @@
       {% set test = characteristics.get("test", "N/A") %}
       {% set suite = characteristics.get("suite", "N/A") %}
       {% set tags = characteristics.get("tags", "N/A") %}
-      {% set lower_is_better = characteristics.get("lower_is_better", "N/A") %}
       <ul>
           <li><strong>💻 Platform:</strong> {{ platform }}</li>
           <li><strong>🧪 Test:</strong> {{ test }}</li>
@@ -34,7 +33,6 @@
           <li><strong>📦 Repository:</strong> {{ repository }}</li>
           <li><strong>⚙️ Framework:</strong> {{ framework }}</li>
           <li><strong>🏷️ Tags:</strong> {{ tags }}</li>
-          <li><strong>📉 Lower Is Better?</strong> {{ lower_is_better }}</li>
       </ul>
   </div>
   
@@ -87,11 +85,20 @@
     </label>
   </div>
 
+  <div id="report">
+    <label class="switch">
+      <input type="checkbox" id="zoomToggle">
+      <span class="slider round"></span>
+    </label>
+    <span id="zoomLabel">Change zoom mode (current mode is X-Axis Zoom)</span>
+  </div>
+
   <div id="wrap-buttons" class="row">
   	<div class="col-md-3 text-left">
   		<button class="btn btn-primary float-md-left" type="button" 
   			id="btn-reset">Reset</button>
   	</div>
+    
     <div class="col-md-6 text-center">
       <p id="usage">You can zoom in and pan the graph if needed.</p>
     </div>
@@ -105,7 +112,7 @@
         });
       });
     </script>
-    
+
   	<div class="col-md-3 text-right">
   		<button class="btn btn-warning float-md-right" type="button" 
   			id="btn-none">No change points</button>
@@ -140,12 +147,12 @@
   {{ super() }}
   <script src="{{ bootstrap_find_resource('d3.v5.js', cdn='d3', use_minified=True) }}"></script>
   <script src="{{ url_for('static', filename='js/updateTable.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/buttons.js') }}"></script>
   {% if is_multi  %}
   <script src="{{ url_for('static', filename='js/makeChartMulti.js') }}"></script>
   {% else %}
   <script src="{{ url_for('static', filename='js/makeChart.js') }}"></script>
   {% endif %}
+  <script src="{{ url_for('static', filename='js/buttons.js') }}"></script>
   <script>annotateChart("#graph", {{ data.chart_data | tojson }});</script>
   <script>
     // starting time

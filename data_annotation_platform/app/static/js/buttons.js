@@ -6,7 +6,23 @@ function resetOnClick() {
                 elem.attr('class', '');
 	}
 	updateTable();
+	location.reload();
 }
+
+// function resetOnClick() {
+//     var changepoints = getChangepoints();
+//     for (const cp of changepoints) {
+//         var elem = d3.select(cp);
+//         elem.style("fill", "blue");
+//         elem.attr('class', '');
+//     }
+//     updateTable();
+    
+//     // Reset zoom transform
+//     var svg = d3.select("svg"); // Ensure this targets your main SVG
+//     svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+// }
+
 
 function validateDifficulty() {
 	var difficulty = document.querySelector('input[name="difficulty"]:checked');

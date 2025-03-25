@@ -22,7 +22,7 @@ function preprocessData(data) {
 	}
 	cleanData.push(run);
 	return cleanData;
-}
+} 
 
 function scaleAndAxis(data, width, height) {
 	// xScale is the active scale used for zooming, xScaleOrig is used as 
@@ -30,6 +30,8 @@ function scaleAndAxis(data, width, height) {
 	var xScale = d3.scaleLinear().range([0, width]);
 	var xScaleOrig = d3.scaleLinear().range([0, width]);
 	var yScale = d3.scaleLinear().range([height, 0]);
+	var yScaleOrig = d3.scaleLinear().range([height, 0]); // Define yScaleOrig here
+
 
 	// create the axes
 	var xAxis = d3.axisBottom(xScale);
@@ -37,7 +39,7 @@ function scaleAndAxis(data, width, height) {
 
 	// turn off ticks on the y axis. We don't want annotators to be 
 	// influenced by whether a change is big in the absolute sense.
-	yAxis.ticks(0);
+	yAxis.ticks(10);
 
 	var xmin = Math.min(...data.map(function(run) { return Math.min(...run.map(it => it.X)); }))
 	var xmax = Math.max(...data.map(function(run) { return Math.max(...run.map(it => it.X)); }))
@@ -61,9 +63,11 @@ function scaleAndAxis(data, width, height) {
 	xScale.domain([xDomainMin, xDomainMax]);
 	xScaleOrig.domain([xDomainMin, xDomainMax]);
 	yScale.domain([yDomainMin, yDomainMax]);
+	yScaleOrig.domain([yDomainMin, yDomainMax]);
 
-	return [xAxis, yAxis, xScale, xScaleOrig, yScale, yDomainMin, yDomainMax];
+	return [xAxis, yAxis, xScale, xScaleOrig, yScale, yScaleOrig, yDomainMin, yDomainMax];
 }
+
 
 
 function noZoom() {
@@ -88,7 +92,7 @@ function baseChart(
 	 * the same for all users.
 	 */
 	if (divWidth === null || typeof divWidth === 'undefined')
-		divWidth = 1000;
+		divWidth = 1200;
 	if (divHeight === null || typeof divHeight === 'undefined')
 		divHeight = 480;
 
@@ -101,13 +105,13 @@ function baseChart(
 		.append("svg")
 		.attr("width", divWidth)
 		.attr("height", divHeight)
-		.attr("viewBox", "0 0 " + divWidth + " " + divHeight);
+		.attr("viewBox", "-25 0 " + divWidth + " " + divHeight);
 
 	var margin = {top: 20, right: 20, bottom: 50, left: 50};
 	var width = +svg.attr("width") - margin.left - margin.right;
 	var height = +svg.attr("height") - margin.top - margin.bottom;
 
-	var [xAxis, yAxis, xScale, xScaleOrig, yScale, yDomainMin, yDomainMax] = scaleAndAxis(
+	var [xAxis, yAxis, xScale, xScaleOrig, yScale, yScaleOrig, yDomainMin, yDomainMax] = scaleAndAxis(
 		data,
 		width,
 		height);
@@ -120,35 +124,85 @@ function baseChart(
 		lineObjects.push(lineObj);
 	}
 
-	// Initialise the zoom behaviour
-	var zoomObj = d3.zoom()
+	// var zoomX = d3.zoom()
+	// 	.scaleExtent([1, 100])
+	// 	.translateExtent([[0, 0], [width, height]])
+	// 	.extent([[0, 0], [width, height]])
+	// 	.on("zoom", zoomTransformX);
+
+	// var zoomY = d3.zoom()
+	// 	.scaleExtent([1, 100])
+	// 	.translateExtent([[0, 0], [width, height]])
+	// 	.extent([[0, 0], [width, height]])
+	// 	.on("zoom", zoomTransformY);
+
+	// var currentZoom = zoomX; // Default: X-axis zooming
+
+	var zoomX = d3.zoom()
+    .scaleExtent([1, 100])
+    .translateExtent([[0, 0], [width, height]])
+    .extent([[0, 0], [width, height]])
+    .on("zoom", zoomTransformX);
+
+	var zoomY = d3.zoom()
 		.scaleExtent([1, 100])
 		.translateExtent([[0, 0], [width, height]])
 		.extent([[0, 0], [width, height]])
-		.on("zoom", zoomTransform);
+		.on("zoom", zoomTransformY);
 
-	function zoomTransform() {
+	var currentZoom = zoomX; // Default: X-axis zooming
+
+
+
+	function zoomTransformX() {
 		transform = d3.event.transform;
-		// transform the axis
+		
+		// Transform only the x-axis
 		xScale.domain(transform.rescaleX(xScaleOrig).domain());
-
-		for (let r=0; r<data.length; r++) {
-			svg.select(".line-"+r).attr("d", lineObjects[r]);
-
-			// transform the circles
+		
+		for (let r = 0; r < data.length; r++) {
+			svg.select(".line-" + r).attr("d", lineObjects[r]);
+	
+			// Transform the circles
+			pointSets[r].data(data[r])
+				.attr("cx", d => xScale(d.X))
+				.attr("cy", d => yScale(d.Y));
+		}
+	
+		// Transform annotation lines (if any)
+		annoLines = gView.selectAll("line");
+		annoLines._groups[0].forEach(l => {
+			l.setAttribute("x1", xScale(l.getAttribute("cp_idx")));
+			l.setAttribute("x2", xScale(l.getAttribute("cp_idx")));
+		});
+	
+		svg.select(".axis--x").call(xAxis);
+	}
+	
+	function zoomTransformY() {
+		transform = d3.event.transform;
+		
+		// Rescale the Y axis using yScaleOrig
+		yScale.domain(transform.rescaleY(yScaleOrig).domain());
+	
+		for (let r = 0; r < data.length; r++) {
+			svg.select(".line-" + r).attr("d", lineObjects[r]);
+	
+			// Transform the circles
 			pointSets[r].data(data[r])
 				.attr("cx", function(d) { return xScale(d.X); })
 				.attr("cy", function(d) { return yScale(d.Y); });
 		}
-
-		// transform the annotation lines (if any)
+	
+		// Transform the annotation lines (if any)
 		annoLines = gView.selectAll("line");
 		annoLines._groups[0].forEach(function(l) {
-			l.setAttribute("x1", xScale(l.getAttribute("cp_idx")));
-			l.setAttribute("x2", xScale(l.getAttribute("cp_idx")));
+			l.setAttribute("y1", yScale(l.getAttribute("cp_idx")));
+			l.setAttribute("y2", yScale(l.getAttribute("cp_idx")));
 		});
-
-		svg.select(".axis--x").call(xAxis);
+	
+		// Update Y axis
+		svg.select(".axis--y").call(yAxis);
 	}
 
 	// Build the SVG layer cake
@@ -176,10 +230,10 @@ function baseChart(
 	// y axis
 	svg.append("g")
 		.attr("class", "axis axis--y")
-		.attr("transform", "translate(" + zero + ",0)")
+		.attr("transform", "translate(" + zero + ",0)") // Use margin.left instead of zero
 		.call(yAxis);
 
-	// x axis
+		// x axis
 	svg.append("g")
 		.attr("class", "axis axis--x")
 		.attr("transform", "translate(0, " + height + ")")
@@ -193,7 +247,26 @@ function baseChart(
 		.text("Time");
 
 	// wrapper for zoom
-	var gZoom = svg.append("g").call(zoomObj);
+	var gZoom = svg.append("g").call(currentZoom);
+
+
+	// Add event listener for zoom toggle
+	document.getElementById("zoomToggle").addEventListener("change", function() {
+		if (this.checked) {
+		  // Y-axis zoom
+		  currentZoom = zoomY;
+		  document.getElementById("zoomLabel").innerText = "Change zoom mode (current mode is Y-Axis Zoom)";
+		} else {
+		  // X-axis zoom
+		  currentZoom = zoomX;
+		  document.getElementById("zoomLabel").innerText = "Change zoom mode (current mode is X-Axis Zoom)";
+		}
+	  
+		// Apply the current zoom behavior
+		gZoom.call(currentZoom);
+	  });	  
+
+
 
 	// rectangle for the graph area
 	gZoom.append("rect")

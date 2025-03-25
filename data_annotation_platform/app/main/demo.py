@@ -36,48 +36,40 @@ LOGGER = logging.getLogger(__name__)
 # textwrap.dedent is used mostly for code formatting.
 DEMO_DATA = {
     1: {
-        "dataset": {"name": "demo_100"},
+        "dataset": {"name": "demo_400"},
         "learn": {
             "text": markdown.markdown(
                 textwrap.dedent(
-                    """
-                Welcome to AnnotateChange, an annotation app for change point 
-                detection.
+                """
+                Welcome to the Mozilla data annotation tool. Thank you for taking the time to provide your input.
 
-                Our goal with AnnotateChange is to create a dataset of 
-                human-annotated time series to use in the development and 
-                evaluation of change point algorithms.
+                Our goal is to create a dataset of                 
+                *human-annotated* time series to use in the development and 
+                evaluation of change point algorithms which could be used in [Perfherder](https://treeherder.mozilla.org/perfherder/alerts?hideDwnToInv=1&page=1) to provide more accurate alerts, saving investigation time and effort for Mozilla Performance Sheriffs.
 
-                We really appreciate that you've agreed to help us with this! 
-                Without your help this project would not be possible.
+                The time series you will see was collected from the Mozilla performance infrastructure. We collected performance measurements from multiple signatures and we aggregate them by revision as we group the measurtements for a specific revision and we abergae them. 
 
-                In the next few pages, we'll introduce you to the problem of 
-                change point detection. We'll look at a few datasets and see 
-                different types of changes that can occur.
+                Once you annotate a time series, feel free to leave a review on its difficulty of annotation. This will help us to conduct our analysis.
 
-                Thanks again for your help!"""
+                Thanks again for your help!
+                """
                 )
             )
         },
         "annotate": {
             "text": markdown.markdown(
                 textwrap.dedent(
-                    """
-                Please mark the point(s) in the time series where an **abrupt 
-                change** in the behaviour of the series occurs.  The goal is to 
-                define segments of the time series that are separated by places 
-                where these abrupt changes occur. You can mark a point by 
-                clicking on it.
-                Different types of changes (mean, variance, both) can be marked
-                by clicking repeatedly on the same datapoint. The color of the
-                datapoint will change, and the type of change will be reported
-                in the table underneath the plot. A marked point can be unmarked
-                by clicking on it again until it turns blue.
+                """
+                The following time series is presented through the specs described in the box below.
+                
+                In order to perperly investigate change points, you could *zoom in* within the graph with your mouse for more details on X-axis or Y-axis, you can control the behaviour through the correspondent toggle below the graph.
 
+                Note that you could pan in the graph!
+                
+                Also, you could *choose* to include or remove the lines in the graph for convenience by clicking and unclicking the checkbox below.
+                
                 Click "Submit" when you have finished marking the change points 
-                or "No change points" when you believe there are none. You can 
-                reset the graph with the "Reset" button.
-
+                or *"No change points"* when you believe there are none, *such as the case for this example*.
                 """
                 )
             )
@@ -85,48 +77,52 @@ DEMO_DATA = {
         "evaluate": {
             "text": markdown.markdown(
                 textwrap.dedent(
-                    """
-                This first example has **one** change point. Not all datasets 
-                that you'll encounter in this program have exactly one change 
-                point. It is up to you to see whether a time series contains a 
-                change point or not, and if it does, to see if there is more 
-                than one.
-
-                Don't worry if you weren't exactly correct on the first try. 
-                The goal of this introduction is to familiarise yourself with 
-                time series data and with change point detection in particular. 
-
-                Note that in general we consider the change point to be the 
-                point where the new behaviour *starts*, not the last point of 
-                the current behaviour."""
+                """
+                The evaluation layout that you see will help you afterwards to evaluate your annotation attempt.
+                
+                The other time series in this demo contain change points.
+                """
                 )
             )
         },
     },
     2: {
-        "dataset": {"name": "demo_200"},
+        "dataset": {"name": "demo_100"},
         "learn": {
             "text": markdown.markdown(
                 textwrap.dedent(
-                    """
-                In the previous example, you've seen a relatively simple 
-                dataset where a *step change* occurred at a certain point in 
-                time. A step change is one of the simplest types of change 
-                points that can occur.
-
-                Click "Continue" to move on to the next example."""
+                """
+                Different types of changes (mean, variance, both) can be marked
+                by *clicking repeatedly* on the same datapoint. The color of the
+                datapoint will change, and the type of change will be reported
+                in the *table* underneath the plot as follows: ed (mean), orange
+                (variance), yellow (mean_variance) and blue (none). A marked
+                point can be unmarked by clicking on it again until it turns blue.              
+                """
                 )
             )
         },
-        "annotate": {"text": RUBRIC},
+        "annotate": {
+            "text": markdown.markdown(
+                textwrap.dedent(
+                """
+                Please mark the point(s) in the time series where an abrupt change in the behaviour of the series occurs.
+                The goal is to define segments of the time series that are separated by places where these abrupt changes occur.
+                Note that in general we consider the change point to be the 
+                point where the new behaviour *starts*, not the last point of 
+                the current behaviour. You can reset the graph with the "Reset" button.
+                """
+                )
+            )
+        },
         "evaluate": {
             "text": markdown.markdown(
                 textwrap.dedent(
-                    """
-                The dataset in the previous example shows again a time series 
-                with step changes, but here there are **two** change points. 
-                This is important to keep in mind, as there can be more than 
-                one change point in a dataset."""
+                """
+                This time series example contains one change point that represents a *step change* (aka the “mean")
+                occurred at a certain point in time. A step change is one of the simplest types of change 
+                points that can occur.
+                """
                 )
             )
         },
@@ -136,204 +132,35 @@ DEMO_DATA = {
         "learn": {
             "text": markdown.markdown(
                 textwrap.dedent(
-                    """
-                    In the previous examples we've introduced *step changes*. 
-                    However, these are not the only types of change points that 
-                    can occur, as we'll see in the next example."""
+                """
+                In the previous example we've introduced *step change* or *mean*. This first example has *one* change point.
+                Not all datasets that you'll encounter in this program have exactly one change point.
+                However, this is not the only type of change points that 
+                can occur, as we'll see in the next example. 
+                """
                 )
             )
         },
-        "annotate": {"text": RUBRIC},
+        "annotate": {
+            "text": markdown.markdown(
+                textwrap.dedent(
+                """
+                Please mark the point(s) in the time series where an abrupt change in the behaviour of the series occurs.
+                The goal is to define segments of the time series that are separated by places where these abrupt changes occur.
+                """
+                )
+            )
+        },
         "evaluate": {
             "text": markdown.markdown(
                 textwrap.dedent(
-                    """
+                """
                 This time series shows an example where a change occurs in the 
-                **variance** of the data. At the change point the variance of 
+                *variance* of the data. At the change point the variance of 
                 the noise changes abruptly from a relatively low noise variance 
                 to a high noise variance. This is another type of change point 
-                that can occur."""
-                )
-            )
-        },
-    },
-    4: {
-        "dataset": {"name": "demo_400"},
-        "learn": {
-            "text": markdown.markdown(
-                textwrap.dedent(
-                    """
-                So far we have seen two types of change points: step changes 
-                (also known as mean shift) and variance changes."""
-                )
-            )
-        },
-        "annotate": {"text": RUBRIC},
-        "evaluate": {
-            "text": markdown.markdown(
-                textwrap.dedent(
-                    """
-                Remember that it's also possible for there to be *no change 
-                points* in a dataset. It can sometimes be difficult to tell 
-                whether a dataset has change points or not. In that case, it's 
-                important to remember that we are looking for points where the 
-                behaviour of the time series changes *abruptly*."""
-                )
-            )
-        },
-    },
-    5: {
-        "dataset": {"name": "demo_500"},
-        "learn": {
-            "text": markdown.markdown(
-                textwrap.dedent(
-                    """
-                Change points mark places in the time series where the 
-                behaviour changes *abruptly*. While **outliers** are data 
-                points that do not adhere to the prevailing behaviour of the 
-                time series, they are not generally considered change points 
-                because the behaviour of the time series before and after the 
-                outlier is the same. """
-                )
-            )
-        },
-        "annotate": {"text": RUBRIC},
-        "evaluate": {
-            "text": markdown.markdown(
-                textwrap.dedent(
-                    """
-                Outliers are quite common in real-world time series data, and 
-                not all change point detection methods are robust against these 
-                observations.
-
-                Note that short periods that consist of several consecutive 
-                outlying data points could be considered an abrupt change in 
-                behaviour of the time series. If you see this, use your 
-                intuition to guide you."""
-                )
-            )
-        },
-    },
-    6: {
-        "dataset": {"name": "demo_600"},
-        "learn": {
-            "text": markdown.markdown(
-                textwrap.dedent(
-                    """
-                So far we've seen *step changes*, *variance changes*, and time 
-                series with *outliers*. Can you think of another type of change 
-                that can occur?"""
-                )
-            )
-        },
-        "annotate": {"text": RUBRIC},
-        "evaluate": {
-            "text": markdown.markdown(
-                textwrap.dedent(
-                    """
-                What we see here is a change in *trend*. Changes in trend are 
-                not always change points: gradual changes in direction are 
-                common and should not be considered to be *abrupt* changes. 
-
-                For trend changes it's not always easy to figure out exactly 
-                where the change occurs, so it's harder to get it exactly 
-                right. Use your intuition and keep in mind that it is normal 
-                for the observations to be noisy."""
-                )
-            )
-        },
-    },
-    7: {
-        "dataset": {"name": "demo_650"},
-        "learn": {
-            "text": markdown.markdown(
-                textwrap.dedent(
-                    """
-                The datasets we've seen so far are all relatively well behaved, 
-                but real-world time series are often more chaotic.
+                that can occur.
                 """
-                )
-            )
-        },
-        "annotate": {"text": RUBRIC},
-        "evaluate": {
-            "text": markdown.markdown(
-                textwrap.dedent(
-                    """
-                This was an example of a <a 
-                href="https://en.wikipedia.org/wiki/Random_walk" 
-                target="_blank">random walk</a> without a change point. Some 
-                time series data will look similar to this random walk, in the 
-                sense that it varies over time and changes, but doesn't 
-                actually ever change **abruptly**.  This is important to keep 
-                in mind, because not all datasets that you'll see will 
-                necessarily have change points (it's up to you to decide!)
-                """
-                )
-            )
-        },
-    },
-    8: {
-        "dataset": {"name": "demo_700"},
-        "learn": {
-            "text": markdown.markdown(
-                textwrap.dedent(
-                    """
-                It is not uncommon for time series data from the real world to 
-                display **seasonal variation**, for instance because certain 
-                days of the week are more busy than others. Seasonality can 
-                make it harder to find the change points in the dataset (if 
-                there are any at all). Try to follow the pattern of 
-                seasonality, and check whether the pattern changes in its 
-                behaviour or in one of the ways that we've seen previously."""
-                )
-            )
-        },
-        "annotate": {"text": RUBRIC},
-        "evaluate": {
-            "text": markdown.markdown(
-                textwrap.dedent(
-                    """
-                As you can see from this example, changes in the periodicity of 
-                the seasonal effect can occur as well. We expect that these 
-                kinds of changes are quite rare, but it's nevertheless good to 
-                be aware of them. 
-
-                It is also important to note that seasonal effects on their own 
-                do not constitute change points. For instance, a shift from the 
-                winter season to the summer will show a change in passenger 
-                numbers at the airport, but this will generally not be an 
-                *abrupt* change.
-
-                In some cases, it can help to *blur your eyes* to get a more 
-                "global" view of the time series.
-                """
-                )
-            )
-        },
-    },
-    9: {
-        "dataset": {"name": "demo_800"},
-        "learn": {
-            "text": markdown.markdown(
-                textwrap.dedent(
-                    """
-                    In practice time series datasets are not just one 
-                    dimensional, but can be multidimensional too. A change 
-                    point in such a time series does not necessarily occur in 
-                    all dimensions simultaneously. It is therefore important to 
-                    evaluate the behaviour of each dimension individually, as 
-                    well as in relation to each other."""
-                )
-            )
-        },
-        "annotate": {"text": RUBRIC},
-        "evaluate": {
-            "text": markdown.markdown(
-                textwrap.dedent(
-                    """
-                        In this example of a multidimensional time series, the 
-                        change only occurred in a single dimension."""
                 )
             )
         },
@@ -341,7 +168,7 @@ DEMO_DATA = {
 }
 
 # Cut the tutorial to the first 5 steps
-DEMO_DATA = dict(itertools.islice(DEMO_DATA.items(), 5))
+# DEMO_DATA = dict(itertools.islice(DEMO_DATA.items(), 5))
 
 
 def demo_performance(user_id):
@@ -387,7 +214,7 @@ def redirect_user(demo_id, phase_id):
             return redirect(url_for("main.index"))
 
         # check user performance
-        if demo_performance(current_user.id) < 0.75:
+        if demo_performance(current_user.id) < 0.10:
             flash(
                 "Unfortunately your performance on the introduction "
                 "datasets was not as high as we would like. Please go "
@@ -529,7 +356,7 @@ def demo_learn(demo_id, form):
     demo_data = DEMO_DATA[demo_id]["learn"]
     return render_template(
         "demo/learn.html",
-        title="Introduction – %i" % demo_id,
+        title="Demo example – " + str(demo_id) + " out of " + str(len(DEMO_DATA)),
         text=demo_data["text"],
         form=form,
     )
@@ -555,7 +382,7 @@ def demo_annotate(demo_id):
     is_multi = len(chart_data["chart_data"]["values"]) > 1
     return render_template(
         "annotate/index.html",
-        title="Introduction – %i" % demo_id,
+        title="Demo example – " + str(demo_id) + " out of " + str(len(DEMO_DATA)),
         data=chart_data,
         rubric=demo_data["text"],
         identifier=demo_id,
@@ -593,7 +420,7 @@ def demo_evaluate(demo_id, phase_id, form):
     annotations_user = [dict(index=x) for x in user_changepoints]
     return render_template(
         "demo/evaluate.html",
-        title="Introduction – %i" % demo_id,
+        title="Demo example – " + str(demo_id) + " out of " + str(len(DEMO_DATA)),
         data=chart_data,
         annotations_user=annotations_user,
         annotations_true=annotations_true,

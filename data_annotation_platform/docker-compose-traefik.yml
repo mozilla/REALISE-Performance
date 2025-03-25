@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  traefik:
+    image: traefik
+    container_name: traefik
+    command:
+      - "--api.insecure=true"  # Optional: Enables the Traefik dashboard
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - web
+    expose:
+      - "8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik-config/traefik.toml:/traefik.toml
+      - ./traefik-config/acme.json:/acme.json
+    labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.traefik.rule=Host(`7b76-132-205-229-58.ngrok-free.app`)"
+    - "traefik.http.routers.traefik.entrypoints=https"
+    - "traefik.http.routers.traefik.tls.certresolver=myresolver"
+    - "traefik.http.services.traefik.loadbalancer.server.port=8081"
+
+
+networks:
+  web:
+    external: true
