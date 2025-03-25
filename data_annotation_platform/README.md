@@ -174,7 +174,7 @@ instructions](./docs/DEPLOYMENT.md).
    you can upload datasets, manage tasks and users, and download annotation 
    results. This can be done using the following command:
    ```
-   $ docker-compose run --entrypoint 'flask admin add --auto-confirm-email' annotatechange
+   $ docker-compose run --entrypoint 'flask admin add --auto-confirm-email' datannotationplatform
    ```
 
 8. As admin, upload **ALL** demo datasets (included in [demo_data](./demo_data)) 

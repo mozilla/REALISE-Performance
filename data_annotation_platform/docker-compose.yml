@@ -6,6 +6,7 @@ services:
     build: .
     env_file: .env
     labels:
+      - traefik.enable=true"
       - "traefik.backend=annotatechange"
       - "traefik.docker.network=web"
       - "traefik.frontend.rule=Host:${DNS_NAME}"
@@ -21,7 +22,7 @@ services:
       - ./persist/instance:/home/annotatechange/instance
 
   db:
-    image: mysql
+    image: mysql    # last known working version: 8.0.22
     env_file: .env
     volumes:
       - ./persist/mysql:/var/lib/mysql
@@ -29,8 +30,6 @@ services:
       - internal
     labels:
       - "traefik.enable=false"
-    cap_add:
-      - SYS_NICE # https://stackoverflow.com/q/55559386/
 
 networks:
   web:

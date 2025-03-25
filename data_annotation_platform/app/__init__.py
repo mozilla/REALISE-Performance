@@ -11,7 +11,8 @@ import os
 
 from logging.handlers import SMTPHandler, RotatingFileHandler
 
-from flask import Flask
+from flask import Flask, request
+
 from flask_bootstrap import Bootstrap, WebCDN
 from flask_login import LoginManager
 from flask_mail import Mail
@@ -41,6 +42,12 @@ def create_app(config_class=Config):
     login.init_app(app)
     mail.init_app(app)
     bootstrap.init_app(app)
+
+    # Add the ngrok-skip-browser-warning header
+    @app.after_request
+    def add_ngrok_skip_browser_warning(response):
+        response.headers['ngrok-skip-browser-warning'] = '1'
+        return response
 
     # Register CDNs
     app.extensions["bootstrap"]["cdns"]["bootstrap"] = WebCDN(
