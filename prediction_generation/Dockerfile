@@ -29,9 +29,9 @@ COPY ${PROJECT_FOLDER}/Makefile /TCPDBench/Makefile
 COPY ${PROJECT_FOLDER}/cpdbench_ecp.R /TCPDBench/execs/R/cpdbench_ecp.R
 COPY ${PROJECT_FOLDER}/cpdbench_kcpa.py /TCPDBench/execs/python/cpdbench_kcpa.py
 COPY ${PROJECT_FOLDER}/abed_conf.py /TCPDBench/abed_conf.py
-ADD ${DATASETS_PATH} /TCPDBench/datasets
-COPY ${ANNOTATIONS_PATH} /TCPDBench/analysis/annotations/
-COPY ${SIG_ATTIBUTES} /TCPDBench/analysis/annotations/
+COPY ${DATASETS_PATH} /TCPDBench/datasets
+COPY ${ANNOTATIONS_PATH} /TCPDBench/analysis/annotations/annotations.json
+COPY ${SIG_ATTIBUTES} /TCPDBench/analysis/annotations/signatures_attributes.json
 RUN chmod +x utils/setup_datasets.sh && ./utils/setup_datasets.sh
 
 # docker build --build-arg DATASETS_PATH=data/195_non_sp_at_least_one_fp_fn_samples_json_aggregated --build-arg ANNOTATIONS_PATH=data/195_non_sp_at_least_one_fp_fn_samples_json_aggregated/annotations.json --build-arg SIG_ATTIBUTES=data/temp_data/195_non_sp_at_least_one_fp_fn_samples_attribute.json -t non_sp_at_least_one_fn_fp -f prediction_generation/Dockerfile .

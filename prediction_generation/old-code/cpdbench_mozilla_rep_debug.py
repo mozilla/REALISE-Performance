@@ -345,7 +345,7 @@ def main():
 
 
             # This is where we create the alert aka append its index in the locations list
-            locations += [i for i, ts in enumerate(unique_push_timestamp) if ts == cur.push_timestamp]
+            locations += [str(i) + "/t_value/" + str(cur.t) + "/pct_value/" + str(alert_properties.pct_change) + "/prev_value/" + str(prev_value) + "/new_value/" + str(new_value) for i, ts in enumerate(unique_push_timestamp) if ts == cur.push_timestamp]
             # PerformanceAlert.objects.update_or_create(
             #     summary=summary,
             #     series_signature=signature,

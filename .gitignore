@@ -12,3 +12,4 @@ data/temp_data
 */*.egg-info
 */*.swp
 */persist
+*/traefik-config
