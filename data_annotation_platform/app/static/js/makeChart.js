@@ -251,22 +251,41 @@ function baseChart(
 
 
 	// Add event listener for zoom toggle
-	document.getElementById("zoomToggle").addEventListener("change", function() {
-		if (this.checked) {
-		  // Y-axis zoom
-		  currentZoom = zoomY;
-		  document.getElementById("zoomLabel").innerText = "Change zoom mode (current mode is Y-Axis Zoom)";
-		} else {
-		  // X-axis zoom
-		  currentZoom = zoomX;
-		  document.getElementById("zoomLabel").innerText = "Change zoom mode (current mode is X-Axis Zoom)";
-		}
+	// document.getElementById("zoomToggle").addEventListener("change", function() {
+	// 	if (this.checked) {
+	// 	  // Y-axis zoom
+	// 	  currentZoom = zoomY;
+	// 	  document.getElementById("zoomLabel").innerText = "Change zoom mode (current mode is Y-Axis Zoom)";
+	// 	} else {
+	// 	  // X-axis zoom
+	// 	  currentZoom = zoomX;
+	// 	  document.getElementById("zoomLabel").innerText = "Change zoom mode (current mode is X-Axis Zoom)";
+	// 	}
 	  
-		// Apply the current zoom behavior
+	// 	// Apply the current zoom behavior
+	// 	gZoom.call(currentZoom);
+	//   });	  
+
+
+
+	const zoomToggle = document.getElementById("zoomToggle");
+
+	if (zoomToggle) {
+	zoomToggle.addEventListener("change", function () {
+		if (this.checked) {
+		currentZoom = zoomY;
+		document.getElementById("zoomLabel").innerText =
+			"Change zoom mode (current mode is Y-Axis Zoom)";
+		} else {
+		currentZoom = zoomX;
+		document.getElementById("zoomLabel").innerText =
+			"Change zoom mode (current mode is X-Axis Zoom)";
+		}
 		gZoom.call(currentZoom);
-	  });	  
-
-
+	});
+	} else {
+	console.warn('zoomToggle element not found, skipping event listener.');
+	}
 
 	// rectangle for the graph area
 	gZoom.append("rect")

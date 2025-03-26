@@ -1,5 +1,6 @@
 version: '3'
 
+
 services:
   annotatechange:
     image: datannotationplatform
@@ -24,6 +25,7 @@ services:
   db:
     image: mysql    # last known working version: 8.0.22
     env_file: .env
+    user: "root:root"
     volumes:
       - ./persist/mysql:/var/lib/mysql
     networks:
