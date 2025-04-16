@@ -47,7 +47,7 @@ DEMO_DATA = {
                 *human-annotated* time series to use in the development and 
                 evaluation of change point algorithms which could be used in [Perfherder](https://treeherder.mozilla.org/perfherder/alerts?hideDwnToInv=1&page=1) to provide more accurate alerts, saving investigation time and effort for Mozilla Performance Sheriffs.
 
-                The time series you will see was collected from the Mozilla performance infrastructure. We collected performance measurements from multiple signatures and we aggregate them by revision as we group the measurtements for a specific revision and we abergae them. 
+                The time series you will see was collected from the Mozilla performance infrastructure. We collected performance measurements from multiple signatures and we aggregate them by revision as we group the measurtements for a specific revision and we average them. 
 
                 Once you annotate a time series, feel free to leave a review on its difficulty of annotation. This will help us to conduct our analysis.
 
