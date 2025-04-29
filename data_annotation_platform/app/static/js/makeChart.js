@@ -83,14 +83,6 @@ function baseChart(
 	divWidth,
 	divHeight
 ) {
-	/* Note:
-	 * It may be tempting to scale the width/height of the div to be 
-	 * proportional to the size of the window. However this may cause some 
-	 * users with wide screens to perceive changes in the time series 
-	 * differently than others because the horizontal axis is more 
-	 * stretched out. It is therefore better to keep the size of the graph 
-	 * the same for all users.
-	 */
 	if (divWidth === null || typeof divWidth === 'undefined')
 		divWidth = 1200;
 	if (divHeight === null || typeof divHeight === 'undefined')
@@ -124,30 +116,18 @@ function baseChart(
 		lineObjects.push(lineObj);
 	}
 
-	// var zoomX = d3.zoom()
-	// 	.scaleExtent([1, 100])
-	// 	.translateExtent([[0, 0], [width, height]])
-	// 	.extent([[0, 0], [width, height]])
-	// 	.on("zoom", zoomTransformX);
-
-	// var zoomY = d3.zoom()
-	// 	.scaleExtent([1, 100])
-	// 	.translateExtent([[0, 0], [width, height]])
-	// 	.extent([[0, 0], [width, height]])
-	// 	.on("zoom", zoomTransformY);
-
-	// var currentZoom = zoomX; // Default: X-axis zooming
-
 	var zoomX = d3.zoom()
     .scaleExtent([1, 100])
     .translateExtent([[0, 0], [width, height]])
     .extent([[0, 0], [width, height]])
+	.wheelDelta(() => -d3.event.deltaY * 0.002)
     .on("zoom", zoomTransformX);
 
 	var zoomY = d3.zoom()
 		.scaleExtent([1, 100])
 		.translateExtent([[0, 0], [width, height]])
 		.extent([[0, 0], [width, height]])
+		.wheelDelta(() => -d3.event.deltaY * 0.004)
 		.on("zoom", zoomTransformY);
 
 	var currentZoom = zoomX; // Default: X-axis zooming
@@ -155,11 +135,18 @@ function baseChart(
 
 
 	function zoomTransformX() {
-		transform = d3.event.transform;
-		
+		const transform = d3.event.transform;
+		const mouseX = d3.mouse(svg.node())[0]; // Get mouse X position relative to the SVG
+		const mouseDomainX = xScale.invert(mouseX); // Convert mouse X to domain value
+	
 		// Transform only the x-axis
 		xScale.domain(transform.rescaleX(xScaleOrig).domain());
-		
+	
+		// Adjust the domain to center around the mouse position
+		const newMouseDomainX = xScale.invert(mouseX);
+		const domainShift = mouseDomainX - newMouseDomainX;
+		xScale.domain(xScale.domain().map(d => d + domainShift));
+	
 		for (let r = 0; r < data.length; r++) {
 			svg.select(".line-" + r).attr("d", lineObjects[r]);
 	
@@ -180,18 +167,25 @@ function baseChart(
 	}
 	
 	function zoomTransformY() {
-		transform = d3.event.transform;
-		
+		const transform = d3.event.transform;
+		const mouseY = d3.mouse(svg.node())[1]; // Get mouse Y position relative to the SVG
+		const mouseDomainY = yScale.invert(mouseY); // Convert mouse Y to domain value
+	
 		// Rescale the Y axis using yScaleOrig
 		yScale.domain(transform.rescaleY(yScaleOrig).domain());
+	
+		// Adjust the domain to center around the mouse position
+		const newMouseDomainY = yScale.invert(mouseY);
+		const domainShift = mouseDomainY - newMouseDomainY;
+		yScale.domain(yScale.domain().map(d => d + domainShift));
 	
 		for (let r = 0; r < data.length; r++) {
 			svg.select(".line-" + r).attr("d", lineObjects[r]);
 	
 			// Transform the circles
 			pointSets[r].data(data[r])
-				.attr("cx", function(d) { return xScale(d.X); })
-				.attr("cy", function(d) { return yScale(d.Y); });
+				.attr("cx", d => xScale(d.X))
+				.attr("cy", d => yScale(d.Y));
 		}
 	
 		// Transform the annotation lines (if any)
@@ -205,16 +199,51 @@ function baseChart(
 		svg.select(".axis--y").call(yAxis);
 	}
 
-	// Build the SVG layer cake
-	// There are a few elements to this:
-	//
-	//  1. a clip path that ensures elements aren't drawn outside the 
-	//  axes. This is activated with css
-	//  2. axes and x axis label
-	//  3. wrapper "g" element with the zoom event
-	//  3. rectangle to keep the drawing
-	//  4. line
-	//  5. circles with a click event
+
+	// Define drag behavior for panning
+	var drag = d3.drag()
+	.on("drag", function () {
+		// Calculate the change in X and Y based on drag
+		var dx = d3.event.dx * (xScale.domain()[1] - xScale.domain()[0]) / width;
+		var dy = d3.event.dy * (yScale.domain()[1] - yScale.domain()[0]) / height;
+
+		// Update X and Y domains
+		xScale.domain([xScale.domain()[0] - dx, xScale.domain()[1] - dx]);
+		yScale.domain([yScale.domain()[0] + dy, yScale.domain()[1] + dy]);
+
+		// Update the axes
+		svg.select(".axis--x").call(xAxis);
+		svg.select(".axis--y").call(yAxis);
+
+		// Update lines and points
+		for (let r = 0; r < data.length; r++) {
+			svg.select(".line-" + r).attr("d", lineObjects[r]);
+			pointSets[r].data(data[r])
+				.attr("cx", d => xScale(d.X))
+				.attr("cy", d => yScale(d.Y));
+		}
+
+		// Update annotation lines (if any)
+		annoLines = gView.selectAll("line");
+		annoLines._groups[0].forEach(function (l) {
+			l.setAttribute("x1", xScale(l.getAttribute("cp_idx")));
+			l.setAttribute("x2", xScale(l.getAttribute("cp_idx")));
+			l.setAttribute("y1", yScale(l.getAttribute("cp_idx")));
+			l.setAttribute("y2", yScale(l.getAttribute("cp_idx")));
+		});
+	});
+	
+
+
+
+
+
+
+
+
+
+
+
 
 	var zero = xScale(0);
 
@@ -247,7 +276,11 @@ function baseChart(
 		.text("Time");
 
 	// wrapper for zoom
-	var gZoom = svg.append("g").call(currentZoom);
+	var gZoom = svg.append("g")
+	.call(currentZoom)
+	.call(drag);
+
+	gZoom.call(currentZoom);
 
 
 	// Add event listener for zoom toggle
