@@ -51,6 +51,8 @@ DEMO_DATA = {
 
                 Once you annotate a time series, feel free to leave a review on its difficulty of annotation. This will help us to conduct our analysis.
 
+                Each step of the shows a limited part of the functionality of the tool so you can develop a good understanding of it.
+
                 Thanks again for your help!
                 """
                 )
@@ -62,9 +64,17 @@ DEMO_DATA = {
                 """
                 The following time series is presented through the specs described in the box below.
                 
-                In order to perperly investigate change points, you could *zoom in* within the graph with your mouse for more details on X-axis or Y-axis, you can control the behaviour through the correspondent toggle below the graph.
+                In order to perperly investigate change points, you could *zoom in* within the graph with your mouse or touchpad for more details on X-axis or Y-axis, you can control the behaviour through the correspondent toggle below the graph.
 
-                Note that you could pan in the graph!
+                - *Zooming with mouse*
+
+                Use the scroller to zoom in and out, you could double click on an area to zoom in it.
+
+                - Zooming and panning with touchpad
+
+                Use a two-finger swipe gesture on your touchpad to zoom in (upward sliding) or zoom out (downward sliding). You can also double-click on the left button of the touchpad to zoom in.
+
+                Note that you could pan in the graph! Click and hold the left mouse button (or touchpad), then move your cursor or finger to pan the graph 
                 
                 Also, you could *choose* to include or remove the lines in the graph for convenience by clicking and unclicking the checkbox below.
                 
@@ -95,7 +105,7 @@ DEMO_DATA = {
                 Different types of changes (mean, variance, both) can be marked
                 by *clicking repeatedly* on the same datapoint. The color of the
                 datapoint will change, and the type of change will be reported
-                in the *table* underneath the plot as follows: ed (mean), orange
+                in the *table* underneath the plot as follows: red (mean), orange
                 (variance), yellow (mean_variance) and blue (none). A marked
                 point can be unmarked by clicking on it again until it turns blue.              
                 """
