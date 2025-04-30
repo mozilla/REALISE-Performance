@@ -74,6 +74,7 @@ DEMO_DATA = {
 
                 Use a two-finger swipe gesture on your touchpad to zoom in (upward sliding) or zoom out (downward sliding). You can also double-click on the left button of the touchpad to zoom in.
 
+                *Be careful!* the initial zoom after changing the zoom mode might be very large. It is recommended to point the cursor on the data points before zooming in.
                 Note that you could pan in the graph! Click and hold the left mouse button (or touchpad), then move your cursor or finger to pan the graph 
                 
                 Also, you could *choose* to include or remove the lines in the graph for convenience by clicking and unclicking the checkbox below.
