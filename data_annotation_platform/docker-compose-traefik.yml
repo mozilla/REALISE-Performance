@@ -22,7 +22,7 @@ services:
       - ./traefik-config/acme.json:/acme.json
     labels:
     - "traefik.enable=true"
-    - "traefik.http.routers.traefik.rule=Host(`7b76-132-205-229-58.ngrok-free.app`)"
+    - "traefik.http.routers.traefik.rule=Host(`ec2-3-144-228-249.us-east-2.compute.amazonaws.com/`)"
     - "traefik.http.routers.traefik.entrypoints=https"
     - "traefik.http.routers.traefik.tls.certresolver=myresolver"
     - "traefik.http.services.traefik.loadbalancer.server.port=8081"
