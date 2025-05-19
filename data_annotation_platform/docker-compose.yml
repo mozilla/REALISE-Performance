@@ -1,19 +1,17 @@
 version: '3'
 
-
 services:
   annotatechange:
     image: datannotationplatform
     build: .
     env_file: .env
     labels:
-      - traefik.enable=true"
-      - "traefik.backend=annotatechange"
-      - "traefik.docker.network=web"
-      - "traefik.frontend.rule=Host:${DNS_NAME}"
-      - "traefik.port=7831"
-    ports:
-      - "80:7831"
+      - "traefik.enable=true"
+      - "traefik.http.routers.annotatechange.rule=Host(`perfchangeannotator.com`)"
+      - "traefik.http.routers.annotatechange.entrypoints=websecure"
+      - "traefik.http.routers.annotatechange.tls=true"
+      - "traefik.http.routers.annotatechange.tls.certresolver=le"
+      - "traefik.http.services.annotatechange.loadbalancer.server.port=7831"
     networks:
       - internal
       - web
@@ -23,7 +21,7 @@ services:
       - ./persist/instance:/home/annotatechange/instance
 
   db:
-    image: mysql    # last known working version: 8.0.22
+    image: mysql
     env_file: .env
     user: "root:root"
     volumes:

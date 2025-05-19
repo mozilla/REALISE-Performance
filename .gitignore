@@ -13,3 +13,4 @@ data/temp_data
 */*.swp
 */persist
 */traefik-config
+*/letsencrypt
