@@ -14,3 +14,4 @@ data/temp_data
 */persist*
 */traefik-config
 */letsencrypt
+**/.DS_Store
