@@ -11,6 +11,6 @@ data/temp_data
 */app.db
 */*.egg-info
 */*.swp
-*/persist
+*/persist*
 */traefik-config
 */letsencrypt

@@ -18,3 +18,11 @@
 .tasks-done .btn {
     padding: 0px 12px !important;
 }
+
+.small-img {
+    display: block;
+    margin: 40px auto;
+    width: 700px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  }
