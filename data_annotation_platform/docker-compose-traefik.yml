@@ -1,33 +1,32 @@
-version: '3'
+version: "3.3"
 
 services:
   traefik:
-    image: traefik
-    container_name: traefik
+    image: "traefik:v3.4"
+    container_name: "traefik"
     command:
-      - "--api.insecure=true"  # Optional: Enables the Traefik dashboard
+      - "--api.insecure=true"
       - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.le.acme.httpchallenge=true"
+      - "--certificatesresolvers.le.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.le.acme.email=realiselab@gmail.com"
+      - "--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json"
     ports:
       - "80:80"
       - "443:443"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./letsencrypt:/letsencrypt"
     networks:
       - web
-    expose:
-      - "8080"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./traefik-config/traefik.toml:/traefik.toml
-      - ./traefik-config/acme.json:/acme.json
-    labels:
-    - "traefik.enable=true"
-    - "traefik.http.routers.traefik.rule=Host(`ec2-3-144-228-249.us-east-2.compute.amazonaws.com/`)"
-    - "traefik.http.routers.traefik.entrypoints=https"
-    - "traefik.http.routers.traefik.tls.certresolver=myresolver"
-    - "traefik.http.services.traefik.loadbalancer.server.port=8081"
-
+      - internal
 
 networks:
   web:
     external: true
+  internal:
+    external: false
