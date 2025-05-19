@@ -49,4 +49,4 @@ This work is a collaboration between Mozilla and REALISE Lab in Concordia Univer
 - Prof. Diego Elias Costa (Supervising Professor)
 - Mohamed Bilel Besbes (Research assistant)
 
-![Concordia logo](assets/concordia-logo.png)
+![Concordia logo](app/static/img/concordia-logo.png)

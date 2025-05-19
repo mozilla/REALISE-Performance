@@ -26,7 +26,7 @@ Here's a screenshot of what the application looks like during the annotation
 process:
 
 <p align="center">
-<img height="500px" src="./annotatechange_wide.png" alt="screenshot of 
+<img height="500px" src="app/static/img/annotatechange_wide.png" alt="screenshot of 
 AnnotateChange" />
 </p>
 
