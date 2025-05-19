@@ -8,6 +8,7 @@ import csv
 import io
 import os
 import datetime
+from app.utils.datasets import validate_dataset, get_name_from_dataset
 
 from flask import (
     current_app,
@@ -16,6 +17,7 @@ from flask import (
     render_template,
     send_file,
     url_for,
+    request,
 )
 
 from werkzeug.utils import secure_filename
@@ -252,7 +254,6 @@ def manage_datasets():
         form=form,
     )
 
-
 @bp.route("/add", methods=("GET", "POST"))
 @admin_required
 def add_dataset():
@@ -264,30 +265,66 @@ def add_dataset():
     )
     form = AdminAddDatasetForm()
     if form.validate_on_submit():
-        temp_filename = os.path.join(
-            tmp_dir, secure_filename(form.file_.data.filename)
-        )
-        if not os.path.exists(temp_filename):
-            flash("Internal error: temporary dataset disappeared.", "error")
+        files = request.files.getlist("file_")
+        if not files:
+            flash("No files uploaded.", "error")
             return redirect(url_for("admin.add_dataset"))
-        name = get_name_from_dataset(temp_filename)
-        target_filename = os.path.join(dataset_dir, name + ".json")
-        if os.path.exists(target_filename):
-            flash("Internal error: file already exists!", "error")
-            return redirect(url_for("admin.add_dataset"))
-        os.rename(temp_filename, target_filename)
-        if not os.path.exists(target_filename):
-            flash("Internal error: file moving failed", "error")
-            return redirect(url_for("admin.add_dataset"))
-        is_demo = dataset_is_demo(target_filename)
-        dataset = Dataset(
-            name=name, md5sum=md5sum(target_filename), is_demo=is_demo
-        )
-        db.session.add(dataset)
+
+        for file_storage in files:
+            filename = secure_filename(file_storage.filename)
+
+            # Validate extension
+            if not filename.lower().endswith(".json"):
+                flash(f"File '{filename}' is not a JSON file.", "error")
+                continue
+
+            temp_filename = os.path.join(tmp_dir, filename)
+
+            # Save temporary file
+            file_storage.stream.seek(0)
+            file_storage.save(temp_filename)
+
+            # Validate content
+            error = validate_dataset(temp_filename)
+            if error is not None:
+                os.unlink(temp_filename)
+                flash(f"Validation failed for '{filename}': {error}", "error")
+                continue
+
+            # Derive dataset name and ensure uniqueness
+            name = get_name_from_dataset(temp_filename)
+            existing = Dataset.query.filter_by(name=name).first()
+            if existing is not None:
+                os.unlink(temp_filename)
+                flash(f"Dataset '{name}' already exists.", "error")
+                continue
+
+            # Final move and db update
+            target_filename = os.path.join(dataset_dir, name + ".json")
+            if os.path.exists(target_filename):
+                os.unlink(temp_filename)
+                flash(f"File for dataset '{name}' already exists.", "error")
+                continue
+
+            os.rename(temp_filename, target_filename)
+
+            if not os.path.exists(target_filename):
+                flash(f"Internal error moving file '{filename}'.", "error")
+                continue
+
+            is_demo = dataset_is_demo(target_filename)
+            dataset = Dataset(
+                name=name, md5sum=md5sum(target_filename), is_demo=is_demo
+            )
+            db.session.add(dataset)
+
+            flash(f"Dataset '{name}' added successfully.", "success")
+
         db.session.commit()
-        flash("Dataset %r added successfully." % name, "success")
         return redirect(url_for("admin.add_dataset"))
+
     return render_template("admin/add.html", title="Add Dataset", form=form)
+
 
 
 @bp.route("/annotations", methods=("GET", "POST"))

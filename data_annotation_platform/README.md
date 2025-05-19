@@ -63,35 +63,35 @@ AnnotateChange can be launched quickly for local development as follows:
 
 1. Clone the repo
    ```
-   $ git clone https://github.com/mozilla/REALISE-Performance.git
-   $ cd REALISE-Performance/data_annotation_platform
+   git clone https://github.com/mozilla/REALISE-Performance.git
+   cd REALISE-Performance/data_annotation_platform
    ```
 
 2. Set up a virtual environment and install dependencies (requires Python 
    3.7+)
    ```
-   $ sudo apt-get install -y python3-venv # assuming Ubuntu
-   $ pip install wheel
-   $ python3 -m venv ./venv
-   $ source ./venv/bin/activate
-   $ pip install -r requirements.txt
+   sudo apt-get install -y python3-venv # assuming Ubuntu
+   pip install wheel
+   python3 -m venv ./venv
+   source ./venv/bin/activate
+   pip install -r requirements.txt
    ```
 
 3. Create local development environment file
    ```
-   $ cp .env.example .env.development
-   $ sed -i 's/DB_TYPE=mysql/DB_TYPE=sqlite3/g' .env.development
+   cp .env.example .env.development
+   sed -i 's/DB_TYPE=mysql/DB_TYPE=sqlite3/g' .env.development
    ```
    With ``DB_TYPE=sqlite3``, we don't have to deal with MySQL locally.
 
 4. Initialize the database (this will be a local ``app.db`` file).
    ```
-   $ ./flask.sh db upgrade
+   ./flask.sh db upgrade
    ```
 
 5. Create the admin user account
    ```
-   $ ./flask.sh admin add --auto-confirm-email
+   ./flask.sh admin add --auto-confirm-email
    ```
    The ``--auto-confirm-email`` flag automatically marks the email address of 
    the admin user as confirmed. This is mostly useful in development 
@@ -99,7 +99,7 @@ AnnotateChange can be launched quickly for local development as follows:
 
 6. Run the application
    ```
-   $ ./flask.sh run
+   ./flask.sh run
    ```
    This should tell you where its running, probably ``localhost``. You 
    should be able to log in with the admin account you've just created.
@@ -122,26 +122,27 @@ instructions](./docs/DEPLOYMENT.md).
 
 1. Clone this repository and switch to it:
    ```
-   $ git clone https://github.com/mozilla/REALISE-Performance.git
-   $ cd REALISE-Performance/data_annotation_platform
+   git clone https://github.com/mozilla/REALISE-Performance.git
+   cd REALISE-Performance/data_annotation_platform
    ```
 
 2. Build the docker image:
    ```
-   $ docker build -t datannotationplatform .
+   docker build -t datannotationplatform .
    ```
 
 3. Create the directory for persistent MySQL database storage:
    ```
-   $ mkdir -p persist/{instance,mysql}
-   $ sudo chown :1024 persist/instance
-   $ chmod 775 persist/instance
-   $ chmod g+s persist/instance
+   mkdir -p persist/{instance,mysql}
+   sudo chown :1024 persist/instance
+   chmod 775 persist/instance
+   chmod g+s persist/instance
+   cp ../data/data_timeseries_attributes.json persist/instance/tmp/data_timeseries_attributes.json
    ```
 
 4. Copy the environment variables file:
    ```
-   $ cp .env.example .env
+   cp .env.example .env
    ```
    Some environment variables can be adjusted if needed. For example, 
    when moving to production, you'll need to change the `FLASK_ENV` variable 
@@ -158,12 +159,12 @@ instructions](./docs/DEPLOYMENT.md).
 5. Create a local docker network for communiation between the AnnotateChange 
    app and the MySQL server:
    ```
-   $ docker network create web
+   docker network create web
    ```
 
 6. Launch the services with docker-compose
    ```
-   $ docker-compose up
+   docker-compose up
    ```
    You may need to wait 2 minutes here before the database is initialized.
    If all goes well, you should be able to point your browser to 
@@ -174,7 +175,7 @@ instructions](./docs/DEPLOYMENT.md).
    you can upload datasets, manage tasks and users, and download annotation 
    results. This can be done using the following command:
    ```
-   $ docker-compose run --entrypoint 'flask admin add --auto-confirm-email' datannotationplatform
+   docker-compose run --entrypoint 'flask admin add --auto-confirm-email' datannotationplatform
    ```
 
 8. As admin, upload **ALL** demo datasets (included in [demo_data](./demo_data)) 
