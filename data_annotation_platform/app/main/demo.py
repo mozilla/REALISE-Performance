@@ -43,8 +43,7 @@ DEMO_DATA = {
                 """
                 Welcome to the Mozilla data annotation tool. Thank you for taking the time to provide your input.
 
-                Our goal is to create a dataset of                 
-                *human-annotated* time series to use in the development and 
+                Our goal is to create a dataset of *human-annotated* time series to use in the development and 
                 evaluation of change point algorithms which could be used in [Perfherder](https://treeherder.mozilla.org/perfherder/alerts?hideDwnToInv=1&page=1) to provide more accurate alerts, saving investigation time and effort for Mozilla Performance Sheriffs.
 
                 The time series you will see was collected from the Mozilla performance infrastructure. We collected performance measurements from multiple signatures and we aggregate them by revision as we group the measurtements for a specific revision and we average them. 
@@ -144,9 +143,9 @@ DEMO_DATA = {
             "text": markdown.markdown(
                 textwrap.dedent(
                 """
-                In the previous example we've introduced *step change* or *mean*. This first example has *one* change point.
+                In the previous example we've introduced *step change* or *mean*. It had *one* change point.
                 Not all datasets that you'll encounter in this program have exactly one change point.
-                However, this is not the only type of change points that 
+                Also, *mean* is not the only type of change points that 
                 can occur, as we'll see in the next example. 
                 """
                 )
