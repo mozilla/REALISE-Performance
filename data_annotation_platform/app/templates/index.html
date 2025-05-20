@@ -88,7 +88,7 @@
       {% else %}
         <p>Click the button below to do some more annotations!</p>
       {% endif %}
-      <p>So far, you annotated <strong>{{ tasks_done|length }}</strong> time series! <strong>{{ tasks_potential|length }}</strong> to go!</p>
+      <p>So far, you annotated <strong>{{ tasks_done|length }}</strong> time series!</p>
       <div id="annotate-button">
         <a class="btn btn-primary btn-lg btn-block" href="{{ url_for('main.assign') }}" role="button">
           Click here to annotate a time series!
