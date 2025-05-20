@@ -15,8 +15,6 @@ services:
     networks:
       - internal
       - web
-    ports:
-      - "80:7831"
     depends_on:
       - db
     volumes:
