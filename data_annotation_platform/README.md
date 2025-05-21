@@ -137,7 +137,6 @@ instructions](./docs/DEPLOYMENT.md).
    sudo chown :1024 persist/instance
    chmod 775 persist/instance
    chmod g+s persist/instance
-   cp ../data/data_timeseries_attributes.json persist/instance/tmp/data_timeseries_attributes.json
    ```
 
 4. Copy the environment variables file:
@@ -175,7 +174,12 @@ instructions](./docs/DEPLOYMENT.md).
    you can upload datasets, manage tasks and users, and download annotation 
    results. This can be done using the following command:
    ```
-   docker-compose run --entrypoint 'flask admin add --auto-confirm-email' datannotationplatform
+   docker-compose run --entrypoint 'flask admin add --auto-confirm-email' annotatechange
+   ```
+   Also, you need to load the JSON file cotaining the characteristics of the timeseries.
+
+   ```
+   cp ../data/data_timeseries_attributes.json persist/instance/tmp/data_timeseries_attributes.json
    ```
 
 8. As admin, upload **ALL** demo datasets (included in [demo_data](./demo_data)) 
