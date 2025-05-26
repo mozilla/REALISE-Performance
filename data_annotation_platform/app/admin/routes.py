@@ -41,6 +41,7 @@ from app.utils.datasets import (
 )
 from sqlalchemy import func
 
+ADMIN_EMAILS = os.getenv("ADMIN_EMAILS", "realiselab@gmail.com")
 
 @bp.route("/manage/tasks", methods=("GET", "POST"))
 @admin_required
@@ -108,7 +109,7 @@ def manage_tasks():
         .all()
     )
     return render_template(
-        "admin/manage_tasks.html", title="Assign Task", form=form, tasks=tasks
+        "admin/manage_tasks.html", title="Assign Task", form=form, tasks=tasks, admin_emails=ADMIN_EMAILS
     )
 
 @bp.route("/manage/tasks/download", methods=("GET",))
@@ -190,7 +191,7 @@ def manage_users():
         flash("User '%s' deleted successfully." % username, "success")
         return redirect(url_for("admin.manage_users"))
     return render_template(
-        "admin/manage_users.html", title="Manage Users", users=users, form=form
+        "admin/manage_users.html", title="Manage Users", users=users, form=form, admin_emails=ADMIN_EMAILS
     )
 
 
@@ -252,6 +253,7 @@ def manage_datasets():
         title="Manage Datasets",
         overview=overview,
         form=form,
+        admin_emails=ADMIN_EMAILS
     )
 
 @bp.route("/add", methods=("GET", "POST"))
@@ -323,7 +325,7 @@ def add_dataset():
         db.session.commit()
         return redirect(url_for("admin.add_dataset"))
 
-    return render_template("admin/add.html", title="Add Dataset", form=form)
+    return render_template("admin/add.html", title="Add Dataset", form=form, admin_emails=ADMIN_EMAILS)
 
 
 
@@ -355,6 +357,7 @@ def view_annotations():
         title="View Annotations",
         annotations=annotations,
         form=form,
+        admin_emails=ADMIN_EMAILS
     )
 
 
@@ -443,10 +446,11 @@ def view_annotations_by_dataset(dset_id):
         title="View Annotations for dataset",
         data=data,
         is_multi=is_multi,
+        admin_emails=ADMIN_EMAILS
     )
 
 
 @bp.route("/", methods=("GET",))
 @admin_required
 def index():
-    return render_template("admin/index.html", title="Admin Home")
+    return render_template("admin/index.html", title="Admin Home", admin_emails=ADMIN_EMAILS)
