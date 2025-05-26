@@ -18,7 +18,11 @@ from app.models import Annotation, Task, Dataset
 from app.utils.datasets import load_data_for_chart
 from app.utils.tasks import generate_user_task
 
+import os
+
 logger = logging.getLogger(__name__)
+
+ADMIN_EMAILS = os.getenv("ADMIN_EMAILS", "realiselab@gmail.com")
 
 RUBRIC = """
 Please mark the point(s) in the time series where an <b>abrupt change</b> in
@@ -57,8 +61,9 @@ def index():
             tasks_done=tasks_done,
             tasks_todo=tasks_todo,
             tasks_potential=tasks_potential,
+            admin_emails=ADMIN_EMAILS
         )
-    return render_template("index.html", title="Home")
+    return render_template("index.html", title="Home", admin_emails=ADMIN_EMAILS)
 
 
 @bp.route("/assign")
@@ -188,6 +193,7 @@ def annotate(task_id):
         data=data,
         rubric=RUBRIC,
         is_multi=is_multi,
+        admin_emails=ADMIN_EMAILS
     )
 
 @bp.route("/view_annotations/<int:task_id>", methods=("GET", "POST"))
@@ -213,4 +219,5 @@ def view_annotations(task_id):
         data=data,
         is_multi=is_multi,
         task_id=task_id,
+        admin_emails=ADMIN_EMAILS
     )

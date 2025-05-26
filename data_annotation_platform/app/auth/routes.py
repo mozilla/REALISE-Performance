@@ -36,6 +36,9 @@ from app.auth.email import (
 )
 from app.models import User, Task, Annotation
 
+import os
+
+ADMIN_EMAILS = os.getenv("ADMIN_EMAILS", "realiselab@gmail.com")
 
 LEGAL = markdown.markdown(
     textwrap.dedent(
@@ -126,7 +129,7 @@ def login():
             return redirect(url_for("main.index"))
 
         return redirect(next_page)
-    return render_template("auth/login.html", title="Sign In", form=form)
+    return render_template("auth/login.html", title="Sign In", form=form, admin_emails=ADMIN_EMAILS)
 
 
 @bp.route("/logout")
@@ -138,7 +141,7 @@ def logout():
 @bp.route("/register", methods=("GET", "POST"))
 def register():
     if not current_app.config['ACCEPTING_REGISTRATION']:
-        return render_template("auth/no_register.html")
+        return render_template("auth/no_register.html", admin_emails=ADMIN_EMAILS)
 
     if current_user.is_authenticated:
         return redirect(url_for("main.index"))
@@ -166,7 +169,7 @@ def register():
 
         return redirect(url_for("auth.login"))
     return render_template(
-        "auth/register.html", title="Register", form=form, legal=LEGAL
+        "auth/register.html", title="Register", form=form, legal=LEGAL, admin_emails=ADMIN_EMAILS
     )
 
 
@@ -185,7 +188,7 @@ def reset_password_request():
         )
         return redirect(url_for("auth.login"))
     return render_template(
-        "auth/reset_password_request.html", title="Reset Password", form=form
+        "auth/reset_password_request.html", title="Reset Password", form=form, admin_emails=ADMIN_EMAILS
     )
 
 
@@ -202,7 +205,7 @@ def reset_password(token):
         db.session.commit()
         flash("Your password has been reset.", "info")
         return redirect(url_for("auth.login"))
-    return render_template("auth/reset_password.html", form=form)
+    return render_template("auth/reset_password.html", form=form, admin_emails=ADMIN_EMAILS)
 
 
 @bp.route("/confirm/<token>")
@@ -233,7 +236,7 @@ def not_confirmed():
         flash("Account is already confirmed.")
         return redirect(url_for("main.index"))
     flash("Please confirm your account before moving on.", "info")
-    return render_template("auth/not_confirmed.html")
+    return render_template("auth/not_confirmed.html", admin_emails=ADMIN_EMAILS)
 
 
 @bp.route("/resend")

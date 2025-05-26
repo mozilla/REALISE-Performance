@@ -30,6 +30,9 @@ from app.main import bp
 from app.main.forms import NextForm
 from app.main.routes import RUBRIC
 from app.utils.datasets import load_data_for_chart, get_demo_true_cps
+import os
+
+ADMIN_EMAILS = os.getenv("ADMIN_EMAILS", "realiselab@gmail.com")
 
 LOGGER = logging.getLogger(__name__)
 
@@ -369,6 +372,7 @@ def demo_learn(demo_id, form):
         title="Demo example – " + str(demo_id) + " out of " + str(len(DEMO_DATA)),
         text=demo_data["text"],
         form=form,
+        admin_emails=ADMIN_EMAILS
     )
 
 
@@ -397,6 +401,7 @@ def demo_annotate(demo_id):
         rubric=demo_data["text"],
         identifier=demo_id,
         is_multi=is_multi,
+        admin_emails=ADMIN_EMAILS
     )
 
 
@@ -438,6 +443,7 @@ def demo_evaluate(demo_id, phase_id, form):
         feedback=feedback,
         form=form,
         is_multi=is_multi,
+        admin_emails=ADMIN_EMAILS
     )
 
 
