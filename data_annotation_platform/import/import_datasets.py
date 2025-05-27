@@ -6,7 +6,7 @@ import pandas as pd
 from pathlib import Path
 
 '''
-Class for the AnnotateChange import format.
+Class for the Perf Annotation Changer import format.
 '''
 class AnnotateChange:
 

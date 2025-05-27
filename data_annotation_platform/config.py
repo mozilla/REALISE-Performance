@@ -4,7 +4,7 @@
 # License: See LICENSE file
 # Copyright: 2020 (c) The Alan Turing Institute
 
-"""Configuration for the AnnotateChange app
+"""Configuration for the Perf Annotation Changer app
 
 Almost all configuration options are expected to be supplied through 
 environment variables.

@@ -45,7 +45,7 @@ LEGAL = markdown.markdown(
         """
         ## Terms and Conditions
 
-        The AnnotateChange application was created to construct a data set for 
+        The Perf Annotation Changer application was created to construct a data set for 
         the analysis of change point detection algorithms. As a user, you will 
         be asked to annotate time series data. It is important that we can use 
         these annotations freely and publish them under a permissive license. 
@@ -69,6 +69,9 @@ LEGAL = markdown.markdown(
         3. You agree that you will not revoke or seek invalidation of any 
         license that you have granted under these Terms and conditions for any 
         content you have provided us.
+
+        4. You understand that the data collected and the research findings
+        from this study may be published and presented to academic and/or industrial parties.
 
         """
     )
