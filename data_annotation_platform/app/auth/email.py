@@ -15,7 +15,7 @@ ADMIN_EMAILS = os.getenv("ADMIN_EMAILS", "realiselab@gmail.com")
 def send_password_reset_email(user):
     token = user.get_reset_password_token()
     send_email(
-        "[AnnotateChange] Reset your password",
+        "[Perf Annotation Changer] Reset your password",
         sender=current_app.config["MAIL_FROM"],
         recipients=[user.email],
         text_body=render_template(
@@ -30,7 +30,7 @@ def send_password_reset_email(user):
 def send_email_confirmation_email(user):
     token = user.get_email_confirmation_token()
     send_email(
-        "[AnnotateChange] Confirm your email",
+        "[Perf Annotation Changer] Confirm your email",
         sender=current_app.config["MAIL_FROM"],
         recipients=[user.email],
         text_body=render_template(

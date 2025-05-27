@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block title %}
-  {% if title %}{{ title }} &middot; AnnotateChange{% else %}Welcome to AnnotateChange{% endif %}
+  {% if title %}{{ title }} &middot; Perf Annotation Changer{% else %}Welcome to Perf Annotation Changer{% endif %}
 {% endblock %}
 
 {% block navbar %}
@@ -21,7 +21,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="{{ url_for('main.index') }}">AnnotateChange</a>
+        <a class="navbar-brand" href="{{ url_for('main.index') }}">Perf Annotation Changer</a>
       </div>
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
@@ -52,7 +52,7 @@
   {%- block footer %}
   <footer class="fixed-bottom">
     <div class="container">
-      <span class="text-muted">This is AnnotateChange version {{ config.APP_VERSION }}. For questions or comments, please <a href="mailto:{{ admin_emails }}">send us an email</a>.</span>
+      <span class="text-muted">This is Perf Annotation Changer version {{ config.APP_VERSION }}. For questions or comments, please <a href="mailto:{{ admin_emails }}">send us an email</a>.</span>
     </div>
   </footer>
   {%- endblock footer %}

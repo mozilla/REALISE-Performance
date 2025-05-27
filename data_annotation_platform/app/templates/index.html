@@ -11,7 +11,7 @@
     <h1>Hi, {{ current_user.username }}!</h1>
   {% endif %}
   <p>
-    Welcome to <i>AnnotateChange</i>, a tool for annotating time series data 
+    Welcome to <i>Performance change annotator</i>, a tool for annotating time series data 
     for changepoint analysis.
   </p>
   {% if not current_user.is_authenticated %}<br>
@@ -24,44 +24,54 @@
   <br>
   <p>
     Hello,
-    This project is done by <a href="https://realiselab.github.io/" target="_blank">REALISE Lab</a> at Concordia University in Montréal, Canada.
+    This project is done by student <a href="https://www.linkedin.com/in/mohamed-bilel-besbes/" target="_blank">Mohamed Bilel Besbes</a> and <a href="https://diegoeliascosta.github.io/" target="_blank">Professor Diego Elias Damasceno Costa</a> from <a href="https://realiselab.github.io/" target="_blank">REALISE Lab</a> at Concordia University in Montréal, Canada. 
   </p>
-  <br>
-  <img src="{{ url_for('static', filename='img/lab_picture.jpg') }}" alt="REALISE Lab Image" class="small-img">
   <br>
   <h1>Main Contribution</h1>
   <br>
-  <p>
-    This project aims to enhance the performance anomaly detection method by exploring alternatives to the existing method (Student T-test).
-  </p>
-  <br>
-  <h1>Current Progress Status</h1>
-  <br>
-  <p>
-    We collected data from Mozilla systems earlier, we explored Mozilla’s performance engineering workflow for insights,
-    and we published the collected data and explored insights in a
-    <a href="https://arxiv.org/pdf/2503.16332" target="_blank">paper</a> that we presented in
-    <a href="https://icpe2025.spec.org/" target="_blank">ICPE’25</a>.
-  </p>
-  <br>
-  <img src="{{ url_for('static', filename='img/icpe_presentation.jpg') }}" alt="Progress Image" class="small-img">
-  <br>
-  <h1>Future Directions</h1>
-  <br>
-  <p>
-    As we explored the data, it was hard to have a baseline to compare Mozilla’s current Change Point Detection method (Student T-test).
-    <b>BUT</b>, the issue is that the current data of the signatures timeseries contains backfills and retriggers, making it hard to replicate the original time series.
-  </p>
-  <p>
-    Therefore, we wanted to make a dataset of experts-validated annotation to use it as a ground truth.
-  </p>
-  <br>
+
+
+  <ul>
+    <li>
+      <h3>General overview</h3><br>
+      This project aims to optimize the performance engineering workflow at Mozilla, specifically the part of automatic
+      detection by making it detect anomalies (regressions and improvements) faster and more precisely, thus saving investigation 
+      time for Mozilla performance engineers. The aim to do this by exploring alternatives to the existing method in use (Student T-test).
+    </li>
+    <li>
+      <h3>Current Progress Status</h3><br>
+      We collected data from Mozilla systems earlier, we explored Mozilla’s performance engineering workflow for insights, 
+      and we published the collected data and explored insights in a 
+      <a href="https://arxiv.org/pdf/2503.16332" target="_blank">paper</a> that we presented in 
+      <a href="https://icpe2025.spec.org/" target="_blank">ICPE’25</a>.
+      <br>
+      <img src="{{ url_for('static', filename='img/icpe_presentation.jpg') }}" alt="Progress Image" class="small-img">
+    </li>
+    <li>
+      <h3>Future Directions</h3><br>
+      As we explored the data, it was hard to have a baseline to compare Mozilla’s current 
+      Change Point Detection method (Student T-test). <b>BUT</b>, the issue is that the current data of 
+      the signatures timeseries contains backfills and retriggers, making it hard to replicate the 
+      original time series. Therefore, we wanted to make a dataset of experts-validated annotation 
+      to use it as a ground truth.
+    </li>
+  </ul>
   <h1>Your Contribution</h1>
   <br>
   <p>
     As a Mozilla engineer, we provide this platform for you to annotate timeseries of signatures from Mozilla’s systems.
-    You will have a tutorial to familiarize yourself with the platform. Thank you for contributing to this!
+    You will have a tutorial below to familiarize yourself with the platform. Thank you for contributing to this!
   </p>
+  <br>
+  
+  <div class="centered-video">
+    <iframe 
+      src="https://drive.google.com/file/d/12ig-WSXNIZo3RQvo-lWzwBcseG1yd8Z8/preview" 
+      allowfullscreen>
+    </iframe>
+  </div>
+
+
   <br>
   {% endif %}
   {% if current_user.is_authenticated %}

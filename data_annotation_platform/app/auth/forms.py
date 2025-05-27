@@ -70,12 +70,12 @@ class RegistrationForm(FlaskForm):
                 in current_app.config["USER_EMAIL_DOMAINS"]
             ):
                 raise ValidationError(
-                    "Access to AnnotateChange is restricted to "
+                    "Access to Perf Annotation Changer is restricted to "
                     "individuals with email addresses from specific "
                     "institutions. Please use your employee email address "
                     "when signing up. If that does not solve the issue, "
                     "you unfortunately do not have access to "
-                    "AnnotateChange at this time."
+                    "Perf Annotation Changer at this time."
                 )
 
     def validate_credit(self, credit):
