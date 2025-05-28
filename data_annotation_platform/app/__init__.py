@@ -108,7 +108,7 @@ def create_app(config_class=Config):
                 mailhost=(app.config["MAIL_SERVER"], app.config["MAIL_PORT"]),
                 fromaddr="no-reply@" + app.config["MAIL_SERVER"],
                 toaddrs=app.config["ADMINS"],
-                subject="AnnotateChange Failure",
+                subject="Perf Annotation Changer Failure",
                 credentials=auth,
                 secure=secure,
             )
@@ -129,7 +129,7 @@ def create_app(config_class=Config):
         app.logger.addHandler(file_handler)
 
         app.logger.setLevel(logging.INFO)
-        app.logger.info("AnnotateChange startup")
+        app.logger.info("Perf Annotation Changer startup")
 
     return app
 

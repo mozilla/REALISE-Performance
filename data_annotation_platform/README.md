@@ -1,4 +1,4 @@
-# AnnotateChange
+# Perf Annotation Changer
 
 This application was created to collect annotations of time series data in order to 
 construct the [Turing Change Point 
@@ -27,10 +27,10 @@ process:
 
 <p align="center">
 <img height="500px" src="app/static/img/annotatechange_wide.png" alt="screenshot of 
-AnnotateChange" />
+Perf Annotation Changer" />
 </p>
 
-Some of the features of AnnotateChange include:
+Some of the features of Perf Annotation Changer include:
 
 * Admin panel to add/remove datasets, add/remove annotation tasks, add/remove 
   users, and inspect incoming annotations.
@@ -59,7 +59,7 @@ and for running the application with Docker.
 
 ### Basic
 
-AnnotateChange can be launched quickly for local development as follows:
+Perf Annotation Changer can be launched quickly for local development as follows:
 
 1. Clone the repo
    ```
@@ -113,7 +113,7 @@ AnnotateChange can be launched quickly for local development as follows:
 
 ### Docker
 
-To use AnnotateChange locally using Docker, follow the steps below. For a 
+To use Perf Annotation Changer locally using Docker, follow the steps below. For a 
 full-fledged installation on a server, see the [deployment 
 instructions](./docs/DEPLOYMENT.md).
 
@@ -155,7 +155,7 @@ instructions](./docs/DEPLOYMENT.md).
    variable. See the [config.py](config.py) file for more info on the 
    configuration options.
 
-5. Create a local docker network for communiation between the AnnotateChange 
+5. Create a local docker network for communiation between the Perf Annotation Changer 
    app and the MySQL server:
    ```
    docker network create web
@@ -204,7 +204,7 @@ Williams](https://homepages.inf.ed.ac.uk/ckiw/). It was further accustomed to fi
 
 Below are some thoughts that may help make sense of the codebase.
 
-* AnnotateChange is a web application build on the Flask framework. See [this 
+* Perf Annotation Changer is a web application build on the Flask framework. See [this 
   excellent 
   tutorial](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world) 
   for an introduction to Flask. The [flask.sh](./flask.sh) shell script loads 
