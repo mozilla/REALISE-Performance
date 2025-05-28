@@ -1,4 +1,4 @@
-# Notes on Deploying AnnotateChange
+# Notes on Deploying Perf Annotation Changer
 
 Throughout this note we'll use ``YOUR_DOMAIN`` to refer to your base domain 
 (i.e. ``gertjanvandenburg.com``) and ``YOUR_EMAIL`` to your email address, 
@@ -112,14 +112,14 @@ certificates. To set up Traefik, follow these steps:
 1. Start the traefik container using ``docker-compose up``. If there are no 
    errors, stop it using Ctrl-C and restart it using ``docker-compose up -d``.
 
-## AnnotateChange
+## Perf Annotation Changer
 
 Most of the configuration of the app is provided through environment 
 variables, that are encoded in an environment file. An example of such a file 
 is included in the Github repository.
 
 1. Create a directory ``/home/deploy/production/annotatechange/``
-1. Clone the AnnotateChange repo to this directory and switch to it:
+1. Clone the Perf Annotation Changer repo to this directory and switch to it:
    ```
    $ git clone https://github.com/alan-turing-institute/AnnotateChange /home/deploy/production/annotatechange
    $ cd /home/deploy/production/annotatechange/

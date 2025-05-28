@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Script to run the AnnotateChange application.
+# Script to run the Perf Annotation Changer application.
 #
 # First tries to perform all database migrations, then launches the app 
 # through gunicorn. The script assumes that all dependencies are available in 
