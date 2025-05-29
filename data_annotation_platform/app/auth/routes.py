@@ -71,7 +71,7 @@ LEGAL = markdown.markdown(
         content you have provided us.
 
         4. You understand that the data collected and the research findings
-        from this study may be published and presented to academic and/or industrial parties.
+        from this study may be published.
 
         """
     )

@@ -53,7 +53,7 @@ class Config(object):
     TEMP_DIR = "tmp"
 
     # task distribution settings
-    TASKS_MAX_PER_USER = int(os.environ.get("TASKS_MAX_PER_USER") or 50)
+    TASKS_MAX_PER_USER = int(os.environ.get("TASKS_MAX_PER_USER") or 400)
     TASKS_NUM_PER_DATASET = int(os.environ.get("TASKS_NUM_PER_DATASET") or 5)
 
     # user emails allowed
