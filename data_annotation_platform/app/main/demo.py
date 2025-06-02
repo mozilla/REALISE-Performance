@@ -108,8 +108,8 @@ DEMO_DATA = {
                 Different types of changes (mean, variance, both) can be marked
                 by *clicking repeatedly* on the same datapoint. The color of the
                 datapoint will change, and the type of change will be reported
-                in the *table* underneath the plot as follows: red (mean), orange
-                (variance), yellow (mean_variance) and blue (none). A marked
+                in the *table* underneath the plot as follows: <span style="color:red">red</span> (mean), <span style="color:orange">orange</span>
+                (variance), <span style="color:#CCCC00">yellow</span> (mean_variance) and <span style="color:blue">blue</span> (none). A marked
                 point can be unmarked by clicking on it again until it turns blue.              
                 """
                 )
