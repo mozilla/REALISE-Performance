@@ -101,8 +101,8 @@ METHODS = [
 
 '''
 METHODS = [
-    "best_mozilla_rep",
-    "default_mozilla_rep",
+    "best_cusum",
+    "default_cusum",
 ]
 
 
@@ -176,6 +176,21 @@ PARAMS = {
         "pvalue": [0.01, 0.05],
         "permutations": [10, 20, 50, 100, 150, 200],
     },
+    "best_cusum": {
+        "threshold": [1.0, 3.0, 5.0, 7.0, 10.0],
+        "drift_type": ["mean", "variance"],
+        "reset": [True, False]
+    },
+        "best_adwin": {
+        "delta": [0.001, 0.002, 0.005, 0.01, 0.02]
+    },
+    "best_page_hinkley": {
+        "min_instances": [10, 20, 30, 50],
+        "delta": [0.001, 0.005, 0.01],
+        "threshold": [10.0, 30.0, 50.0, 100.0],
+        "alpha": [0.99, 0.999, 0.9999],
+        "mode": ["up", "down", "both"]
+    },
     "best_mozilla_rep": {"no_param": [0]},
     "default_bocpd": {"no_param": [0]},
     "default_cpnp": {"no_param": [0]},
@@ -190,6 +205,9 @@ PARAMS = {
     "default_prophet": {"no_param": [0]},
     "default_zero": {"no_param": [0]},
     "default_mongodb": {"no_param": [0]},
+    "default_cusum": {"no_param": [0]},
+    "default_adwin": {"no_param": [0]},
+    "default_page_hinkley": {"no_param": [0]},
     "default_mozilla_rep": {"no_param": [0]}
 }
 
@@ -211,6 +229,9 @@ COMMANDS = {
     "best_bocpd": "Rscript --no-save --slave {execdir}/R/cpdbench_ocp.R -i {datadir}/{dataset}.json -l {intensity} --prior-a {prior_a} --prior-b {prior_b} --prior-k {prior_k}",
     "best_zero": "python3.9 {execdir}/python/cpdbench_zero.py -i {datadir}/{dataset}.json",
     "best_mongodb": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_mongodb.py -i {datadir}/{dataset}.json --pvalue {pvalue} --permutations {permutations}",
+    "best_cusum": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_cusum.py -i {datadir}/{dataset}.json --threshold {threshold} --drift-type {drift_type} --reset {reset}",
+    "best_adwin": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_adwin.py -i {datadir}/{dataset}.json --delta {delta}",
+    "best_page_hinkley": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_page_hinkley.py -i {datadir}/{dataset}.json --delta {delta} --threshold {threshold} --min_instances {min_instances} --alpha {alpha} --mode {mode}",
     "best_mozilla_rep": "python3.9 {execdir}/python/cpdbench_mozilla_rep.py -i {datadir}/{dataset}.json -a /TCPDBench/analysis/annotations/signatures_attributes.json",
     "default_amoc": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p MBIC -f mean -t Normal -m AMOC",
     "default_binseg": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p MBIC -f mean -t Normal -m BinSeg -Q default",
@@ -225,8 +246,19 @@ COMMANDS = {
     "default_bocpd": "Rscript --no-save --slave {execdir}/R/cpdbench_ocp.R -i {datadir}/{dataset}.json -l 100 --prior-a 1.0 --prior-b 1.0 --prior-k 1.0",
     "default_zero": "python3.9 {execdir}/python/cpdbench_zero.py -i {datadir}/{dataset}.json",
     "default_mongodb": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_mongodb.py -i {datadir}/{dataset}.json",
+    "default_cusum": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_cusum.py -i {datadir}/{dataset}.json --threshold 5.0 --drift_type mean --reset True",
+    "default_adwin": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_adwin.py -i {datadir}/{dataset}.json --delta 0.002",
+    "default_page_hinkley": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_page_hinkley.py -i {datadir}/{dataset}.json --delta 0.005 --threshold 50.0 --min_instances 30 --alpha 0.9999 --mode both",
     "default_mozilla_rep": "python3.9 {execdir}/python/cpdbench_mozilla_rep.py -i {datadir}/{dataset}.json -a /TCPDBench/analysis/annotations/signatures_attributes.json",
 }
+
+threshold: 5.0
+
+drift_type: 'mean'
+
+reset: True
+
+
 
 
 METRICS = {}

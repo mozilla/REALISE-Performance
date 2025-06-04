@@ -11,6 +11,10 @@ services:
       - "traefik.http.routers.annotatechange.entrypoints=websecure"
       - "traefik.http.routers.annotatechange.tls=true"
       - "traefik.http.routers.annotatechange.tls.certresolver=le"
+      - "traefik.http.routers.annotatechange-http.rule=Host(`perfchangeannotator.com`)"
+      - "traefik.http.routers.annotatechange-http.entrypoints=web"
+      - "traefik.http.routers.annotatechange-http.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       - "traefik.http.services.annotatechange.loadbalancer.server.port=7831"
     networks:
       - internal
