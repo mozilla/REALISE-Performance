@@ -1,13 +1,12 @@
 function resetOnClick() {
-	var changepoints = getChangepoints();
-	for (const cp of changepoints) {
-		var elem = d3.select(cp);
-		elem.style("fill", "blue");
-                elem.attr('class', '');
-	}
-	updateTable();
-	location.reload();
+    // Only reset the zoom — keep point colors, annotations, etc.
+    if (typeof resetZoom === 'function') {
+        resetZoom();
+    } else {
+        console.warn("resetZoom function not available");
+    }
 }
+
 
 // function resetOnClick() {
 //     var changepoints = getChangepoints();
