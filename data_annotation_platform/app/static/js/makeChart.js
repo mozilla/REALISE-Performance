@@ -368,14 +368,19 @@ function baseChart(
 
 	// handle the annotations
 	annotations.forEach(function(a) {
-		for (i=0; i<points._groups[0].length; i++) {
-			p = points._groups[0][i];
-			if (p.getAttribute("data_X") != a.index)
-				continue;
-			var elem = d3.select(p);
-			annotationFunction(a, elem, gView, xScale, yScale, yDomainMin, yDomainMax);
+		for (let i = 0; i < pointSets.length; i++) {
+			const group = pointSets[i];
+			if (!group || !group._groups || group._groups.length === 0) continue;
+			const circles = group._groups[0];
+			for (let j = 0; j < circles.length; j++) {
+				const p = circles[j];
+				if (p.getAttribute("data_X") != a.index) continue;
+				const elem = d3.select(p);
+				annotationFunction(a, elem, gView, xScale, yScale, yDomainMin, yDomainMax);
+			}
 		}
 	});
+	
 
 
 		// Store global context for zoom reset
