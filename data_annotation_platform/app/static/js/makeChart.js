@@ -1,6 +1,5 @@
 // Based on: //https://github.com/benalexkeen/d3-flask-blog-post/blob/master/templates/index.html
 // And: https://bl.ocks.org/mbostock/35964711079355050ff1
-
 function preprocessData(data) {
 	var n = 0;
 	cleanData = [];
@@ -141,7 +140,7 @@ function baseChart(
 	
 		// Transform only the x-axis
 		xScale.domain(transform.rescaleX(xScaleOrig).domain());
-	
+	 
 		// Adjust the domain to center around the mouse position
 		const newMouseDomainX = xScale.invert(mouseX);
 		const domainShift = mouseDomainX - newMouseDomainX;
@@ -200,22 +199,34 @@ function baseChart(
 	}
 
 
-	// Define drag behavior for panning
 	var drag = d3.drag()
 	.on("drag", function () {
-		// Calculate the change in X and Y based on drag
 		var dx = d3.event.dx * (xScale.domain()[1] - xScale.domain()[0]) / width;
 		var dy = d3.event.dy * (yScale.domain()[1] - yScale.domain()[0]) / height;
 
-		// Update X and Y domains
-		xScale.domain([xScale.domain()[0] - dx, xScale.domain()[1] - dx]);
+		// Clamp X axis to original scale range
+		const xMin = xScaleOrig.domain()[0];
+		const xMax = xScaleOrig.domain()[1];
+		let newX0 = xScale.domain()[0] - dx;
+		let newX1 = xScale.domain()[1] - dx;
+
+		if (newX0 < xMin) {
+			newX0 = xMin;
+			newX1 = newX0 + (xScale.domain()[1] - xScale.domain()[0]);
+		}
+		if (newX1 > xMax) {
+			newX1 = xMax;
+			newX0 = newX1 - (xScale.domain()[1] - xScale.domain()[0]);
+		}
+		xScale.domain([newX0, newX1]);
+
+		// Optionally do the same for yScale if needed
 		yScale.domain([yScale.domain()[0] + dy, yScale.domain()[1] + dy]);
 
-		// Update the axes
+		// Update axes and visuals
 		svg.select(".axis--x").call(xAxis);
 		svg.select(".axis--y").call(yAxis);
 
-		// Update lines and points
 		for (let r = 0; r < data.length; r++) {
 			svg.select(".line-" + r).attr("d", lineObjects[r]);
 			pointSets[r].data(data[r])
@@ -223,7 +234,7 @@ function baseChart(
 				.attr("cy", d => yScale(d.Y));
 		}
 
-		// Update annotation lines (if any)
+		// Update annotation lines
 		annoLines = gView.selectAll("line");
 		annoLines._groups[0].forEach(function (l) {
 			l.setAttribute("x1", xScale(l.getAttribute("cp_idx")));
@@ -232,17 +243,6 @@ function baseChart(
 			l.setAttribute("y2", yScale(l.getAttribute("cp_idx")));
 		});
 	});
-	
-
-
-
-
-
-
-
-
-
-
 
 
 	var zero = xScale(0);
@@ -337,24 +337,34 @@ function baseChart(
 			.attr("d", lineObjects[r]);
 	}
 
+	// Render data points and save them for later zoom resets
 	var pointSets = [];
-	for (let r=0; r<data.length; r++) {
-		var wrap = gView.append("g");
-		var points = wrap.selectAll("circle")
+
+	for (let r = 0; r < data.length; r++) {
+		const wrap = gView.append("g");
+
+		// Append the circles
+		wrap.selectAll("circle")
 			.data(data[r])
 			.enter()
 			.append("circle")
-			.attr("cx", function(d) { return xScale(d.X); })
-			.attr("cy", function(d) { return yScale(d.Y); })
-			.attr("data_X", function(d) { return d.X; })
-			.attr("data_Y", function(d) { return d.Y; })
+			.attr("cx", d => xScale(d.X))
+			.attr("cy", d => yScale(d.Y))
+			.attr("data_X", d => d.X)
+			.attr("data_Y", d => d.Y)
 			.attr("r", 5)
-			.on("click", function(d, i) {
+			.on("click", function (d, i) {
 				d.element = this;
 				return clickFunction(d, i);
 			});
+
+		// Select all circles *after* enter+append
+		const points = wrap.selectAll("circle");
+
 		pointSets.push(points);
 	}
+
+
 
 	// handle the annotations
 	annotations.forEach(function(a) {
@@ -366,6 +376,15 @@ function baseChart(
 			annotationFunction(a, elem, gView, xScale, yScale, yDomainMin, yDomainMax);
 		}
 	});
+
+
+		// Store global context for zoom reset
+		window._chartContext = {
+			xScale, xScaleOrig,
+			yScale, yScaleOrig,
+			xAxis, yAxis,
+			svg, lineObjects, data, pointSets, gView
+		};
 }
 
 const changeTypes = [
@@ -435,4 +454,58 @@ function adminViewAnnotations(selector, data, annotations) {
 			.attr("class", "ann-line" + " " + ann.user);
 	}
 	baseChart(selector, data, function() {}, annotations, handleAnnotation);
+}
+
+function resetZoom() {
+    if (!window._chartContext) {
+        console.warn("No chart context found for zoom reset");
+        return;
+    }
+
+    const {
+        xScale, xScaleOrig, yScale, yScaleOrig,
+        xAxis, yAxis,
+        svg, lineObjects, data, pointSets, gView
+    } = window._chartContext;
+
+    // Debug: print pointSets structure
+    console.log("resetZoom: pointSets =", pointSets);
+
+    // Reset scales
+    xScale.domain(xScaleOrig.domain());
+    yScale.domain(yScaleOrig.domain());
+
+    // Redraw axes
+    svg.select(".axis--x").call(xAxis);
+    svg.select(".axis--y").call(yAxis);
+
+    // Redraw lines and points
+    for (let r = 0; r < data.length; r++) {
+        svg.select(".line-" + r).attr("d", lineObjects[r]);
+
+        if (!pointSets || !pointSets[r]) {
+            console.warn(`resetZoom: pointSets[${r}] is undefined`);
+            continue;
+        }
+
+        const pointGroup = pointSets[r];
+        if (!Array.isArray(pointGroup._groups) || pointGroup._groups.length === 0) {
+            console.warn(`resetZoom: pointSets[${r}] has invalid _groups`);
+            continue;
+        }
+
+        pointGroup
+            .data(data[r])
+            .attr("cx", d => xScale(d.X))
+            .attr("cy", d => yScale(d.Y));
+    }
+
+    // Reset annotation lines
+    const annoLines = gView.selectAll("line");
+    annoLines._groups[0].forEach(function (l) {
+        l.setAttribute("x1", xScale(l.getAttribute("cp_idx")));
+        l.setAttribute("x2", xScale(l.getAttribute("cp_idx")));
+        l.setAttribute("y1", yScale(l.getAttribute("cp_idx")));
+        l.setAttribute("y2", yScale(l.getAttribute("cp_idx")));
+    });
 }

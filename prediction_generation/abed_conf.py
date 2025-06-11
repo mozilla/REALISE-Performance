@@ -67,6 +67,8 @@ EXECDIR = "execs"
 
 DATASETS = DATASETPLACEHOLDER
 
+DATASETS = ["3599323", "3776819"]
+
 DATASET_NAMES = {k: k for k in DATASETS}
 
 '''
@@ -176,12 +178,7 @@ PARAMS = {
         "pvalue": [0.01, 0.05],
         "permutations": [10, 20, 50, 100, 150, 200],
     },
-    "best_cusum": {
-        "threshold": [1.0, 3.0, 5.0, 7.0, 10.0],
-        "drift_type": ["mean", "variance"],
-        "reset": [True, False]
-    },
-        "best_adwin": {
+    "best_adwin": {
         "delta": [0.001, 0.002, 0.005, 0.01, 0.02]
     },
     "best_page_hinkley": {
@@ -190,6 +187,29 @@ PARAMS = {
         "threshold": [10.0, 30.0, 50.0, 100.0],
         "alpha": [0.99, 0.999, 0.9999],
         "mode": ["up", "down", "both"]
+    },
+    "best_chisquare": {
+        "p_val": [0.01, 0.05, 0.1],
+        "correction": ["bonferroni", "fdr"],
+        "update_x_ref": ["null", 100, 200],
+        "init_size": [5, 10, 20]
+    },
+    "best_kswin": {
+        "alpha": [0.001, 0.005, 0.01, 0.02],
+        "window_size": [100, 150, 199],
+        "stat_size": [10, 20, 50]
+    },
+    "best_cusum": {
+        "k": [1.0, 2.0, 3.0, 4.0, 5.0],
+        "h": [30.0, 50.0, 75.0, 100.0, 150.0, 200.0],
+        "init_size": [2.0, 5.0, 10.0, 15.0, 20.0],
+        "min_distance": [50, 100, 150, 200, 300]
+    },
+    "best_ewma": {
+        "drift_confidence": [0.001, 0.005, 0.01],
+        "warning_confidence": [0.01, 0.02, 0.05],
+        "lambda_val": [0.01, 0.05, 0.1],
+        "two_sided_test": ["true", "false"]
     },
     "best_mozilla_rep": {"no_param": [0]},
     "default_bocpd": {"no_param": [0]},
@@ -205,9 +225,12 @@ PARAMS = {
     "default_prophet": {"no_param": [0]},
     "default_zero": {"no_param": [0]},
     "default_mongodb": {"no_param": [0]},
-    "default_cusum": {"no_param": [0]},
     "default_adwin": {"no_param": [0]},
     "default_page_hinkley": {"no_param": [0]},
+    "default_chisquare": {"no_param": [0]},
+    "default_ewma": {"no_param": [0]},
+    "default_kswin": {"no_param": [0]},
+    "default_cusum": {"no_param": [0]},
     "default_mozilla_rep": {"no_param": [0]}
 }
 
@@ -219,7 +242,6 @@ COMMANDS = {
     "best_amoc": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p {penalty} -f {function} -t {statistic} -m AMOC",
     "best_binseg": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p {penalty} -f {function} -t {statistic} -m BinSeg -Q {Q}",
     "best_cpnp": "Rscript --no-save --slave {execdir}/R/cpdbench_changepointnp.R -i {datadir}/{dataset}.json -p {penalty} -q {quantiles}",
-    "best_ecp": "Rscript {execdir}/R/cpdbench_ecp.R -i {datadir}/{dataset}.json --siglvl {siglvl} --minsize {minsize} --alpha {alpha} --algorithm {algorithm} --runs {runs}",
     "best_kcpa": "python3.9 {execdir}/python/cpdbench_kcpa.py -i {datadir}/{dataset}.json --maxcp {maxcp} --minsize {minsize} --kernel {kernel}",
     "best_pelt": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p {penalty} -f {function} -t {statistic} -m PELT",
     "best_prophet": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_prophet.py -i {datadir}/{dataset}.json -N {Nmax} --WeeklySeasonality True --DailySeasonality False --ChangepointRange {ChangepointRange} --ChangepointPriorScale {ChangepointPriorScale} --IntervalWidth {IntervalWidth} --growth {growth} --cap 100",
@@ -229,9 +251,12 @@ COMMANDS = {
     "best_bocpd": "Rscript --no-save --slave {execdir}/R/cpdbench_ocp.R -i {datadir}/{dataset}.json -l {intensity} --prior-a {prior_a} --prior-b {prior_b} --prior-k {prior_k}",
     "best_zero": "python3.9 {execdir}/python/cpdbench_zero.py -i {datadir}/{dataset}.json",
     "best_mongodb": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_mongodb.py -i {datadir}/{dataset}.json --pvalue {pvalue} --permutations {permutations}",
-    "best_cusum": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_cusum.py -i {datadir}/{dataset}.json --threshold {threshold} --drift-type {drift_type} --reset {reset}",
     "best_adwin": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_adwin.py -i {datadir}/{dataset}.json --delta {delta}",
     "best_page_hinkley": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_page_hinkley.py -i {datadir}/{dataset}.json --delta {delta} --threshold {threshold} --min_instances {min_instances} --alpha {alpha} --mode {mode}",
+    "best_chisquare": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_chisquare.py -i {datadir}/{dataset}.json --p-val {p_val} --correction {correction} --update-x-ref {update_x_ref} --init-size {init_size}",
+    "best_cusum": "python3.9 {execdir}/python/cpdbench_cusum.py -i {datadir}/{dataset}.json --k {k} --h {h} --init-size {init_size} --min-distance {min_distance}",
+    "best_ewma": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_hddm_w.py -i {datadir}/{dataset}.json --drift_confidence {drift_confidence} --warning_confidence {warning_confidence} --lambda_val {lambda_val} --two_sided_test {two_sided_test}",
+    "best_kswin": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_kswin.py -i {datadir}/{dataset}.json --alpha {alpha} --window-size {window_size} --stat-size {stat_size}",
     "best_mozilla_rep": "python3.9 {execdir}/python/cpdbench_mozilla_rep.py -i {datadir}/{dataset}.json -a /TCPDBench/analysis/annotations/signatures_attributes.json",
     "default_amoc": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p MBIC -f mean -t Normal -m AMOC",
     "default_binseg": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p MBIC -f mean -t Normal -m BinSeg -Q default",
@@ -246,18 +271,14 @@ COMMANDS = {
     "default_bocpd": "Rscript --no-save --slave {execdir}/R/cpdbench_ocp.R -i {datadir}/{dataset}.json -l 100 --prior-a 1.0 --prior-b 1.0 --prior-k 1.0",
     "default_zero": "python3.9 {execdir}/python/cpdbench_zero.py -i {datadir}/{dataset}.json",
     "default_mongodb": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_mongodb.py -i {datadir}/{dataset}.json",
-    "default_cusum": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_cusum.py -i {datadir}/{dataset}.json --threshold 5.0 --drift_type mean --reset True",
     "default_adwin": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_adwin.py -i {datadir}/{dataset}.json --delta 0.002",
     "default_page_hinkley": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_page_hinkley.py -i {datadir}/{dataset}.json --delta 0.005 --threshold 50.0 --min_instances 30 --alpha 0.9999 --mode both",
+    "default_chisquare": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_chisquare.py -i {datadir}/{dataset}.json --p-val 0.05 --correction bonferroni --update-x-ref null --init-size 10",
+    "default_cusum": "python3.9 {execdir}/python/cpdbench_cusum.py -i {datadir}/{dataset}.json --k 1.0 --h 15.0 --init-size 10.0 --min-distance 30",
+    "default_ewma": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_hddm_w.py -i {datadir}/{dataset}.json --drift_confidence {drift_confidence} --warning_confidence {warning_confidence} --lambda_val {lambda_val} --two_sided_test {two_sided_test}",
+    "default_kswin": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_kswin.py -i {datadir}/{dataset}.json --alpha 0.005 --window-size 100 --stat-size 10",
     "default_mozilla_rep": "python3.9 {execdir}/python/cpdbench_mozilla_rep.py -i {datadir}/{dataset}.json -a /TCPDBench/analysis/annotations/signatures_attributes.json",
 }
-
-threshold: 5.0
-
-drift_type: 'mean'
-
-reset: True
-
 
 
 
