@@ -1,0 +1,3 @@
+torch==2.2.2
+alibi-detect==0.12.0
+alibi-detect[torch]==0.12.0

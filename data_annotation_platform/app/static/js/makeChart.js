@@ -130,32 +130,32 @@ function baseChart(
 		.on("zoom", zoomTransformY);
 
 	var currentZoom = zoomX; // Default: X-axis zooming
-
-
-
 	function zoomTransformX() {
 		const transform = d3.event.transform;
-		const mouseX = d3.mouse(svg.node())[0]; // Get mouse X position relative to the SVG
-		const mouseDomainX = xScale.invert(mouseX); // Convert mouse X to domain value
 	
-		// Transform only the x-axis
+		let mouseX;
+		try {
+			mouseX = d3.mouse(svg.node())[0];
+			if (!isFinite(mouseX)) throw new Error("mouseX is NaN");
+		} catch {
+			mouseX = svg.node().clientWidth / 2;
+		}
+	
+		const mouseDomainX = xScale.invert(mouseX);
+	
 		xScale.domain(transform.rescaleX(xScaleOrig).domain());
-	 
-		// Adjust the domain to center around the mouse position
+	
 		const newMouseDomainX = xScale.invert(mouseX);
 		const domainShift = mouseDomainX - newMouseDomainX;
 		xScale.domain(xScale.domain().map(d => d + domainShift));
 	
 		for (let r = 0; r < data.length; r++) {
 			svg.select(".line-" + r).attr("d", lineObjects[r]);
-	
-			// Transform the circles
 			pointSets[r].data(data[r])
 				.attr("cx", d => xScale(d.X))
 				.attr("cy", d => yScale(d.Y));
 		}
 	
-		// Transform annotation lines (if any)
 		annoLines = gView.selectAll("line");
 		annoLines._groups[0].forEach(l => {
 			l.setAttribute("x1", xScale(l.getAttribute("cp_idx")));
@@ -167,37 +167,39 @@ function baseChart(
 	
 	function zoomTransformY() {
 		const transform = d3.event.transform;
-		const mouseY = d3.mouse(svg.node())[1]; // Get mouse Y position relative to the SVG
-		const mouseDomainY = yScale.invert(mouseY); // Convert mouse Y to domain value
 	
-		// Rescale the Y axis using yScaleOrig
+		let mouseY;
+		try {
+			mouseY = d3.mouse(svg.node())[1];
+			if (!isFinite(mouseY)) throw new Error("mouseY is NaN");
+		} catch {
+			mouseY = svg.node().clientHeight / 2;
+		}
+	
+		const mouseDomainY = yScale.invert(mouseY);
+	
 		yScale.domain(transform.rescaleY(yScaleOrig).domain());
 	
-		// Adjust the domain to center around the mouse position
 		const newMouseDomainY = yScale.invert(mouseY);
 		const domainShift = mouseDomainY - newMouseDomainY;
 		yScale.domain(yScale.domain().map(d => d + domainShift));
 	
 		for (let r = 0; r < data.length; r++) {
 			svg.select(".line-" + r).attr("d", lineObjects[r]);
-	
-			// Transform the circles
 			pointSets[r].data(data[r])
 				.attr("cx", d => xScale(d.X))
 				.attr("cy", d => yScale(d.Y));
 		}
 	
-		// Transform the annotation lines (if any)
 		annoLines = gView.selectAll("line");
 		annoLines._groups[0].forEach(function(l) {
 			l.setAttribute("y1", yScale(l.getAttribute("cp_idx")));
 			l.setAttribute("y2", yScale(l.getAttribute("cp_idx")));
 		});
 	
-		// Update Y axis
 		svg.select(".axis--y").call(yAxis);
-	}
-
+	}	
+	
 
 	var drag = d3.drag()
 	.on("drag", function () {

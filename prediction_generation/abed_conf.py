@@ -103,8 +103,8 @@ METHODS = [
 
 '''
 METHODS = [
-    "best_cusum",
-    "default_cusum",
+    "best_ptrigger",
+    "default_ptrigger",
 ]
 
 
@@ -189,10 +189,10 @@ PARAMS = {
         "mode": ["up", "down", "both"]
     },
     "best_chisquare": {
-        "p_val": [0.01, 0.05, 0.1],
-        "correction": ["bonferroni", "fdr"],
-        "update_x_ref": ["null", 100, 200],
-        "init_size": [5, 10, 20]
+        "window_size": [1.0, 2.5, 5.0, 7.5, 10.0],
+        "num_bins": [5, 10, 20, 30],
+        "p_threshold": [0.001, 0.005, 0.01, 0.02, 0.05],
+        "min_distance": [10, 20, 30, 50, 100]
     },
     "best_kswin": {
         "alpha": [0.001, 0.005, 0.01, 0.02],
@@ -206,10 +206,27 @@ PARAMS = {
         "min_distance": [50, 100, 150, 200, 300]
     },
     "best_ewma": {
-        "drift_confidence": [0.001, 0.005, 0.01],
-        "warning_confidence": [0.01, 0.02, 0.05],
-        "lambda_val": [0.01, 0.05, 0.1],
-        "two_sided_test": ["true", "false"]
+        "alpha": [0.1, 0.2, 0.3],
+        "threshold": [2.5, 2.7, 3.0, 3.3],
+        "init_size": [5.0, 10.0, 15.0],
+        "min_distance": [20, 30, 50]
+    },
+    "best_shewhart": {
+        "threshold": [2.5, 3.0, 3.5],
+        "init_size": [5.0, 10.0, 15.0],
+        "min_distance": [20, 30, 50]
+    },
+    "best_onlinekernel": {
+        "ert": [20, 50, 100],
+        "window_size": [20, 50, 100],
+        "init_size": [5.0, 10.0, 20.0],
+        "sigma": [None, 0.1, 1.0, 10.0],
+        "backend": ["tensorflow", "pytorch"]
+    },
+    "best_ptrigger": {
+        "period": [10, 30, 50, 100],
+        "init_size": [5.0, 10.0, 20.0],
+        "min_distance": [10, 20, 30]
     },
     "best_mozilla_rep": {"no_param": [0]},
     "default_bocpd": {"no_param": [0]},
@@ -231,6 +248,9 @@ PARAMS = {
     "default_ewma": {"no_param": [0]},
     "default_kswin": {"no_param": [0]},
     "default_cusum": {"no_param": [0]},
+    "default_shewhart": {"no_param": [0]},
+    "default_onlinekernel": {"no_param": [0]},
+    "default_ptrigger": {"no_param": [0]},
     "default_mozilla_rep": {"no_param": [0]}
 }
 
@@ -242,6 +262,7 @@ COMMANDS = {
     "best_amoc": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p {penalty} -f {function} -t {statistic} -m AMOC",
     "best_binseg": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p {penalty} -f {function} -t {statistic} -m BinSeg -Q {Q}",
     "best_cpnp": "Rscript --no-save --slave {execdir}/R/cpdbench_changepointnp.R -i {datadir}/{dataset}.json -p {penalty} -q {quantiles}",
+    "best_ecp": "Rscript --no-save --slave {execdir}/R/cpdbench_ecp.R -i {datadir}/{dataset}.json -a {algorithm} --siglvl {siglvl} --minsize {minsize} --alpha {alpha}",
     "best_kcpa": "python3.9 {execdir}/python/cpdbench_kcpa.py -i {datadir}/{dataset}.json --maxcp {maxcp} --minsize {minsize} --kernel {kernel}",
     "best_pelt": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p {penalty} -f {function} -t {statistic} -m PELT",
     "best_prophet": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_prophet.py -i {datadir}/{dataset}.json -N {Nmax} --WeeklySeasonality True --DailySeasonality False --ChangepointRange {ChangepointRange} --ChangepointPriorScale {ChangepointPriorScale} --IntervalWidth {IntervalWidth} --growth {growth} --cap 100",
@@ -253,10 +274,13 @@ COMMANDS = {
     "best_mongodb": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_mongodb.py -i {datadir}/{dataset}.json --pvalue {pvalue} --permutations {permutations}",
     "best_adwin": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_adwin.py -i {datadir}/{dataset}.json --delta {delta}",
     "best_page_hinkley": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_page_hinkley.py -i {datadir}/{dataset}.json --delta {delta} --threshold {threshold} --min_instances {min_instances} --alpha {alpha} --mode {mode}",
-    "best_chisquare": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_chisquare.py -i {datadir}/{dataset}.json --p-val {p_val} --correction {correction} --update-x-ref {update_x_ref} --init-size {init_size}",
+    "best_chisquare": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_chisquare.py -i {datadir}/{dataset}.json --window-size {window_size} --num-bins {num_bins} --p-threshold {p_threshold} --min-distance {min_distance}",
     "best_cusum": "python3.9 {execdir}/python/cpdbench_cusum.py -i {datadir}/{dataset}.json --k {k} --h {h} --init-size {init_size} --min-distance {min_distance}",
-    "best_ewma": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_hddm_w.py -i {datadir}/{dataset}.json --drift_confidence {drift_confidence} --warning_confidence {warning_confidence} --lambda_val {lambda_val} --two_sided_test {two_sided_test}",
+    "best_ewma":  "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_ewma.py -i {datadir}/{dataset}.json --alpha {alpha} --threshold {threshold} --init-size {init_size} --min-distance {min_distance} ",
     "best_kswin": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_kswin.py -i {datadir}/{dataset}.json --alpha {alpha} --window-size {window_size} --stat-size {stat_size}",
+    "best_shewhart": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_shewhart.py -i {datadir}/{dataset}.json --threshold {threshold} --init-size {init_size} --min-distance {min_distance}",
+    "best_onlinekernel": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_onlinekernel.py -i {datadir}/{dataset}.json --ert {ert} --window-size {window_size} --init-size {init_size} --sigma {sigma} --backend {backend}",
+    "best_ptrigger": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_periodictrigger.py -i {datadir}/{dataset}.json --period {period} --init-size {init_size} --min-distance {min_distance}",
     "best_mozilla_rep": "python3.9 {execdir}/python/cpdbench_mozilla_rep.py -i {datadir}/{dataset}.json -a /TCPDBench/analysis/annotations/signatures_attributes.json",
     "default_amoc": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p MBIC -f mean -t Normal -m AMOC",
     "default_binseg": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p MBIC -f mean -t Normal -m BinSeg -Q default",
@@ -273,10 +297,13 @@ COMMANDS = {
     "default_mongodb": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_mongodb.py -i {datadir}/{dataset}.json",
     "default_adwin": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_adwin.py -i {datadir}/{dataset}.json --delta 0.002",
     "default_page_hinkley": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_page_hinkley.py -i {datadir}/{dataset}.json --delta 0.005 --threshold 50.0 --min_instances 30 --alpha 0.9999 --mode both",
-    "default_chisquare": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_chisquare.py -i {datadir}/{dataset}.json --p-val 0.05 --correction bonferroni --update-x-ref null --init-size 10",
+    "default_chisquare": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_chisquare.py -i {datadir}/{dataset}.json --window-size 5.0 --num-bins 10 --p-threshold 0.01 --min-distance 30",
     "default_cusum": "python3.9 {execdir}/python/cpdbench_cusum.py -i {datadir}/{dataset}.json --k 1.0 --h 15.0 --init-size 10.0 --min-distance 30",
-    "default_ewma": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_hddm_w.py -i {datadir}/{dataset}.json --drift_confidence {drift_confidence} --warning_confidence {warning_confidence} --lambda_val {lambda_val} --two_sided_test {two_sided_test}",
+    "default_ewma":  "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_ewma.py -i {datadir}/{dataset}.json --alpha 0.3 --threshold 3.0 --init-size 10.0 --min-distance 30",
+    "default_shewhart": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_shewhart.py -i {datadir}/{dataset}.json --threshold 3.0 --init-size 10.0 --min-distance 30",
     "default_kswin": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_kswin.py -i {datadir}/{dataset}.json --alpha 0.005 --window-size 100 --stat-size 10",
+    "default_onlinekernel": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_onlinekernel.py -i {datadir}/{dataset}.json --ert 50 --window-size 50 --init-size 10.0 --sigma None --backend tensorflow",
+    "default_ptrigger": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_periodictrigger.py -i {datadir}/{dataset}.json --period 50 --init-size 10.0 --min-distance 30",
     "default_mozilla_rep": "python3.9 {execdir}/python/cpdbench_mozilla_rep.py -i {datadir}/{dataset}.json -a /TCPDBench/analysis/annotations/signatures_attributes.json",
 }
 
