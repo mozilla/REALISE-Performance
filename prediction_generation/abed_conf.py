@@ -230,6 +230,12 @@ PARAMS = {
         "init_size": [5.0, 10.0, 20.0],
         "min_distance": [10, 20, 30]
     },
+    "best_mosum": {
+        "window_size": [10, 20, 30, 50],
+        "threshold": [2.0, 2.5, 3.0, 3.5],
+        "init_size": [5.0, 10.0, 20.0],
+        "min_distance": [10, 20, 30]
+    },
     "best_mozilla_rep": {"no_param": [0]},
     "default_bocpd": {"no_param": [0]},
     "default_cpnp": {"no_param": [0]},
@@ -253,6 +259,7 @@ PARAMS = {
     "default_shewhart": {"no_param": [0]},
     "default_ptrigger": {"no_param": [0]},
     "default_sprt": {"no_param": [0]},
+    "default_mosum": {"no_param": [0]},
     "default_mozilla_rep": {"no_param": [0]}
 }
 
@@ -283,6 +290,7 @@ COMMANDS = {
     "best_shewhart": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_shewhart.py -i {datadir}/{dataset}.json --threshold {threshold} --init-size {init_size} --min-distance {min_distance}",
     "best_ptrigger": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_periodictrigger.py -i {datadir}/{dataset}.json --period {period} --init-size {init_size} --min-distance {min_distance}",
     "best_sprt": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_sprt.py -i {datadir}/{dataset}.json --mu0 {mu0} --mu1 {mu1} --sigma {sigma} --alpha {alpha} --beta {beta} --init-size {init_size} --min-distance {min_distance}",
+    "best_mosum": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_mosum.py -i {datadir}/{dataset}.json --window-size {window_size} --threshold {threshold} --init-size {init_size} --min-distance {min_distance}",
     "best_mozilla_rep": "python3.9 {execdir}/python/cpdbench_mozilla_rep.py -i {datadir}/{dataset}.json -a /TCPDBench/analysis/annotations/signatures_attributes.json",
     "default_amoc": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p MBIC -f mean -t Normal -m AMOC",
     "default_binseg": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p MBIC -f mean -t Normal -m BinSeg -Q default",
@@ -306,6 +314,7 @@ COMMANDS = {
     "default_kswin": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_kswin.py -i {datadir}/{dataset}.json --alpha 0.005 --window-size 100 --stat-size 10",
     "default_ptrigger": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_periodictrigger.py -i {datadir}/{dataset}.json --period 50 --init-size 10.0 --min-distance 30",
     "default_sprt": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_sprt.py -i {datadir}/{dataset}.json --mu0 0.0 --mu1 1.0 --sigma 1.0 --alpha 0.05 --beta 0.05 --init-size 10.0 --min-distance 30",
+    "default_mosum": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_mosum.py -i {datadir}/{dataset}.json --window-size 20 --threshold 3.0 --init-size 10.0 --min-distance 30",
     "default_mozilla_rep": "python3.9 {execdir}/python/cpdbench_mozilla_rep.py -i {datadir}/{dataset}.json -a /TCPDBench/analysis/annotations/signatures_attributes.json",
 }
 
