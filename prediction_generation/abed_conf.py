@@ -216,15 +216,17 @@ PARAMS = {
         "init_size": [5.0, 10.0, 15.0],
         "min_distance": [20, 30, 50]
     },
-    "best_onlinekernel": {
-        "ert": [20, 50, 100],
-        "window_size": [20, 50, 100],
-        "init_size": [5.0, 10.0, 20.0],
-        "sigma": [None, 0.1, 1.0, 10.0],
-        "backend": ["tensorflow", "pytorch"]
-    },
     "best_ptrigger": {
         "period": [10, 30, 50, 100],
+        "init_size": [5.0, 10.0, 20.0],
+        "min_distance": [10, 20, 30]
+    },
+    "best_sprt": {
+        "mu0": [0.0, 0.5],
+        "mu1": [1.0, 1.5],
+        "sigma": [0.5, 1.0, 2.0],
+        "alpha": [0.01, 0.05, 0.1],
+        "beta": [0.01, 0.05, 0.1],
         "init_size": [5.0, 10.0, 20.0],
         "min_distance": [10, 20, 30]
     },
@@ -249,8 +251,8 @@ PARAMS = {
     "default_kswin": {"no_param": [0]},
     "default_cusum": {"no_param": [0]},
     "default_shewhart": {"no_param": [0]},
-    "default_onlinekernel": {"no_param": [0]},
     "default_ptrigger": {"no_param": [0]},
+    "default_sprt": {"no_param": [0]},
     "default_mozilla_rep": {"no_param": [0]}
 }
 
@@ -279,8 +281,8 @@ COMMANDS = {
     "best_ewma":  "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_ewma.py -i {datadir}/{dataset}.json --alpha {alpha} --threshold {threshold} --init-size {init_size} --min-distance {min_distance} ",
     "best_kswin": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_kswin.py -i {datadir}/{dataset}.json --alpha {alpha} --window-size {window_size} --stat-size {stat_size}",
     "best_shewhart": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_shewhart.py -i {datadir}/{dataset}.json --threshold {threshold} --init-size {init_size} --min-distance {min_distance}",
-    "best_onlinekernel": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_onlinekernel.py -i {datadir}/{dataset}.json --ert {ert} --window-size {window_size} --init-size {init_size} --sigma {sigma} --backend {backend}",
     "best_ptrigger": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_periodictrigger.py -i {datadir}/{dataset}.json --period {period} --init-size {init_size} --min-distance {min_distance}",
+    "best_sprt": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_sprt.py -i {datadir}/{dataset}.json --mu0 {mu0} --mu1 {mu1} --sigma {sigma} --alpha {alpha} --beta {beta} --init-size {init_size} --min-distance {min_distance}",
     "best_mozilla_rep": "python3.9 {execdir}/python/cpdbench_mozilla_rep.py -i {datadir}/{dataset}.json -a /TCPDBench/analysis/annotations/signatures_attributes.json",
     "default_amoc": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p MBIC -f mean -t Normal -m AMOC",
     "default_binseg": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p MBIC -f mean -t Normal -m BinSeg -Q default",
@@ -302,8 +304,8 @@ COMMANDS = {
     "default_ewma":  "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_ewma.py -i {datadir}/{dataset}.json --alpha 0.3 --threshold 3.0 --init-size 10.0 --min-distance 30",
     "default_shewhart": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_shewhart.py -i {datadir}/{dataset}.json --threshold 3.0 --init-size 10.0 --min-distance 30",
     "default_kswin": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_kswin.py -i {datadir}/{dataset}.json --alpha 0.005 --window-size 100 --stat-size 10",
-    "default_onlinekernel": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_onlinekernel.py -i {datadir}/{dataset}.json --ert 50 --window-size 50 --init-size 10.0 --sigma None --backend tensorflow",
     "default_ptrigger": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_periodictrigger.py -i {datadir}/{dataset}.json --period 50 --init-size 10.0 --min-distance 30",
+    "default_sprt": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_sprt.py -i {datadir}/{dataset}.json --mu0 0.0 --mu1 1.0 --sigma 1.0 --alpha 0.05 --beta 0.05 --init-size 10.0 --min-distance 30",
     "default_mozilla_rep": "python3.9 {execdir}/python/cpdbench_mozilla_rep.py -i {datadir}/{dataset}.json -a /TCPDBench/analysis/annotations/signatures_attributes.json",
 }
 
