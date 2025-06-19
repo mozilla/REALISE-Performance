@@ -9,6 +9,7 @@ from scipy.stats import chisquare
 from collections import deque
 from cpdbench_utils import load_dataset, exit_success, exit_with_error
 
+# There is no direct implementation of Sliding Window Chi-Square Test for Change Point Detection specifically for univariate timeseries
 def parse_args():
     parser = argparse.ArgumentParser(description="Run Sliding Window Chi-Square Test on a time series dataset.")
     parser.add_argument('-i', '--input', help="Path to the input JSON dataset file.")
