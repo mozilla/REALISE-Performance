@@ -189,9 +189,9 @@ PARAMS = {
         "mode": ["up", "down", "both"]
     },
     "best_chisquare": {
-        "window_size": [1.0, 2.5, 5.0, 7.5, 10.0],
-        "num_bins": [5, 10, 20, 30],
-        "p_threshold": [0.001, 0.005, 0.01, 0.02, 0.05],
+        "window_size": [1.0, 2.5, 5.0, 7.5, 10.0], # Window size has to be between 1 and 10% as interpreted from here: https://centre-borelli.github.io/ruptures-docs/user-guide/detection/window/
+        "num_bins": [5, 10, 20, 30], # Number of bins more than 5, around 30 as interpreted here: https://arxiv.org/html/2412.11158v1
+        "p_threshold": [0.001, 0.005, 0.01, 0.02, 0.05], # p < 0.05 as a detection trigger as interpreted here: https://arxiv.org/html/2412.11158v1
         "min_distance": [10, 20, 30, 50, 100]
     },
     "best_kswin": {
@@ -201,20 +201,20 @@ PARAMS = {
     },
     "best_cusum": {
         "k": [1.0, 2.0, 3.0, 4.0, 5.0],
-        "h": [30.0, 50.0, 75.0, 100.0, 150.0, 200.0],
-        "init_size": [2.0, 5.0, 10.0, 15.0, 20.0],
-        "min_distance": [50, 100, 150, 200, 300]
+        "h": [30.0, 50.0, 75.0, 100.0, 150.0, 200.0], # h is recommended to be multiples of σ as interpreted here: https://arxiv.org/abs/2206.06777 . In this case, static values are used
+        "init_size": [2.0, 5.0, 10.0, 15.0, 20.0], # Initial size proposed hyperparameter values are inspired from the following documentation: https://www.mathworks.com/help/signal/ref/cusum.html
+        "min_distance": [50, 100, 150, 200, 300] # values reandomly selected
     },
     "best_ewma": {
-        "alpha": [0.1, 0.2, 0.3],
-        "threshold": [2.5, 2.7, 3.0, 3.3],
+        "alpha": [0.1, 0.2, 0.3], # nan aplha value of around 0.5 was used here in 11.1 : https://people.irisa.fr/Michele.Basseville/kniga/kniga.pdf
+        "threshold": [2.5, 2.7, 3.0, 3.3], # threshold value is recommended to be multiples of σ as interpreted here: https://homepages.laas.fr/owe/METROSEC/DOC/Detection%20of%20intrusions%20in%20information%20systems%20by%20sequential%20change%20point%20methods.pdf. In this case, static values are used
         "init_size": [5.0, 10.0, 15.0],
-        "min_distance": [20, 30, 50]
+        "min_distance": [20, 30, 50] # As per 9.3 and 10.2 from thids book: https://sadbhavnapublications.org/research-enrichment-material/2-Statistical-Books/Outlier-Analysis.pdf , the window value should be small enough
     },
     "best_shewhart": {
-        "threshold": [2.5, 3.0, 3.5],
-        "init_size": [5.0, 10.0, 15.0],
-        "min_distance": [20, 30, 50]
+        "threshold": [2.5, 3.0, 3.5], # threshold value is recommended to be multiples of σ as interpreted here: https://homepages.laas.fr/owe/METROSEC/DOC/Detection%20of%20intrusions%20in%20information%20systems%20by%20sequential%20change%20point%20methods.pdf
+        "init_size": [5.0, 10.0, 15.0], # values selected based on the following publication (III-A): https://arxiv.org/html/2408.06620
+        "min_distance": [20, 30, 50] # size is interpreted from the following documentation: https://stackoverflow.com/questions/12709853/python-running-cumulative-sum-with-a-given-window
     },
     "best_odummy": {
         "trigger_method": ["fixed", "random"],
@@ -225,16 +225,16 @@ PARAMS = {
         "seed": [42]
     },
     "best_mosum": {
-        "window_size": [10, 20, 30, 40, 50],
-        "threshold": [1.0, 2.0, 3.0, 4.0, 5.0],
-        "min_distance": [10, 20, 30, 40, 50],
+        "window_size": [10, 20, 30, 40, 50], # Window size has to be between 1 and 10% as interpreted from here: https://centre-borelli.github.io/ruptures-docs/user-guide/detection/window/
+        "threshold": [1.0, 2.0, 3.0, 4.0, 5.0], # value are selected randomly
+        "min_distance": [10, 20, 30, 40, 50], # size is interpreted from the following documentation: https://stackoverflow.com/questions/12709853/python-running-cumulative-sum-with-a-given-window
     },
     "best_sprt": {
-        "mu0": [0.0],
-        "mu1": [0.5, 1.0, 1.5],
-        "sigma": [1.0],
+        "mu0": [0.0], # values of m0, m1, and sigma inspired from this: https://mattlapa.com/sprt
+        "mu1": [0.5, 1.0, 1.5], # values of m0, m1, and sigma inspired from this: https://mattlapa.com/sprt
+        "sigma": [1.0], # values of m0, m1, and sigma inspired from this: https://mattlapa.com/sprt
         "threshold": [10.0, 15.0, 20.0],
-        "min_distance": [10, 20, 30],
+        "min_distance": [10, 20, 30], # size is interpreted from the following documentation: https://stackoverflow.com/questions/12709853/python-running-cumulative-sum-with-a-given-window
     },
     "best_cvm": {
         "ert": [100, 200, 300, 500],
