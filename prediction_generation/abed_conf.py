@@ -103,8 +103,8 @@ METHODS = [
 
 '''
 METHODS = [
-    "best_ptrigger",
-    "default_ptrigger",
+    "best_pelt",
+    "default_pelt",
 ]
 
 
@@ -216,17 +216,30 @@ PARAMS = {
         "init_size": [5.0, 10.0, 15.0],
         "min_distance": [20, 30, 50]
     },
-    "best_onlinekernel": {
-        "ert": [20, 50, 100],
-        "window_size": [20, 50, 100],
-        "init_size": [5.0, 10.0, 20.0],
-        "sigma": [None, 0.1, 1.0, 10.0],
-        "backend": ["tensorflow", "pytorch"]
+    "best_odummy": {
+        "trigger_method": ["fixed", "random"],
+        "t_0": [100, 200, 300, 500],
+        "w": [1, 50, 100],
+        "init_size": [5.0, 10.0, 15.0],
+        "min_distance": [20, 30, 50],
+        "seed": [42]
     },
-    "best_ptrigger": {
-        "period": [10, 30, 50, 100],
-        "init_size": [5.0, 10.0, 20.0],
-        "min_distance": [10, 20, 30]
+    "best_mosum": {
+        "window_size": [10, 20, 30, 40, 50],
+        "threshold": [1.0, 2.0, 3.0, 4.0, 5.0],
+        "min_distance": [10, 20, 30, 40, 50],
+    },
+    "best_sprt": {
+        "mu0": [0.0],
+        "mu1": [0.5, 1.0, 1.5],
+        "sigma": [1.0],
+        "threshold": [10.0, 15.0, 20.0],
+        "min_distance": [10, 20, 30],
+    },
+    "best_cvm": {
+        "ert": [100, 200, 300, 500],
+        "window_sizes": ["20", "30", "20 50", "30 60"],
+        "min_distance": [20, 30, 40]
     },
     "best_mozilla_rep": {"no_param": [0]},
     "default_bocpd": {"no_param": [0]},
@@ -249,8 +262,10 @@ PARAMS = {
     "default_kswin": {"no_param": [0]},
     "default_cusum": {"no_param": [0]},
     "default_shewhart": {"no_param": [0]},
-    "default_onlinekernel": {"no_param": [0]},
-    "default_ptrigger": {"no_param": [0]},
+    "default_odummy": {"no_param": [0]},
+    "default_mosum": {"no_param": [0]},
+    "default_sprt": {"no_param": [0]},
+    "default_cvm": {"no_param": [0]},
     "default_mozilla_rep": {"no_param": [0]}
 }
 
@@ -279,8 +294,10 @@ COMMANDS = {
     "best_ewma":  "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_ewma.py -i {datadir}/{dataset}.json --alpha {alpha} --threshold {threshold} --init-size {init_size} --min-distance {min_distance} ",
     "best_kswin": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_kswin.py -i {datadir}/{dataset}.json --alpha {alpha} --window-size {window_size} --stat-size {stat_size}",
     "best_shewhart": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_shewhart.py -i {datadir}/{dataset}.json --threshold {threshold} --init-size {init_size} --min-distance {min_distance}",
-    "best_onlinekernel": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_onlinekernel.py -i {datadir}/{dataset}.json --ert {ert} --window-size {window_size} --init-size {init_size} --sigma {sigma} --backend {backend}",
-    "best_ptrigger": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_periodictrigger.py -i {datadir}/{dataset}.json --period {period} --init-size {init_size} --min-distance {min_distance}",
+    "best_odummy": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_odummy.py -i {datadir}/{dataset}.json --trigger-method {trigger_method} --t_0 {t_0} --w {w} --init-size {init_size} --min-distance {min_distance} --seed {seed}",
+    "best_mosum": "python3.9 {execdir}/python/cpdbench_mosum.py -i {datadir}/{dataset}.json --window-size {window_size} --threshold {threshold} --min-distance {min_distance}",
+    "best_sprt": "python3.9 {execdir}/python/cpdbench_sprt.py -i {datadir}/{dataset}.json --mu0 {mu0} --mu1 {mu1} --sigma {sigma} --threshold {threshold} --min-distance {min_distance}",
+    "best_cvm": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_cvm.py -i {datadir}/{dataset}.json --ert {ert} --window-sizes {window_sizes} --min-distance {min_distance}",
     "best_mozilla_rep": "python3.9 {execdir}/python/cpdbench_mozilla_rep.py -i {datadir}/{dataset}.json -a /TCPDBench/analysis/annotations/signatures_attributes.json",
     "default_amoc": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p MBIC -f mean -t Normal -m AMOC",
     "default_binseg": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p MBIC -f mean -t Normal -m BinSeg -Q default",
@@ -302,12 +319,12 @@ COMMANDS = {
     "default_ewma":  "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_ewma.py -i {datadir}/{dataset}.json --alpha 0.3 --threshold 3.0 --init-size 10.0 --min-distance 30",
     "default_shewhart": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_shewhart.py -i {datadir}/{dataset}.json --threshold 3.0 --init-size 10.0 --min-distance 30",
     "default_kswin": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_kswin.py -i {datadir}/{dataset}.json --alpha 0.005 --window-size 100 --stat-size 10",
-    "default_onlinekernel": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_onlinekernel.py -i {datadir}/{dataset}.json --ert 50 --window-size 50 --init-size 10.0 --sigma None --backend tensorflow",
-    "default_ptrigger": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_periodictrigger.py -i {datadir}/{dataset}.json --period 50 --init-size 10.0 --min-distance 30",
+    "default_odummy": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_odummy.py -i {datadir}/{dataset}.json --trigger-method fixed --t_0 300 --w 0 --init-size 10 --min-distance 30 --seed 42",
+    "default_mosum": "python3.9 {execdir}/python/cpdbench_mosum.py -i {datadir}/{dataset}.json --window-size 30 --threshold 3.0 --min-distance 30",
+    "default_sprt": "python3.9 {execdir}/python/cpdbench_sprt.py -i {datadir}/{dataset}.json --mu0 0.0 --mu1 1.0 --sigma 1.0 --threshold 15.0 --min-distance 30",
+    "default_cvm": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_cvm.py -i {datadir}/{dataset}.json --ert 200.0 --window-sizes 20 50 --min-distance 30",
     "default_mozilla_rep": "python3.9 {execdir}/python/cpdbench_mozilla_rep.py -i {datadir}/{dataset}.json -a /TCPDBench/analysis/annotations/signatures_attributes.json",
 }
-
-
 
 METRICS = {}
 
