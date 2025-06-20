@@ -35,7 +35,6 @@ COPY ${PROJECT_FOLDER}/cpdbench_ewma.py /TCPDBench/execs/python/cpdbench_ewma.py
 COPY ${PROJECT_FOLDER}/cpdbench_kswin.py /TCPDBench/execs/python/cpdbench_kswin.py
 COPY ${PROJECT_FOLDER}/cpdbench_cusum.py /TCPDBench/execs/python/cpdbench_cusum.py
 COPY ${PROJECT_FOLDER}/cpdbench_sprt.py /TCPDBench/execs/python/cpdbench_sprt.py
-COPY ${PROJECT_FOLDER}/cpdbench_onlinekernel.py /TCPDBench/execs/python/cpdbench_onlinekernel.py
 COPY ${PROJECT_FOLDER}/cpdbench_odummy.py /TCPDBench/execs/python/cpdbench_odummy.py
 COPY ${PROJECT_FOLDER}/cpdbench_shewhart.py /TCPDBench/execs/python/cpdbench_shewhart.py
 COPY ${PROJECT_FOLDER}/cpdbench_mosum.py /TCPDBench/execs/python/cpdbench_mosum.py
