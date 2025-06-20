@@ -6,15 +6,20 @@ import time
 import copy
 import numpy as np
 from cpdbench_utils import load_dataset, exit_success, exit_with_error
-
-from river.drift import PeriodicTrigger
+from river.drift import DummyDriftDetector
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Run Online PeriodicTrigger on a time series dataset.")
+    parser = argparse.ArgumentParser(description="Run DummyDriftDetector on a time series dataset.")
     parser.add_argument('-i', '--input', help="Path to the input JSON dataset file.")
     parser.add_argument('-o', '--output', help="Path to the output JSON file.")
-    parser.add_argument('--period', type=int, default=50,
-                        help="Number of samples between triggers (default: 50)")
+    parser.add_argument('--trigger-method', type=str, choices=['fixed', 'random'], default='fixed',
+                        help="Trigger method: 'fixed' or 'random' (default: 'fixed')")
+    parser.add_argument('--t_0', type=int, default=300,
+                        help="Reference period for drift signals (default: 300)")
+    parser.add_argument('--w', type=int, default=0,
+                        help="Warmup length (for 'fixed') or spread (for 'random'). Required for 'random'.")
+    parser.add_argument('--seed', type=int, default=None,
+                        help="Random seed (default: None)")
     parser.add_argument('--init-size', type=float, default=10.0,
                         help="Initial window size as percentage of dataset to skip detection (default: 10.0)")
     parser.add_argument('--min-distance', type=int, default=30,
@@ -34,7 +39,14 @@ def main():
         if init_count >= n_points:
             raise ValueError("init_size too large for the dataset")
 
-        detector = PeriodicTrigger(period=args.period)
+        detector = DummyDriftDetector(
+            trigger_method=args.trigger_method,
+            t_0=args.t_0,
+            w=args.w,
+            seed=args.seed,
+            dynamic_cloning=False
+        )
+
         drift_points = []
         last_cp = -args.min_distance
 
@@ -43,7 +55,7 @@ def main():
         for i, x in enumerate(series):
             detector.update(x)
             if i >= init_count:
-                if detector.change_detected and (i - last_cp > args.min_distance):
+                if detector.drift_detected and (i - last_cp > args.min_distance):
                     drift_points.append(i)
                     last_cp = i
 
