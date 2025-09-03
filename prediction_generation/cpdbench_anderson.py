@@ -22,6 +22,7 @@ import os
 from collections import namedtuple
 import newrelic.agent
 import logging
+from scipy import stats
 
 def analyze(revision_data, weight_fn=None):
     """Returns the average and sample variance (s**2) of a list of floats.
@@ -83,27 +84,6 @@ def linear_weights(i, n):
     return float(n - i) / float(n)
 
 
-def calc_t(w1, w2, weight_fn=None):
-    """Perform a Students t-test on the two sets of revision data.
-
-    See the analyze() function for a description of the `weight_fn` argument.
-    """
-    if not w1 or not w2:
-        return 0
-
-    s1 = analyze(w1, weight_fn)
-    s2 = analyze(w2, weight_fn)
-    delta_s = s2["avg"] - s1["avg"]
-
-    if delta_s == 0:
-        return 0
-    if s1["variance"] == 0 and s2["variance"] == 0:
-        return float("inf")
-
-    return delta_s / (((s1["variance"] / s1["n"]) + (s2["variance"] / s2["n"])) ** 0.5)
-
-
-
 @functools.total_ordering
 class RevisionDatum:
     """
@@ -139,10 +119,7 @@ class RevisionDatum:
         return f"<{self.push_timestamp}: {self.push_id}, {values_str}, {self.t:.3f}, {self.change_detected}>"
 
 
-
-
-def detect_changes(data, min_back_window=12, max_back_window=24, fore_window=12, t_threshold=7):
-    # Use T-Tests
+def detect_changes(data, min_back_window=12, max_back_window=24, fore_window=12, sig_level=0.05):
     # Analyze test data using T-Tests, comparing data[i-j:i] to data[i:i+k]
     data = sorted(data)
 
@@ -179,42 +156,36 @@ def detect_changes(data, min_back_window=12, max_back_window=24, fore_window=12,
         di.historical_stats = analyze(jw)
         di.forward_stats = analyze(kw)
 
-        di.t = abs(calc_t(jw, kw, linear_weights))
-        # add additional historical data points next time if we
-        # haven't detected a likely regression
-        if di.t > t_threshold:
-            last_seen_regression = 0
+        # run Anderson–Darling two-sample test
+        if len(jw) > 0 and len(kw) > 0:
+            jw_vals = [v for d in jw for v in d.values]
+            kw_vals = [v for d in kw for v in d.values]
+
+            try:
+                res = stats.anderson_ksamp([jw_vals, kw_vals])
+                di.statistic = res.statistic
+                di.significance_level = res.significance_level / 100.0  # convert % → proportion
+                di.change_detected = di.significance_level < sig_level
+
+                # adaptive window update
+                if di.change_detected:
+                    last_seen_regression = 0
+                else:
+                    last_seen_regression += 1
+
+            except Exception:
+                di.statistic = 0
+                di.significance_level = 1.0
+                di.change_detected = False
+                last_seen_regression += 1
         else:
+            di.statistic = 0
+            di.significance_level = 1.0
+            di.change_detected = False
             last_seen_regression += 1
 
-    # Now that the t-test scores are calculated, go back through the data to
-    # find where changes most likely happened.
-    for i in range(1, len(data)):
-        di = data[i]
-
-        # if we don't have enough data yet, skip for now (until more comes
-        # in)
-        if di.amount_prev_data < min_back_window or di.amount_next_data < fore_window:
-            continue
-
-        if di.t <= t_threshold:
-            continue
-
-        # Check the adjacent points
-        prev = data[i - 1]
-        if prev.t > di.t:
-            continue
-        # next may or may not exist if it's the last in the series
-        if (i + 1) < len(data):
-            next = data[i + 1]
-            if next.t > di.t:
-                continue
-
-        # This datapoint has a t value higher than the threshold and higher
-        # than either neighbor.  Mark it as the cause of a regression.
-        di.change_detected = True
-
     return data
+
 
 
 def parse_args():
@@ -225,7 +196,7 @@ def parse_args():
     parser.add_argument('--min-back-window', type=int, default=12, help="Minimum lookback window size (default: 12).")
     parser.add_argument('--max-back-window', type=int, default=24, help="Maximum lookback window size (default: 24).")
     parser.add_argument('--fore-window', type=int, default=12, help="Forecast/forward window size (default: 12).")
-    parser.add_argument('--t-threshold', type=int, default=7, help="T statistic threshold for detection (default: 7).")
+    parser.add_argument('--sig-level', type=float, default=0.05, help="Significance level threshold.")
     parser.add_argument('--alert-threshold', type=int, default=2, help="Alert threshold value (default: 2).")
 
     return parser.parse_args()
@@ -277,14 +248,14 @@ def main():
     min_back_window=args.min_back_window
     max_back_window=args.max_back_window
     fore_window=args.fore_window
-    t_threshold=args.t_threshold
+    sig_level=args.sig_level
     alert_threshold=args.alert_threshold
     analyzed_series = detect_changes(
         data,
         min_back_window=min_back_window,
         max_back_window=max_back_window,
         fore_window=fore_window,
-        t_threshold=t_threshold,
+        sig_level=sig_level
     )
     locations = []
     #with transaction.atomic():
@@ -345,13 +316,6 @@ def main():
             #         "created": datetime.utcfromtimestamp(cur.push_timestamp),
             #     },
             # )
-
-            # django/mysql doesn't understand "inf", so just use some
-            # arbitrarily high value for that case
-            t_value = cur.t
-            if t_value == float("inf"):
-                t_value = 1000
-
 
 
             # This is where we create the alert aka append its index in the locations list

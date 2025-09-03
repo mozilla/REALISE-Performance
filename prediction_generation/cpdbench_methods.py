@@ -4,7 +4,7 @@
 """
 
 Author: Mohamed Bilel Besbes
-Date: 2025-01-28
+Date: 2025-08-26
 
 """
 import functools
@@ -22,6 +22,7 @@ import os
 from collections import namedtuple
 import newrelic.agent
 import logging
+from scipy import stats
 
 def analyze(revision_data, weight_fn=None):
     """Returns the average and sample variance (s**2) of a list of floats.
@@ -83,25 +84,27 @@ def linear_weights(i, n):
     return float(n - i) / float(n)
 
 
-def calc_t(w1, w2, weight_fn=None):
-    """Perform a Students t-test on the two sets of revision data.
-
-    See the analyze() function for a description of the `weight_fn` argument.
-    """
-    if not w1 or not w2:
-        return 0
-
-    s1 = analyze(w1, weight_fn)
-    s2 = analyze(w2, weight_fn)
-    delta_s = s2["avg"] - s1["avg"]
-
-    if delta_s == 0:
-        return 0
-    if s1["variance"] == 0 and s2["variance"] == 0:
-        return float("inf")
-
-    return delta_s / (((s1["variance"] / s1["n"]) + (s2["variance"] / s2["n"])) ** 0.5)
-
+def run_test(method, jw, kw):
+    jw_values = [v for datum in jw for v in datum.values]
+    kw_values = [v for datum in kw for v in datum.values]
+    if method == "welch":
+        stat, p = stats.ttest_ind(jw_values, kw_values, equal_var=False)
+    elif method == "mwu":
+        stat, p = stats.mannwhitneyu(jw_values, kw_values, alternative="two-sided")
+    elif method == "ks":
+        stat, p = stats.ks_2samp(jw_values, kw_values)
+    elif method == "cvm":
+        result = stats.cramervonmises_2samp(jw_values, kw_values)
+        stat, p = result.statistic, result.pvalue
+    elif method == "levene":
+        stat, p = stats.levene(jw_values, kw_values)
+    elif method == "anderson":
+        # although Anderson Darling test does not have a p cvalue but rather a significance level, it could be treated such as a p value as it falls in the same ranges and it can be compared to an alpha like a p-value: significance_level < alpha → anomaly.
+        result = stats.anderson_ksamp([jw_values, kw_values])
+        stat, p = result.statistic, result.significance_level / 100.0
+    else:
+        raise ValueError(f"Unknown method: {method}")
+    return stat, p
 
 
 @functools.total_ordering
@@ -121,8 +124,8 @@ class RevisionDatum:
         # data values associated with this revision
         self.values = copy.copy(values)
 
-        # t-test score
-        self.t = 0
+        self.stat = 0
+        self.p = 1.0
 
         # Whether a perf regression or improvement was found
         self.change_detected = False
@@ -136,12 +139,10 @@ class RevisionDatum:
     def __repr__(self):
         values_csv = ", ".join([f"{value:.3f}" for value in self.values])
         values_str = f"[ {values_csv} ]"
-        return f"<{self.push_timestamp}: {self.push_id}, {values_str}, {self.t:.3f}, {self.change_detected}>"
+        return f"<{self.push_timestamp}: {self.push_id}, {values_str}, {self.stat:.3f}, {self.p:.3f}, {self.change_detected}>"
 
 
-
-
-def detect_changes(data, min_back_window=12, max_back_window=24, fore_window=12, t_threshold=7):
+def detect_changes(data, min_back_window=12, max_back_window=24, fore_window=12, alpha=0.05, method="welch"):
     # Use T-Tests
     # Analyze test data using T-Tests, comparing data[i-j:i] to data[i:i+k]
     data = sorted(data)
@@ -179,55 +180,44 @@ def detect_changes(data, min_back_window=12, max_back_window=24, fore_window=12,
         di.historical_stats = analyze(jw)
         di.forward_stats = analyze(kw)
 
-        di.t = abs(calc_t(jw, kw, linear_weights))
-        # add additional historical data points next time if we
-        # haven't detected a likely regression
-        if di.t > t_threshold:
+        if len(jw) > 1 and len(kw) > 1:
+            di.stat, di.p = run_test(method, jw, kw)
+        else:
+            di.stat, di.p = 0, 1.0
+
+        if di.p < alpha:
             last_seen_regression = 0
         else:
             last_seen_regression += 1
 
-    # Now that the t-test scores are calculated, go back through the data to
-    # find where changes most likely happened.
     for i in range(1, len(data)):
         di = data[i]
-
-        # if we don't have enough data yet, skip for now (until more comes
-        # in)
         if di.amount_prev_data < min_back_window or di.amount_next_data < fore_window:
             continue
-
-        if di.t <= t_threshold:
+        if di.p >= alpha:
             continue
-
-        # Check the adjacent points
         prev = data[i - 1]
-        if prev.t > di.t:
+        if prev.p < di.p:
             continue
-        # next may or may not exist if it's the last in the series
-        if (i + 1) < len(data):
-            next = data[i + 1]
-            if next.t > di.t:
-                continue
-
-        # This datapoint has a t value higher than the threshold and higher
-        # than either neighbor.  Mark it as the cause of a regression.
+        if (i + 1) < len(data) and data[i + 1].p < di.p:
+            continue
         di.change_detected = True
 
     return data
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(description="Run Mozilla algorithm on a time series dataset.")
-    parser.add_argument('-i', '--input', help="Path to the input JSON dataset file.")
-    parser.add_argument('-o', '--output', help="Path to the output file.")
-    parser.add_argument('-a', '--signatures-attributes', help="JSON file of signatures attributes")
-    parser.add_argument('--min-back-window', type=int, default=12, help="Minimum lookback window size (default: 12).")
-    parser.add_argument('--max-back-window', type=int, default=24, help="Maximum lookback window size (default: 24).")
-    parser.add_argument('--fore-window', type=int, default=12, help="Forecast/forward window size (default: 12).")
-    parser.add_argument('--t-threshold', type=int, default=7, help="T statistic threshold for detection (default: 7).")
-    parser.add_argument('--alert-threshold', type=int, default=2, help="Alert threshold value (default: 2).")
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Run statistical test on a time series dataset.")
+    parser.add_argument('-i', '--input', required=True, help="Path to input JSON dataset.")
+    parser.add_argument('-o', '--output', help="Path to output file.")
+    parser.add_argument('-a', '--signatures-attributes', required=True, help="JSON file of signatures attributes")
+    parser.add_argument('--method', choices=["welch", "mwu", "ks", "cvm", "levene", "anderson"], required=True, help="Statistical test method to use.")
+    parser.add_argument('--min-back-window', type=int, default=12)
+    parser.add_argument('--max-back-window', type=int, default=24)
+    parser.add_argument('--fore-window', type=int, default=12)
+    parser.add_argument('--alpha', type=float, default=0.05)
+    parser.add_argument('--alert-threshold', default="2")
     return parser.parse_args()
 
 
@@ -277,14 +267,16 @@ def main():
     min_back_window=args.min_back_window
     max_back_window=args.max_back_window
     fore_window=args.fore_window
-    t_threshold=args.t_threshold
+    alpha=args.alpha
+    method=args.method
     alert_threshold=args.alert_threshold
     analyzed_series = detect_changes(
         data,
         min_back_window=min_back_window,
         max_back_window=max_back_window,
         fore_window=fore_window,
-        t_threshold=t_threshold,
+        alpha=alpha,
+        method=method
     )
     locations = []
     #with transaction.atomic():
@@ -324,17 +316,18 @@ def main():
             ALERT_PCT = 0
             ALERT_ABS = 1
             ALERT_CHANGE_TYPES = ((ALERT_PCT, "percentage"), (ALERT_ABS, "absolute"))
-            if (
-                (
-                    signature.alert_change_type is None
-                    or signature.alert_change_type == ALERT_PCT
-                )
-                and alert_properties.pct_change < alert_threshold
-            ) or (
-                signature.alert_change_type == ALERT_ABS
-                and abs(alert_properties.delta) < alert_threshold
-            ):
-                continue
+            if args.alert_threshold != "disabled":
+                if (
+                    (
+                        signature.alert_change_type is None
+                        or signature.alert_change_type == ALERT_PCT
+                    )
+                    and alert_properties.pct_change < float(alert_threshold)
+                ) or (
+                    signature.alert_change_type == ALERT_ABS
+                    and abs(alert_properties.delta) < float(alert_threshold)
+                ):
+                    continue
             # summary, _ = PerformanceAlertSummary.objects.get_or_create(
             #     repository=signature.repository,
             #     framework=signature.framework,
@@ -345,13 +338,6 @@ def main():
             #         "created": datetime.utcfromtimestamp(cur.push_timestamp),
             #     },
             # )
-
-            # django/mysql doesn't understand "inf", so just use some
-            # arbitrarily high value for that case
-            t_value = cur.t
-            if t_value == float("inf"):
-                t_value = 1000
-
 
 
             # This is where we create the alert aka append its index in the locations list

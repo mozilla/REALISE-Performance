@@ -26,6 +26,8 @@ COPY ${PROJECT_FOLDER}/cpdbench_prophet.py /TCPDBench/execs/python/cpdbench_prop
 COPY ${PROJECT_FOLDER}/cpdbench_mozilla_rep.py /TCPDBench/execs/python/cpdbench_mozilla_rep.py
 COPY ${PROJECT_FOLDER}/cpdbench_page_hinkley.py /TCPDBench/execs/python/cpdbench_page_hinkley.py
 COPY ${PROJECT_FOLDER}/cpdbench_chisquare.py /TCPDBench/execs/python/cpdbench_chisquare.py
+COPY ${PROJECT_FOLDER}/cpdbench_page_hinkley_lookahead.py /TCPDBench/execs/python/cpdbench_page_hinkley_lookahead.py
+COPY ${PROJECT_FOLDER}/cpdbench_chisquare_lookahead.py /TCPDBench/execs/python/cpdbench_chisquare_lookahead.py
 RUN mkdir stagedir
 COPY ${PROJECT_FOLDER}/Makefile /TCPDBench/Makefile
 COPY ${PROJECT_FOLDER}/cpdbench_ecp.R /TCPDBench/execs/R/cpdbench_ecp.R
@@ -39,10 +41,21 @@ COPY ${PROJECT_FOLDER}/cpdbench_odummy.py /TCPDBench/execs/python/cpdbench_odumm
 COPY ${PROJECT_FOLDER}/cpdbench_shewhart.py /TCPDBench/execs/python/cpdbench_shewhart.py
 COPY ${PROJECT_FOLDER}/cpdbench_mosum.py /TCPDBench/execs/python/cpdbench_mosum.py
 COPY ${PROJECT_FOLDER}/cpdbench_cvm.py /TCPDBench/execs/python/cpdbench_cvm.py
+COPY ${PROJECT_FOLDER}/cpdbench_adwin_lookahead.py /TCPDBench/execs/python/cpdbench_adwin_lookahead.py
+COPY ${PROJECT_FOLDER}/cpdbench_ewma_lookahead.py /TCPDBench/execs/python/cpdbench_ewma_lookahead.py
+COPY ${PROJECT_FOLDER}/cpdbench_kswin_lookahead.py /TCPDBench/execs/python/cpdbench_kswin_lookahead.py
+COPY ${PROJECT_FOLDER}/cpdbench_cusum_lookahead.py /TCPDBench/execs/python/cpdbench_cusum_lookahead.py
+COPY ${PROJECT_FOLDER}/cpdbench_sprt_lookahead.py /TCPDBench/execs/python/cpdbench_sprt_lookahead.py
+COPY ${PROJECT_FOLDER}/cpdbench_odummy_lookahead.py /TCPDBench/execs/python/cpdbench_odummy_lookahead.py
+COPY ${PROJECT_FOLDER}/cpdbench_shewhart_lookahead.py /TCPDBench/execs/python/cpdbench_shewhart_lookahead.py
+COPY ${PROJECT_FOLDER}/cpdbench_mosum_lookahead.py /TCPDBench/execs/python/cpdbench_mosum_lookahead.py
+COPY ${PROJECT_FOLDER}/cpdbench_cvm_lookahead.py /TCPDBench/execs/python/cpdbench_cvm_lookahead.py
+COPY ${PROJECT_FOLDER}/cpdbench_bocpd_lookahead.R /TCPDBench/execs/R/cpdbench_bocpd_lookahead.R
+COPY ${PROJECT_FOLDER}/cpdbench_methods.py /TCPDBench/execs/python/cpdbench_methods.py
 COPY ${PROJECT_FOLDER}/abed_conf.py /TCPDBench/abed_conf.py
 COPY ${DATASETS_PATH} /TCPDBench/datasets
 COPY ${ANNOTATIONS_PATH} /TCPDBench/analysis/annotations/annotations.json
 COPY ${SIG_ATTIBUTES} /TCPDBench/analysis/annotations/signatures_attributes.json
 RUN chmod +x utils/setup_datasets.sh && ./utils/setup_datasets.sh
 
-# docker build --no-cache --build-arg DATASETS_PATH=data/clean_data/sp3-tp6-datasets-annotated-aggregated-jsonfied-400-samples-new-prod/all_timeseries --build-arg ANNOTATIONS_PATH=data/temp_data/sp3-tp6-datasets-annotated-aggregated-jsonfied-400-samples-new-prod/annotations.json --build-arg SIG_ATTIBUTES=data_annotation_platform/app/static/resources/timeseries_specs.json -t selected_400 -f prediction_generation/Dockerfile .
+# docker build --no-cache --build-arg DATASETS_PATH=data/temp_data/clean_data/sp3-tp6-datasets-annotated-aggregated-jsonfied-174-samples --build-arg ANNOTATIONS_PATH=data/temp_data/clean_data/annotations.json --build-arg SIG_ATTIBUTES=data_annotation_platform/app/static/resources/timeseries_specs.json -t selected_174 -f prediction_generation/Dockerfile .

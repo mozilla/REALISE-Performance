@@ -28,7 +28,7 @@ def process_signature(root, sig_path):
     with open(sig_summary_path, 'r') as file:
         data = json.load(file)
     dataset = data['dataset']
-    annotations = data['annotations']['1']
+    annotations = data['annotations']
     results = data['results']
     for cpd in results:
         for conf in results[cpd]:

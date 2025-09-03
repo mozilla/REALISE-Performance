@@ -1,13 +1,28 @@
 import os
 import shutil
+import argparse
 
-# Define the base folder and the subfolders you want to merge
+
+'''
 base_dir = "../data/temp_data/copy_results_average_aggregated_195"
 ding_dir = os.path.join(base_dir, "all_best_default_mixed_4_cpd")
+folders_to_merge = ["all_best_default"]
+'''
+
+parser = argparse.ArgumentParser(description="Merge subfolders into a destination folder.")
+parser.add_argument('--base-dir', required=True, help='Base directory containing the folders to merge')
+parser.add_argument('--output-folder', required=True, help='Name of the output (merged) folder')
+parser.add_argument('--folders-to-merge', nargs='+', required=True, help='List of subfolder names to merge')
+
+args = parser.parse_args()
+
+base_dir = args.base_dir
+ding_dir = os.path.join(base_dir, args.output_folder)
+folders_to_merge = args.folders_to_merge
+
 os.makedirs(ding_dir, exist_ok=True)
 
 # List of subfolders to merge into 'ding'
-folders_to_merge = ["all_best_default"]
 # folders_to_merge = ["union_kcpa_bocpd", "union_mongodb_bocpd","union_mongodb_kcpa","union_mongodb_pelt","union_pelt_bocpd","union_pelt_kcpa"]
 # Helper function to merge the contents of two directories
 def merge_folders(src_dir, dest_dir):
