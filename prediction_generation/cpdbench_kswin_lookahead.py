@@ -1,0 +1,61 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import argparse
+import time
+import copy
+import numpy as np
+from river.drift import KSWIN
+from cpdbench_utils import load_dataset, exit_success, exit_with_error
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Run KSWIN (river) on a time series dataset with lookahead average.")
+    parser.add_argument('-i', '--input', help="Path to the input JSON dataset file.")
+    parser.add_argument('-o', '--output', help="Path to the output JSON file.")
+    parser.add_argument('--alpha', type=float, default=0.005, help="Significance level for the KS test (default: 0.005)")
+    parser.add_argument('--window-size', type=int, default=100, help="Size of the sliding window (default: 100)")
+    parser.add_argument('--stat-size', type=int, default=30, help="Number of recent values used in the KS test (default: 30)")
+    parser.add_argument('--lookahead', type=int, default=12, help="Number of future points to average for evaluation (default: 12)")
+    return parser.parse_args()
+
+def main():
+    args = parse_args()
+    data, mat = load_dataset(args.input)
+    start_time = time.time()
+    raw_args = copy.deepcopy(args)
+    try:
+        series = data['series'][0]['raw']
+        n_points = len(series)
+
+        detector = KSWIN(
+            alpha=args.alpha,
+            window_size=args.window_size,
+            stat_size=args.stat_size
+        )
+
+        drift_points = []
+
+        for i in range(n_points):
+            # update detector with true past point
+            detector.update(series[i])
+
+            # compute artificial current point as future average
+            if i + args.lookahead < n_points:
+                artificial_x = np.mean(series[i+1:i+1+args.lookahead])
+            else:
+                artificial_x = series[i]
+
+            # deep copy detector to evaluate artificial point
+            temp_detector = copy.deepcopy(detector)
+            temp_detector.update(artificial_x)
+
+            if temp_detector.drift_detected:
+                drift_points.append(i)
+
+        runtime = time.time() - start_time
+        exit_success(data, raw_args, vars(args), drift_points, runtime, __file__)
+    except Exception as e:
+        exit_with_error(data, raw_args, vars(args), str(e), __file__)
+
+if __name__ == "__main__":
+    main()

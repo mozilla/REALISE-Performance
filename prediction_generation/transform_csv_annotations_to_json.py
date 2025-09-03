@@ -18,7 +18,7 @@ def main():
 
     # Exclude datasets that start with "demo_"
     df = df[~df["DatasetName"].astype(str).str.startswith("demo_")]
-    
+
     temp = {}
     
     for _, row in df.iterrows():
@@ -41,7 +41,7 @@ def main():
                 temp[dataset][user_id].append(index)
             except ValueError:
                 continue
-
+    
     # Apply --top filtering if requested
     result = {}
     for dataset, user_dict in temp.items():

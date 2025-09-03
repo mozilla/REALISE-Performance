@@ -1,7 +1,7 @@
 import os
 import json
 import argparse
-import pandas as pd
+#import pandas as pd
 
 
 class MethodMeasurement:
@@ -76,6 +76,12 @@ def process_default(method):
     stripped_method = method.replace("default_", "")
     nb_success = 0
     for dataset_metrics in datasets_metrics:
+        try:
+            if dataset_metrics["results"][method][0]["status"] == "SUCCESS":
+                print("OK")
+        except Exception as e:
+            print("########3")
+            print(dataset_metrics["dataset"])
         if dataset_metrics["results"][method][0]["status"] == "SUCCESS":
             nb_success += 1
             metrics = dataset_metrics["results"][method][0]["scores"]
@@ -135,12 +141,12 @@ def process_best(method):
                     uniq_fail_conf[conf_str].append(dataset_metrics['dataset'])
                 else:
                     uniq_fail_conf[conf_str] = [dataset_metrics['dataset']]
-                #print('AAAAAAAAAAAAAAAA')
-                #print(method)
-            # else:
-            #     print('METHOD:')
-            #     print(method)
-            #     print(dataset_metrics["dataset"])
+                print('AAAAAAAAAAAAAAAA')
+                print(method)
+            else:
+                print('METHOD:')
+                print(method)
+                print(dataset_metrics["dataset"])
     # dict_f1 = {key: sum(value['f1']) / len(value['f1']) for key, value in hyperparams.items() if len(value['f1']) > nb_datasets_threshold}
     # dict_precision = {key: sum(value['precision']) / len(value['precision']) for key, value in hyperparams.items() if len(value['precision']) > nb_datasets_threshold}
     # dict_recall = {key: sum(value['recall']) / len(value['recall']) for key, value in hyperparams.items() if len(value['recall']) > nb_datasets_threshold}
@@ -197,8 +203,8 @@ def process_best(method):
         'Recall': [dict_recall.get(key, float('nan')) for key in all_keys],
         'F1 Score': [dict_f1.get(key, float('nan')) for key in all_keys]
     }
-    df = pd.DataFrame(data)
-    df.to_csv('/TCPDBench/analysis/metrics_of_'+ method + '.csv', index=False)
+    #df = pd.DataFrame(data)
+    #df.to_csv('/TCPDBench/analysis/metrics_of_'+ method + '.csv', index=False)
 
     try:
         max_f1 = dict_f1[max(dict_f1, key=dict_f1.get)]

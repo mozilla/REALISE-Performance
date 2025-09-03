@@ -10,7 +10,7 @@ from collections import deque
 from cpdbench_utils import load_dataset, exit_success, exit_with_error
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Run Sliding Window Chi-Square Test on a time series dataset.")
+    parser = argparse.ArgumentParser(description="Run Sliding Window Chi-Square Test with future-lookahead averaging.")
     parser.add_argument('-i', '--input', help="Path to the input JSON dataset file.")
     parser.add_argument('-o', '--output', help="Path to the output JSON file.")
     parser.add_argument('--window-size', type=float, default=5.0,
@@ -21,6 +21,8 @@ def parse_args():
                         help="Chi-Square p-value threshold to detect change (default: 0.01)")
     parser.add_argument('--min-distance', type=int, default=30,
                         help="Minimum distance between change points (default: 30)")
+    parser.add_argument('--lookahead', type=int, default=12,
+                        help="Number of future points to average for artificial current (default: 12)")
     return parser.parse_args()
 
 def main():
@@ -32,8 +34,7 @@ def main():
         series = data['series'][0]['raw']
         n_points = len(series)
 
-        win_size = args.window_size
-        win_size = int(win_size)
+        win_size = int(args.window_size)
         if 2 * win_size >= n_points:
             raise ValueError("Window size too large for the dataset. Reduce window-size.")
 
@@ -46,18 +47,22 @@ def main():
         start_time = time.time()
 
         for i in range(2 * win_size, n_points):
-            # Only use data seen so far for min/max computation
-            current_data = list(ref_win) + list(curr_win)
+            # Compute artificial current point as average of next lookahead points
+            if i + args.lookahead < n_points:
+                artificial_x = np.mean(series[i+1:i+1+args.lookahead])
+            else:
+                artificial_x = series[i]
+
+            # Only use past data + artificial current for histogram comparison
+            current_data = list(ref_win) + list(curr_win)[:-1] + [artificial_x]
             data_min, data_max = min(current_data), max(current_data)
 
             hist_ref, _ = np.histogram(ref_win, bins=args.num_bins, range=(data_min, data_max))
-            hist_curr, _ = np.histogram(curr_win, bins=args.num_bins, range=(data_min, data_max))
+            hist_curr, _ = np.histogram(list(curr_win)[:-1] + [artificial_x], bins=args.num_bins, range=(data_min, data_max))
 
-            # Avoid zeros for expected frequencies (to prevent division by zero)
             hist_ref = np.where(hist_ref == 0, 1e-6, hist_ref)
             hist_curr = np.where(hist_curr == 0, 1e-6, hist_curr)
 
-            # Normalize histograms to have same total count
             sum_ref = hist_ref.sum()
             sum_curr = hist_curr.sum()
             if sum_ref != sum_curr:

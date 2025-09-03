@@ -5,7 +5,7 @@ import sys
 import random
 import string
 # bocpd, amoc, binseg, cpnp, kcpa, mongodb, pelt, rfpop, wbs, zero
-# python3 merge_cpds.py -i ../data/copy_results_average_aggregated_195/all -o ../data/copy_results_average_aggregated_195/all_mixed -f mozilla -s binseg -c intersection_first -m 5
+# python3 merge_multiple_cpds_with_mozilla.py -i aa -o aa -f mozilla_rep -s cvm_advanced cvm_simple ks_advanced ks_simple levene_advanced levene_simple mwu_advanced mwu_simple welch_advanced welch_simple adwin bocpd chisquare cusum cvm ewma kswin mosum odummy shewhart sprt page_hinkley amoc binseg cpnp kcpa mongodb rfpop segneigh pelt zero wbs -c intersection_first -m 5
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(

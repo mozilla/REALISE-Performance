@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 
 """
-
+Centralized performance regression detection
+Supports: Welch t-test, Mann-Whitney U, KS, CvM, Levene
 Author: Mohamed Bilel Besbes
-Date: 2025-01-28
-
+Date: 2025-08-26
 """
+
 import functools
 import argparse
 import time
@@ -179,57 +180,44 @@ def detect_changes(data, min_back_window=12, max_back_window=24, fore_window=12,
         di.historical_stats = analyze(jw)
         di.forward_stats = analyze(kw)
 
-        di.t = abs(calc_t(jw, kw, linear_weights))
-        # add additional historical data points next time if we
-        # haven't detected a likely regression
-        if di.t > t_threshold:
+        if len(jw_values) > 1 and len(kw_values) > 1:
+            di.stat, di.p = run_test(method, jw_values, kw_values)
+        else:
+            di.stat, di.p = 0, 1.0
+
+        if di.p < alpha:
             last_seen_regression = 0
         else:
             last_seen_regression += 1
 
-    # Now that the t-test scores are calculated, go back through the data to
-    # find where changes most likely happened.
     for i in range(1, len(data)):
         di = data[i]
-
-        # if we don't have enough data yet, skip for now (until more comes
-        # in)
         if di.amount_prev_data < min_back_window or di.amount_next_data < fore_window:
             continue
-
-        if di.t <= t_threshold:
+        if di.p >= alpha:
             continue
-
-        # Check the adjacent points
         prev = data[i - 1]
-        if prev.t > di.t:
+        if prev.p < di.p:
             continue
-        # next may or may not exist if it's the last in the series
-        if (i + 1) < len(data):
-            next = data[i + 1]
-            if next.t > di.t:
-                continue
-
-        # This datapoint has a t value higher than the threshold and higher
-        # than either neighbor.  Mark it as the cause of a regression.
+        if (i + 1) < len(data) and data[i + 1].p < di.p:
+            continue
         di.change_detected = True
 
     return data
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Run Mozilla algorithm on a time series dataset.")
-    parser.add_argument('-i', '--input', help="Path to the input JSON dataset file.")
-    parser.add_argument('-o', '--output', help="Path to the output file.")
-    parser.add_argument('-a', '--signatures-attributes', help="JSON file of signatures attributes")
-    parser.add_argument('--min-back-window', type=int, default=12, help="Minimum lookback window size (default: 12).")
-    parser.add_argument('--max-back-window', type=int, default=24, help="Maximum lookback window size (default: 24).")
-    parser.add_argument('--fore-window', type=int, default=12, help="Forecast/forward window size (default: 12).")
-    parser.add_argument('--t-threshold', type=int, default=7, help="T statistic threshold for detection (default: 7).")
-    parser.add_argument('--alert-threshold', type=int, default=2, help="Alert threshold value (default: 2).")
-
+    parser = argparse.ArgumentParser(description="Run statistical test on a time series dataset.")
+    parser.add_argument('-i', '--input', required=True, help="Path to input JSON dataset.")
+    parser.add_argument('-o', '--output', help="Path to output file.")
+    parser.add_argument('-a', '--signatures-attributes', required=True, help="JSON file of signatures attributes")
+    parser.add_argument('--method', choices=["welch", "mwu", "ks", "cvm", "levene"], required=True, help="Statistical test method to use.")
+    parser.add_argument('--min-back-window', type=int, default=12)
+    parser.add_argument('--max-back-window', type=int, default=24)
+    parser.add_argument('--fore-window', type=int, default=12)
+    parser.add_argument('--alpha', type=float, default=0.05)
+    parser.add_argument('--alert-threshold', default="2")
     return parser.parse_args()
-
 
 
 def get_alert_properties(prev_value, new_value, lower_is_better):
