@@ -1,0 +1,393 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+
+Author: Mohamed Bilel Besbes
+Date: 2025-08-26
+
+"""
+import functools
+import argparse
+import time
+import copy
+import numpy as np
+from datetime import datetime
+from cpdbench_utils import load_dataset, exit_success, exit_with_error
+from collections import defaultdict
+#from django.db import transaction
+import moz_measure_noise
+import json
+import os
+from collections import namedtuple
+import newrelic.agent
+import logging
+from scipy import stats
+
+def analyze(revision_data, weight_fn=None):
+    """Returns the average and sample variance (s**2) of a list of floats.
+
+    `weight_fn` is a function that takes a list index and a window width, and
+    returns a weight that is used to calculate a weighted average.  For example,
+    see `default_weights` or `linear_weights` below.  If no function is passed,
+    `default_weights` is used and the average will be uniformly weighted.
+    """
+    if weight_fn is None:
+        weight_fn = default_weights
+
+    # get a weighted average for the full set of data -- this is complicated
+    # by the fact that we might have multiple data points from each revision
+    # which we would want to weight equally -- do this by creating a set of
+    # weights only for each bucket containing (potentially) multiple results
+    # for each value
+    num_revisions = len(revision_data)
+    weights = [weight_fn(i, num_revisions) for i in range(num_revisions)]
+    weighted_sum = 0
+    sum_of_weights = 0
+    for i in range(num_revisions):
+        weighted_sum += sum(value * weights[i] for value in revision_data[i].values)
+        sum_of_weights += weights[i] * len(revision_data[i].values)
+    weighted_avg = weighted_sum / sum_of_weights if num_revisions > 0 else 0.0
+
+    # now that we have a weighted average, we can calculate the variance of the
+    # whole series
+    all_data = [v for datum in revision_data for v in datum.values]
+    variance = (
+        (sum(pow(d - weighted_avg, 2) for d in all_data) / (len(all_data) - 1))
+        if len(all_data) > 1
+        else 0.0
+    )
+
+    return {"avg": weighted_avg, "n": len(all_data), "variance": variance}
+
+
+
+def geomean(iterable):
+    # Returns a geomean of a list of values.
+    a = np.array(iterable)
+    return a.prod() ** (1.0 / len(a))
+
+def default_weights(i, n):
+    """A window function that weights all points uniformly."""
+    return 1.0
+
+
+def linear_weights(i, n):
+    """A window function that falls off arithmetically.
+
+    This is used to calculate a weighted moving average (WMA) that gives higher
+    weight to changes near the point being analyzed, and smooth out changes at
+    the opposite edge of the moving window.  See bug 879903 for details.
+    """
+    if i >= n:
+        return 0.0
+    return float(n - i) / float(n)
+
+
+def run_test(method, jw, kw):
+    jw_values = [v for datum in jw for v in datum.values]
+    kw_values = [v for datum in kw for v in datum.values]
+    if method == "welch":
+        stat, p = stats.ttest_ind(jw_values, kw_values, equal_var=False)
+    elif method == "mwu":
+        stat, p = stats.mannwhitneyu(jw_values, kw_values, alternative="two-sided")
+    elif method == "ks":
+        stat, p = stats.ks_2samp(jw_values, kw_values)
+    elif method == "cvm":
+        result = stats.cramervonmises_2samp(jw_values, kw_values)
+        stat, p = result.statistic, result.pvalue
+    elif method == "levene":
+        stat, p = stats.levene(jw_values, kw_values)
+    elif method == "anderson":
+        # although Anderson Darling test does not have a p cvalue but rather a significance level, it could be treated such as a p value as it falls in the same ranges and it can be compared to an alpha like a p-value: significance_level < alpha → anomaly.
+        result = stats.anderson_ksamp([jw_values, kw_values])
+        stat, p = result.statistic, result.significance_level / 100.0
+    else:
+        raise ValueError(f"Unknown method: {method}")
+    return stat, p
+
+
+@functools.total_ordering
+class RevisionDatum:
+    """
+    This class represents a specific revision and the set of values for it
+    """
+
+    def __init__(self, push_timestamp, push_id, values):
+        # Date code was pushed
+        self.push_timestamp = push_timestamp
+
+        # What revision this data is for (usually, but not guaranteed
+        # to be increasing with push_timestamp)
+        self.push_id = push_id
+
+        # data values associated with this revision
+        self.values = copy.copy(values)
+
+        self.stat = 0
+        self.p = 1.0
+
+        # Whether a perf regression or improvement was found
+        self.change_detected = False
+
+    def __eq__(self, o):
+        return self.push_timestamp == o.push_timestamp
+
+    def __lt__(self, o):
+        return self.push_timestamp < o.push_timestamp
+
+    def __repr__(self):
+        values_csv = ", ".join([f"{value:.3f}" for value in self.values])
+        values_str = f"[ {values_csv} ]"
+        return f"<{self.push_timestamp}: {self.push_id}, {values_str}, {self.stat:.3f}, {self.p:.3f}, {self.change_detected}>"
+
+
+def detect_changes(data, min_back_window=12, max_back_window=24, fore_window=12, alpha=0.05, method="welch"):
+    # Use T-Tests
+    # Analyze test data using T-Tests, comparing data[i-j:i] to data[i:i+k]
+    data = sorted(data)
+
+    last_seen_regression = 0
+    for i in range(1, len(data)):
+        di = data[i]
+
+        # keep on getting previous data until we've either got at least 12
+        # data points *or* we've hit the maximum back window
+        jw = []
+        di.amount_prev_data = 0
+        prev_indice = i - 1
+        while (
+            di.amount_prev_data < max_back_window
+            and prev_indice >= 0
+            and (
+                (i - prev_indice)
+                <= min(max(last_seen_regression, min_back_window), max_back_window)
+            )
+        ):
+            jw.append(data[prev_indice])
+            di.amount_prev_data += len(jw[-1].values)
+            prev_indice -= 1
+
+        # accumulate present + future data until we've got at least 12 values
+        kw = []
+        di.amount_next_data = 0
+        next_indice = i
+        while di.amount_next_data < fore_window and next_indice < len(data):
+            kw.append(data[next_indice])
+            di.amount_next_data += len(kw[-1].values)
+            next_indice += 1
+
+        di.historical_stats = analyze(jw)
+        di.forward_stats = analyze(kw)
+
+        if len(jw) > 1 and len(kw) > 1:
+            di.stat, di.p = run_test(method, jw, kw)
+        else:
+            di.stat, di.p = 0, 1.0
+
+        if di.p < alpha:
+            last_seen_regression = 0
+        else:
+            last_seen_regression += 1
+
+    for i in range(1, len(data)):
+        di = data[i]
+        if di.amount_prev_data < min_back_window or di.amount_next_data < fore_window:
+            continue
+        if di.p >= alpha:
+            continue
+        prev = data[i - 1]
+        if prev.p < di.p:
+            continue
+        if (i + 1) < len(data) and data[i + 1].p < di.p:
+            continue
+        di.change_detected = True
+
+    return data
+
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Run statistical test on a time series dataset.")
+    parser.add_argument('-i', '--input', required=True, help="Path to input JSON dataset.")
+    parser.add_argument('-o', '--output', help="Path to output file.")
+    parser.add_argument('-a', '--signatures-attributes', required=True, help="JSON file of signatures attributes")
+    parser.add_argument('--method', choices=["welch", "mwu", "ks", "cvm", "levene", "anderson"], required=True, help="Statistical test method to use.")
+    parser.add_argument('--min-back-window', type=int, default=12)
+    parser.add_argument('--max-back-window', type=int, default=24)
+    parser.add_argument('--fore-window', type=int, default=12)
+    parser.add_argument('--alpha', type=float, default=0.05)
+    parser.add_argument('--alert-threshold', choices=["negligible", "small", "medium", "large"], default="small", help="Minimum Cliff's delta effect size category required to trigger an alert")
+    return parser.parse_args()
+
+
+
+def get_alert_properties(prev_value, new_value, lower_is_better):
+    AlertProperties = namedtuple(
+        "AlertProperties", "pct_change delta is_regression prev_value new_value"
+    )
+    if prev_value != 0:
+        pct_change = 100.0 * abs(new_value - prev_value) / float(prev_value)
+    else:
+        pct_change = 0.0
+    delta = new_value - prev_value
+    is_regression = (delta > 0 and lower_is_better) or (delta < 0 and not lower_is_better)
+    return AlertProperties(pct_change, delta, is_regression, prev_value, new_value)
+
+
+def cliffs_delta(x, y):
+    """
+    Compute Cliff's delta effect size between two samples.
+    δ = ( (#(xi > yj) - #(xi < yj) ) / (len(x)*len(y)) )
+    Range: -1 to +1. We use absolute value for magnitude.
+    """
+    n = len(x)
+    m = len(y)
+    if n == 0 or m == 0:
+        return 0.0
+
+    greater = 0
+    less = 0
+    for xi in x:
+        for yj in y:
+            if xi > yj:
+                greater += 1
+            elif xi < yj:
+                less += 1
+    delta = (greater - less) / float(n * m)
+    return abs(delta)
+
+
+def cliffs_delta_category(delta):
+    """
+    Convert Cliff's delta value into categorical effect size.
+    Reference thresholds from Romano et al. (2006).
+    """
+    if delta < 0.147:
+        return "negligible"
+    elif delta < 0.33:
+        return "small"
+    elif delta < 0.474:
+        return "medium"
+    else:
+        return "large"
+
+
+
+def main():
+    logger = logging.getLogger(__name__)
+    args = parse_args()
+    data, mat = load_dataset(args.input)
+    raw_data = data.copy()
+    start_time = time.time()
+    with open(args.signatures_attributes, 'r') as file:
+        signatures_attributes = json.load(file)
+    signature_id = os.path.splitext(os.path.basename(args.input))[0]
+    signature_attributes = signatures_attributes[signature_id]
+    Signature = namedtuple('Signature', signature_attributes.keys())
+    signature = Signature(**signature_attributes)
+    # print(len(data['time']['raw']))
+    # print(len(data['series'][0]['raw']))
+    raw_args = copy.deepcopy(args)
+    #try:
+    series = data['series'][0]['raw']
+    push_timestamp = data['time']['raw']
+    push_timestamp = [datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") for ts in push_timestamp]
+    #unique_push_timestamp = sorted(set(datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") for ts in push_timestamp))
+    unique_push_timestamp = sorted(set(push_timestamp))
+    grouped_data = defaultdict(list)
+    for ts, value in zip(push_timestamp, series):
+        grouped_data[ts].append(value)
+    data = [RevisionDatum(ts, ts, grouped_data[ts]) for ts in grouped_data]
+    # data_sorted = sorted(data)
+    # These values are the default taken from the Mozilla code, Note that min_back_window, max_back_window, and fore_window come from class Performancesignature, I did not find them on record in the signatures data we have o we will be using the defaults
+    
+    min_back_window=args.min_back_window
+    max_back_window=args.max_back_window
+    fore_window=args.fore_window
+    alpha=args.alpha
+    method=args.method
+    alert_threshold=args.alert_threshold
+    analyzed_series = detect_changes(
+        data,
+        min_back_window=min_back_window,
+        max_back_window=max_back_window,
+        fore_window=fore_window,
+        alpha=alpha,
+        method=method
+    )
+    locations = []
+    #with transaction.atomic():
+    for prev, cur in zip(analyzed_series, analyzed_series[1:]):
+        if cur.change_detected:
+            prev_value = cur.historical_stats["avg"]
+            new_value = cur.forward_stats["avg"]
+            alert_properties = get_alert_properties(
+                prev_value, new_value, signature.lower_is_better
+            )
+            noise_profile = "N/A"
+            try:
+                # Gather all data up to the current data point that
+                # shows the regression and obtain a noise profile on it.
+                # This helps us to ignore this alert and others in the
+                # calculation that could influence the profile.
+                noise_data = []
+                for point in analyzed_series:
+                    if point == cur:
+                        break
+                    noise_data.append(geomean(point.values))
+
+                noise_profile, _ = moz_measure_noise.deviance(noise_data)
+                if not isinstance(noise_profile, str):
+                    raise Exception(
+                        f"Expecting a string as a noise profile, got: {type(noise_profile)}"
+                    )
+            except Exception:
+                # Fail without breaking the alert computation
+                newrelic.agent.notice_error()
+                logger.error("Failed to obtain a noise profile.")
+
+            # Compute Cliff's delta between historical and forward windows
+            jw_values = [v for d in analyzed_series if d.push_timestamp <= prev.push_timestamp for v in d.values]
+            kw_values = [v for d in analyzed_series if d.push_timestamp >= cur.push_timestamp for v in d.values]
+
+            delta = cliffs_delta(jw_values, kw_values)
+            category = cliffs_delta_category(delta)
+            category_threshold = args.alert_threshold
+
+            CATEGORY_ORDER = {
+                "negligible": 0,
+                "small": 1,
+                "medium": 2,
+                "large": 3
+            }
+
+            # Only trigger alerts if category meets or exceeds threshold
+            if CATEGORY_ORDER[category] < CATEGORY_ORDER[category_threshold]:
+                continue
+
+            # This is where we create the alert aka append its index in the locations list
+            # locations += [str(i) + "/t_value/" + str(cur.t) + "/pct_value/" + str(alert_properties.pct_change) + "/prev_value/" + str(prev_value) + "/new_value/" + str(new_value) for i, ts in enumerate(unique_push_timestamp) if ts == cur.push_timestamp]
+            locations += [i for i, ts in enumerate(unique_push_timestamp) if ts == cur.push_timestamp]
+            
+            # PerformanceAlert.objects.update_or_create(
+            #     summary=summary,
+            #     series_signature=signature,
+            #     defaults={
+            #         "noise_profile": noise_profile,
+            #         "is_regression": alert_properties.is_regression,
+            #         "amount_pct": alert_properties.pct_change,
+            #         "amount_abs": alert_properties.delta,
+            #         "prev_value": prev_value,
+            #         "new_value": new_value,
+            #         "t_value": t_value,
+            #     },
+            # )
+
+    stop_time = time.time()
+    runtime = stop_time - start_time
+    exit_success(raw_data, raw_args, vars(args), locations, runtime, __file__)
+    # except Exception as e:
+    #     exit_with_error(raw_data, raw_args, vars(args), str(e), __file__)
+if __name__ == "__main__":
+    main()

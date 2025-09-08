@@ -5,6 +5,34 @@ import sys
 import random
 import string
 # bocpd, amoc, binseg, cpnp, kcpa, mongodb, pelt, rfpop, wbs, zero
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/new_analysis_results -o ../data/temp_data/clean_data/mozilla_with_vote_strict -f -s mozilla -c intersection_first -m 5
+
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s cvm_advanced -c intersection_strict -m 5
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s ks_advanced -c intersection_strict -m 5
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s levene_advanced -c intersection_strict -m 5
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s mwu_advanced -c intersection_strict -m 5
+
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f cvm_advanced -s ks_advanced -c intersection_strict -m 5
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f cvm_advanced -s levene_advanced -c intersection_strict -m 5
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f cvm_advanced -s mwu_advanced -c intersection_strict -m 5
+
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f ks_advanced -s mwu_advanced -c intersection_strict -m 5
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f ks_advanced -s levene_advanced -c intersection_strict -m 5
+
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f mwu_advanced -s levene_advanced -c intersection_strict -m 5
+
+
+
+
+
+
+
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s ks_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s levene_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s mwu_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f cvm_advanced -s ks_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f cvm_advanced -s levene_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f cvm_advanced -s mwu_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f ks_advanced -s mwu_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f ks_advanced -s levene_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f mwu_advanced -s levene_advanced -c intersection_strict -m 5
+
+
+
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -72,7 +100,16 @@ def merge_cpocations(first_method_cplocations, second_method_cplocations, combin
     if combination_strategy == 'union':
         return sorted(set(first_method_cplocations + second_method_cplocations))
     elif combination_strategy == 'intersection_strict':
-        return sorted(set(first_method_cplocations).intersection(set(second_method_cplocations)))
+        final_cplocations = list()
+        for cplocation in first_method_cplocations:
+            if any(abs(cplocation - compcploc) <= margin for compcploc in second_method_cplocations):
+                final_cplocations.append(cplocation)
+
+        for cplocation in second_method_cplocations:
+            if any(abs(cplocation - compcploc) <= margin for compcploc in first_method_cplocations):
+                final_cplocations.append(cplocation)
+
+        return sorted(set(final_cplocations))
     elif combination_strategy == 'intersection_first':
         final_cplocations = list()
         for cplocation in first_method_cplocations:
