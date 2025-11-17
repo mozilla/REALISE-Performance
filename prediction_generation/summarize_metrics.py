@@ -76,12 +76,6 @@ def process_default(method):
     stripped_method = method.replace("default_", "")
     nb_success = 0
     for dataset_metrics in datasets_metrics:
-        try:
-            if dataset_metrics["results"][method][0]["status"] == "SUCCESS":
-                print("OK")
-        except Exception as e:
-            print("########3")
-            print(dataset_metrics["dataset"])
         if dataset_metrics["results"][method][0]["status"] == "SUCCESS":
             nb_success += 1
             metrics = dataset_metrics["results"][method][0]["scores"]
@@ -141,12 +135,7 @@ def process_best(method):
                     uniq_fail_conf[conf_str].append(dataset_metrics['dataset'])
                 else:
                     uniq_fail_conf[conf_str] = [dataset_metrics['dataset']]
-                print('AAAAAAAAAAAAAAAA')
-                print(method)
-            else:
-                print('METHOD:')
-                print(method)
-                print(dataset_metrics["dataset"])
+
     # dict_f1 = {key: sum(value['f1']) / len(value['f1']) for key, value in hyperparams.items() if len(value['f1']) > nb_datasets_threshold}
     # dict_precision = {key: sum(value['precision']) / len(value['precision']) for key, value in hyperparams.items() if len(value['precision']) > nb_datasets_threshold}
     # dict_recall = {key: sum(value['recall']) / len(value['recall']) for key, value in hyperparams.items() if len(value['recall']) > nb_datasets_threshold}
@@ -154,46 +143,10 @@ def process_best(method):
     dict_f1 = {key: sum(value['f1']) / len(value['f1']) for key, value in hyperparams.items() if len(value['f1']) > nb_datasets_threshold}
     dict_precision = {key: sum(value['precision']) / len(value['precision']) for key, value in hyperparams.items() if len(value['precision']) > nb_datasets_threshold}
     dict_recall = {key: sum(value['recall']) / len(value['recall']) for key, value in hyperparams.items() if len(value['recall']) > nb_datasets_threshold}
-    print('Method Kar lChebba thabbat fl wesfan')
-    print(method)
-    print('number of failed confs with no datasets overlap')
-    print(len(uniq_fail_conf))
-    print('number of failed confs with datasets overlap')
-    for key, value in uniq_fail_conf.items():
-        if key in uniq_successful_conf:
-            print(key)
-            print(value)
-    # print(uniq_successful_conf.intersection(set(uniq_fail_conf.keys())))
-    # for key, value in hyperparams.items():
-    #     print(len(value['f1']))
-    # print(method)
-    # print('################')
-    # print('dict_f1')
-    # print(len(dict_f1))
-    # print('dict_precision')
-    # print(len(dict_precision))
-    # print('dict_recall')
-    # print(len(dict_recall))
-    # print('Hyperparamssssssss')
-    # print(len(hyperparams))
     for key, value in hyperparams.items():
         uniq_count.add(len(value['precision']))
         uniq_count.add(len(value['f1']))
         uniq_count.add(len(value['recall']))
-        # print(len(value['f1']))
-    # print(uniq_count)
-    # for key, value in hyperparams.items():
-    #     if (len(value['precision']) < 63):
-    #         print('3omri mensit')
-    #         print(method)
-    #     if (len(value['recall']) < 63):
-    #         print('3omri mensit')
-    #         print(method)
-    #     if (len(value['f1']) < 63):
-    #         print('3omri mensit')
-    #         print(method)
-        # if (len(value['f1']) != len(value['precision'])) or (len(value['f1']) != len(value['recall'])):
-        #     print('Kar lChebba thabbat fl wesfan')
     all_keys = set(dict_precision.keys()).union(set(dict_recall.keys())).union(set(dict_f1.keys()))
 
     # Save all configurations to CSV for debugging purposes
@@ -209,32 +162,22 @@ def process_best(method):
     try:
         max_f1 = dict_f1[max(dict_f1, key=dict_f1.get)]
     except Exception as e:
-        print('###f1####')
-        print(e)
         max_f1 = None
     try:
         precision_max_f1 = dict_precision[max(dict_f1, key=dict_f1.get)]
     except Exception as e:
-        print('###precision f1 max####')
-        print(e)
         precision_max_f1 = None
     try:
         recall_max_f1 = dict_recall[max(dict_f1, key=dict_f1.get)]
     except Exception as e:
-        print('###recall f1####')
-        print(e)
         recall_max_f1 = None
     try:
         max_precision = dict_precision[max(dict_precision, key=dict_precision.get)]
     except Exception as e:
-        print('###precision####')
-        print(e)
         max_precision = None
     try:
         max_recall = dict_recall[max(dict_recall, key=dict_recall.get)]
     except Exception as e:
-        print('###recall####')
-        print(e)
         max_recall = None
     MethodsMeasurements[stripped_method].f1_best = max_f1
     MethodsMeasurements[stripped_method].precision_best = max_precision
