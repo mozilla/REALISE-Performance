@@ -24,6 +24,7 @@ COPY ${PROJECT_FOLDER}/utils.R /TCPDBench/execs/R/utils.R
 COPY ${PROJECT_FOLDER}/cpdbench_wbs.R /TCPDBench/execs/R/cpdbench_wbs.R
 COPY ${PROJECT_FOLDER}/cpdbench_prophet.py /TCPDBench/execs/python/cpdbench_prophet.py
 COPY ${PROJECT_FOLDER}/cpdbench_mozilla_rep.py /TCPDBench/execs/python/cpdbench_mozilla_rep.py
+COPY ${PROJECT_FOLDER}/cpdbench_mozilla_rep_cliff.py /TCPDBench/execs/python/cpdbench_mozilla_rep_cliff.py
 COPY ${PROJECT_FOLDER}/cpdbench_page_hinkley.py /TCPDBench/execs/python/cpdbench_page_hinkley.py
 COPY ${PROJECT_FOLDER}/cpdbench_chisquare.py /TCPDBench/execs/python/cpdbench_chisquare.py
 COPY ${PROJECT_FOLDER}/cpdbench_page_hinkley_lookahead.py /TCPDBench/execs/python/cpdbench_page_hinkley_lookahead.py
@@ -52,10 +53,11 @@ COPY ${PROJECT_FOLDER}/cpdbench_mosum_lookahead.py /TCPDBench/execs/python/cpdbe
 COPY ${PROJECT_FOLDER}/cpdbench_cvm_lookahead.py /TCPDBench/execs/python/cpdbench_cvm_lookahead.py
 COPY ${PROJECT_FOLDER}/cpdbench_bocpd_lookahead.R /TCPDBench/execs/R/cpdbench_bocpd_lookahead.R
 COPY ${PROJECT_FOLDER}/cpdbench_methods.py /TCPDBench/execs/python/cpdbench_methods.py
+COPY ${PROJECT_FOLDER}/cpdbench_methods_cliff.py /TCPDBench/execs/python/cpdbench_methods_cliff.py
 COPY ${PROJECT_FOLDER}/abed_conf.py /TCPDBench/abed_conf.py
 COPY ${DATASETS_PATH} /TCPDBench/datasets
 COPY ${ANNOTATIONS_PATH} /TCPDBench/analysis/annotations/annotations.json
 COPY ${SIG_ATTIBUTES} /TCPDBench/analysis/annotations/signatures_attributes.json
 RUN chmod +x utils/setup_datasets.sh && ./utils/setup_datasets.sh
 
-# docker build --no-cache --build-arg DATASETS_PATH=data/temp_data/clean_data/sp3-tp6-datasets-annotated-aggregated-jsonfied-174-samples --build-arg ANNOTATIONS_PATH=data/temp_data/clean_data/annotations.json --build-arg SIG_ATTIBUTES=data_annotation_platform/app/static/resources/timeseries_specs.json -t selected_174 -f prediction_generation/Dockerfile .
+# docker build --no-cache --build-arg DATASETS_PATH=data/temp_data/clean_data/sp3-tp6-datasets-annotated-aggregated-jsonfied-174-samples --build-arg ANNOTATIONS_PATH=data/temp_data/clean_data/annotations.json --build-arg SIG_ATTIBUTES=data_annotation_platform/app/static/resources/timeseries_specs.json -t mohamedbilelbesbes/selected_174_online_extension:cliff -f prediction_generation/Dockerfile .

@@ -167,30 +167,10 @@ DATASET_NAMES = {k: k for k in DATASETS}
 ]'''
 
 METHODS = [
-    "best_welch_simple",
-    "best_welch_advanced",
-    "best_mwu_simple",
-    "best_mwu_advanced",
-    "best_ks_simple",
-    "best_ks_advanced",
-    "best_cvm_simple",
-    "best_cvm_advanced",
-    "best_levene_simple",
-    "best_levene_advanced",
-    # "best_anderson_simple",
-    # "best_anderson_advanced",
-    "default_welch_simple",
-    "default_welch_advanced",
-    "default_mwu_simple",
-    "default_mwu_advanced",
-    "default_ks_simple",
-    "default_ks_advanced",
-    "default_cvm_simple",
-    "default_cvm_advanced",
-    "default_levene_simple",
-    "default_levene_advanced",
-    # "default_anderson_simple",
-    # "default_anderson_advanced"
+    "best_cvm_online",
+    "best_adwin",
+    "default_cvm_online",
+    "default_adwin"
 ]
 
 # many of these combinations will be invalid for the changepoint package, but
@@ -211,24 +191,48 @@ R_changepoint_params = {
 R_changepoint_params_seg = copy.deepcopy(R_changepoint_params)
 R_changepoint_params_seg["Q"] = ["max", "default"]
 
+alert_threshold_magnitude_change = [1, 2, 3]
+alert_threshold_cliff_delta = ["negligible", "small", "medium", "large"]
+
+
 stat_method_params_base = {
         "min_back_window": [12, 18, 24],
         "max_back_window": [24, 36, 48],
         "fore_window": [3, 6, 12]
     }
 
+
+mozilla_rep_params = copy.deepcopy(stat_method_params_base)
+mozilla_rep_params["t_threshold"] = [5, 7, 9]
+mozilla_rep_params_regular = copy.deepcopy(mozilla_rep_params)
+mozilla_rep_params_regular["alert_threshold"] = alert_threshold_magnitude_change
+
+mozilla_rep_params_cliff = copy.deepcopy(mozilla_rep_params)
+mozilla_rep_params_cliff["alert_threshold"] = alert_threshold_cliff_delta
+
+
 stat_method_params = copy.deepcopy(stat_method_params_base)
-stat_method_params["alpha"] = [0.035, 0.05, 0.06]
+stat_method_params["alpha"] = [0.005, 0.01, 0.02, 0.035, 0.05, 0.06, 0.07, 0.08, 0.1]
 
 
 stat_method_params_anderson = copy.deepcopy(stat_method_params_base)
 stat_method_params_anderson["alpha"] = [0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2]
 
 stat_method_params_advanced = copy.deepcopy(stat_method_params)
-stat_method_params_advanced["alert_threshold"] = [1, 2, 3]
+stat_method_params_advanced["alert_threshold"] = alert_threshold_magnitude_change
+
+stat_method_params_cliff = copy.deepcopy(stat_method_params_advanced)
+stat_method_params_cliff["alert_threshold"] = alert_threshold_cliff_delta
 
 stat_method_params_anderson_advanced = copy.deepcopy(stat_method_params_anderson)
-stat_method_params_anderson_advanced["alert_threshold"] = [1, 2, 3]
+stat_method_params_anderson_advanced["alert_threshold"] = alert_threshold_magnitude_change
+
+
+stat_method_params_anderson_cliff = copy.deepcopy(stat_method_params_anderson_advanced)
+stat_method_params_anderson_cliff["alert_threshold"] = alert_threshold_cliff_delta
+
+stat_chisquare_params = copy.deepcopy(stat_method_params_advanced)
+stat_chisquare_params["bins"] = [10, 20, 50, 100]
 
 PARAMS = {
     "best_bocpd": {
@@ -283,7 +287,10 @@ PARAMS = {
         "permutations": [10, 20, 50, 100, 150, 200],
     },
     "best_adwin": {
-        "delta": [0.001, 0.002, 0.005, 0.01, 0.02]
+        "delta": [0.001, 0.002, 0.005, 0.01, 0.02],
+        "max_buckets": [3, 5, 10],
+        "min_window_length": [10, 20, 30, 50],
+        "grace_period": [5, 10, 20]
     },
     "best_page_hinkley": {
         "min_instances": [10, 20, 30, 50],
@@ -292,12 +299,7 @@ PARAMS = {
         "alpha": [0.99, 0.999, 0.9999],
         "mode": ["up", "down", "both"]
     },
-    "best_chisquare": {
-        "window_size": [30.0, 50.0, 100.0, 200.0], # Window size has to be between 1 and 10% as interpreted from here: https://centre-borelli.github.io/ruptures-docs/user-guide/detection/window/
-        "num_bins": [5, 10, 20, 30], # Number of bins more than 5, around 30 as interpreted here: https://arxiv.org/html/2412.11158v1
-        "p_threshold": [0.001, 0.005, 0.01, 0.02, 0.05], # p < 0.05 as a detection trigger as interpreted here: https://arxiv.org/html/2412.11158v1
-        "min_distance": [10, 20, 30, 50, 100]
-    },
+    "best_chisquare": stat_chisquare_params,
     "best_kswin": {
         "alpha": [0.001, 0.005, 0.01, 0.02],
         "window_size": [100, 150, 199],
@@ -345,7 +347,7 @@ PARAMS = {
         "window_sizes": ["20", "30", "20 50", "30 60"],
         "min_distance": [20, 30, 40]
     },
-    "best_mozilla_rep": stat_method_params_advanced,
+    "best_mozilla_rep": mozilla_rep_params_regular,
     "best_welch_simple": stat_method_params,
     "best_welch_advanced": stat_method_params_advanced,
     "best_mwu_simple": stat_method_params,
@@ -358,6 +360,13 @@ PARAMS = {
     "best_levene_advanced": stat_method_params_advanced,
     "best_anderson_simple": stat_method_params_anderson,
     "best_anderson_advanced": stat_method_params_anderson_advanced,
+    "best_mozilla_rep_cliff": mozilla_rep_params_cliff,
+    "best_welch_cliff": stat_method_params_cliff,
+    "best_mwu_cliff": stat_method_params_cliff,
+    "best_ks_cliff": stat_method_params_cliff,
+    "best_cvm_cliff": stat_method_params_cliff,
+    "best_levene_cliff": stat_method_params_cliff,
+    "best_anderson_cliff": stat_method_params_anderson_cliff,
     "default_bocpd": {"no_param": [0]},
     "default_cpnp": {"no_param": [0]},
     "default_pelt": {"no_param": [0]},
@@ -394,7 +403,14 @@ PARAMS = {
     "default_levene_simple": {"no_param": [0]},
     "default_levene_advanced": {"no_param": [0]},
     "default_anderson_simple": {"no_param": [0]},
-    "default_anderson_advanced": {"no_param": [0]},
+    "default_anderson_advanced": {"no_param": [0]},    
+    "default_mozilla_rep_cliff": {"no_param": [0]},
+    "default_welch_cliff": {"no_param": [0]},
+    "default_mwu_cliff": {"no_param": [0]},
+    "default_ks_cliff": {"no_param": [0]},
+    "default_cvm_cliff": {"no_param": [0]},
+    "default_levene_cliff": {"no_param": [0]},
+    "default_anderson_cliff": {"no_param": [0]}
 }
 
 lookahead = {"lookahead": [9, 12]}
@@ -446,9 +462,9 @@ COMMANDS = {
     "best_zero": "python3.9 {execdir}/python/cpdbench_zero.py -i {datadir}/{dataset}.json",
     "best_mongodb": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_mongodb.py -i {datadir}/{dataset}.json --pvalue {pvalue} --permutations {permutations}",
     "best_bocpd": "Rscript --no-save --slave {execdir}/R/cpdbench_ocp.R -i {datadir}/{dataset}.json -l {intensity} --prior-a {prior_a} --prior-b {prior_b} --prior-k {prior_k}",
-    "best_adwin": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_adwin.py -i {datadir}/{dataset}.json --delta {delta}",
+    "best_adwin": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_adwin.py -i {datadir}/{dataset}.json --delta {delta} --max-buckets {max_buckets} --min-window-length {min_window_length} --grace-period {grace_period}",
     "best_page_hinkley": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_page_hinkley.py -i {datadir}/{dataset}.json --delta {delta} --threshold {threshold} --min_instances {min_instances} --alpha {alpha} --mode {mode}",
-    "best_chisquare": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_chisquare.py -i {datadir}/{dataset}.json --window-size {window_size} --num-bins {num_bins} --p-threshold {p_threshold} --min-distance {min_distance}",
+    "best_chisquare": "python3.9 {execdir}/python/cpdbench_chisquare.py -i {datadir}/{dataset}.json --bins {bins} -a /TCPDBench/analysis/annotations/signatures_attributes.json --min-back-window {min_back_window} --max-back-window {max_back_window} --fore-window {fore_window} --alpha {alpha} --alert-threshold {alert_threshold}",
     "best_cusum": "python3.9 {execdir}/python/cpdbench_cusum.py -i {datadir}/{dataset}.json --k {k} --h {h} --init-size {init_size} --min-distance {min_distance}",
     "best_ewma":  "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_ewma.py -i {datadir}/{dataset}.json --alpha {alpha} --threshold {threshold} --init-size {init_size} --min-distance {min_distance} ",
     "best_kswin": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_kswin.py -i {datadir}/{dataset}.json --alpha {alpha} --window-size {window_size} --stat-size {stat_size}",
@@ -458,7 +474,7 @@ COMMANDS = {
     "best_sprt": "python3.9 {execdir}/python/cpdbench_sprt.py -i {datadir}/{dataset}.json --mu0 {mu0} --mu1 {mu1} --sigma {sigma} --threshold {threshold} --min-distance {min_distance}",
     "best_cvm_online": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_cvm.py -i {datadir}/{dataset}.json --ert {ert} --window-sizes {window_sizes} --min-distance {min_distance}",
     "best_bocpd_lookahead": "Rscript --no-save --slave {execdir}/R/cpdbench_bocpd_lookahead.R -i {datadir}/{dataset}.json -l {intensity} --prior-a {prior_a} --prior-b {prior_b} --prior-k {prior_k} --lookahead {lookahead}",
-    "best_adwin_lookahead": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_adwin_lookahead.py -i {datadir}/{dataset}.json --delta {delta} --lookahead {lookahead}",
+    "best_adwin_lookahead": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_adwin_lookahead.py -i {datadir}/{dataset}.json --delta {delta} —max-buckets {max_buckets} --min-window-length {min_window_length} --grace-period {grace_period} --lookahead {lookahead}",
     "best_page_hinkley_lookahead": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_page_hinkley_lookahead.py -i {datadir}/{dataset}.json --delta {delta} --threshold {threshold} --min_instances {min_instances} --alpha {alpha} --mode {mode} --lookahead {lookahead}",
     "best_chisquare_lookahead": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_chisquare_lookahead.py -i {datadir}/{dataset}.json --window-size {window_size} --num-bins {num_bins} --p-threshold {p_threshold} --min-distance {min_distance} --lookahead {lookahead}",
     "best_cusum_lookahead": "python3.9 {execdir}/python/cpdbench_cusum_lookahead.py -i {datadir}/{dataset}.json --k {k} --h {h} --init-size {init_size} --min-distance {min_distance} --lookahead {lookahead}",
@@ -482,6 +498,13 @@ COMMANDS = {
     "best_levene_advanced": "python3.9 {execdir}/python/cpdbench_methods.py -i {datadir}/{dataset}.json --method levene -a /TCPDBench/analysis/annotations/signatures_attributes.json --min-back-window {min_back_window} --max-back-window {max_back_window} --fore-window {fore_window} --alpha {alpha} --alert-threshold {alert_threshold}",
     "best_anderson_simple": "python3.9 {execdir}/python/cpdbench_methods.py -i {datadir}/{dataset}.json --method anderson -a /TCPDBench/analysis/annotations/signatures_attributes.json --min-back-window {min_back_window} --max-back-window {max_back_window} --fore-window {fore_window} --alpha {alpha} --alert-threshold disabled",
     "best_anderson_advanced": "python3.9 {execdir}/python/cpdbench_methods.py -i {datadir}/{dataset}.json --method anderson -a /TCPDBench/analysis/annotations/signatures_attributes.json --min-back-window {min_back_window} --max-back-window {max_back_window} --fore-window {fore_window} --alpha {alpha} --alert-threshold {alert_threshold}",
+    "best_mozilla_rep_cliff": "python3.9 {execdir}/python/cpdbench_mozilla_rep_cliff.py -i {datadir}/{dataset}.json -a /TCPDBench/analysis/annotations/signatures_attributes.json --min-back-window {min_back_window} --max-back-window {max_back_window} --fore-window {fore_window} --t-threshold {t_threshold} --alert-threshold {alert_threshold}",
+    "best_welch_cliff": "python3.9 {execdir}/python/cpdbench_methods_cliff.py -i {datadir}/{dataset}.json --method welch -a /TCPDBench/analysis/annotations/signatures_attributes.json --min-back-window {min_back_window} --max-back-window {max_back_window} --fore-window {fore_window} --alpha {alpha} --alert-threshold {alert_threshold}",
+    "best_mwu_cliff": "python3.9 {execdir}/python/cpdbench_methods_cliff.py -i {datadir}/{dataset}.json --method mwu -a /TCPDBench/analysis/annotations/signatures_attributes.json --min-back-window {min_back_window} --max-back-window {max_back_window} --fore-window {fore_window} --alpha {alpha} --alert-threshold {alert_threshold}",
+    "best_ks_cliff": "python3.9 {execdir}/python/cpdbench_methods_cliff.py -i {datadir}/{dataset}.json --method ks -a /TCPDBench/analysis/annotations/signatures_attributes.json --min-back-window {min_back_window} --max-back-window {max_back_window} --fore-window {fore_window} --alpha {alpha} --alert-threshold {alert_threshold}",
+    "best_cvm_cliff": "python3.9 {execdir}/python/cpdbench_methods_cliff.py -i {datadir}/{dataset}.json --method cvm -a /TCPDBench/analysis/annotations/signatures_attributes.json --min-back-window {min_back_window} --max-back-window {max_back_window} --fore-window {fore_window} --alpha {alpha} --alert-threshold {alert_threshold}",
+    "best_levene_cliff": "python3.9 {execdir}/python/cpdbench_methods_cliff.py -i {datadir}/{dataset}.json --method levene -a /TCPDBench/analysis/annotations/signatures_attributes.json --min-back-window {min_back_window} --max-back-window {max_back_window} --fore-window {fore_window} --alpha {alpha} --alert-threshold {alert_threshold}",
+    "best_anderson_cliff": "python3.9 {execdir}/python/cpdbench_methods_cliff.py -i {datadir}/{dataset}.json --method anderson -a /TCPDBench/analysis/annotations/signatures_attributes.json --min-back-window {min_back_window} --max-back-window {max_back_window} --fore-window {fore_window} --alpha {alpha} --alert-threshold {alert_threshold}",    
     "default_amoc": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p MBIC -f mean -t Normal -m AMOC",
     "default_binseg": "Rscript --no-save --slave {execdir}/R/cpdbench_changepoint.R -i {datadir}/{dataset}.json -p MBIC -f mean -t Normal -m BinSeg -Q default",
     "default_cpnp": "Rscript --no-save --slave {execdir}/R/cpdbench_changepointnp.R -i {datadir}/{dataset}.json -p MBIC -q 10",
@@ -497,7 +520,7 @@ COMMANDS = {
     "default_bocpd": "Rscript --no-save --slave {execdir}/R/cpdbench_ocp.R -i {datadir}/{dataset}.json -l 100 --prior-a 1.0 --prior-b 1.0 --prior-k 1.0",
     "default_adwin": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_adwin.py -i {datadir}/{dataset}.json --delta 0.002",
     "default_page_hinkley": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_page_hinkley.py -i {datadir}/{dataset}.json --delta 0.005 --threshold 50.0 --min_instances 30 --alpha 0.9999 --mode both",
-    "default_chisquare": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_chisquare.py -i {datadir}/{dataset}.json --window-size 5.0 --num-bins 10 --p-threshold 0.01 --min-distance 30",
+    "default_chisquare": "python3.9 {execdir}/python/cpdbench_chisquare.py -i {datadir}/{dataset}.json -a /TCPDBench/analysis/annotations/signatures_attributes.json --alert-threshold disabled",
     "default_cusum": "python3.9 {execdir}/python/cpdbench_cusum.py -i {datadir}/{dataset}.json --k 1.0 --h 15.0 --init-size 10.0 --min-distance 30",
     "default_ewma":  "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_ewma.py -i {datadir}/{dataset}.json --alpha 0.3 --threshold 3.0 --init-size 10.0 --min-distance 30",
     "default_shewhart": "source {execdir}/python/venv/bin/activate && python {execdir}/python/cpdbench_shewhart.py -i {datadir}/{dataset}.json --threshold 3.0 --init-size 10.0 --min-distance 30",
@@ -530,7 +553,14 @@ COMMANDS = {
     "default_levene_simple": "python3.9 {execdir}/python/cpdbench_methods.py -i {datadir}/{dataset}.json --method levene -a /TCPDBench/analysis/annotations/signatures_attributes.json --alert-threshold disabled",
     "default_levene_advanced": "python3.9 {execdir}/python/cpdbench_methods.py -i {datadir}/{dataset}.json --method levene -a /TCPDBench/analysis/annotations/signatures_attributes.json",
     "default_anderson_simple": "python3.9 {execdir}/python/cpdbench_methods.py -i {datadir}/{dataset}.json --method anderson -a /TCPDBench/analysis/annotations/signatures_attributes.json --alert-threshold disabled",
-    "default_anderson_advanced": "python3.9 {execdir}/python/cpdbench_methods.py -i {datadir}/{dataset}.json --method anderson -a /TCPDBench/analysis/annotations/signatures_attributes.json"
+    "default_anderson_advanced": "python3.9 {execdir}/python/cpdbench_methods.py -i {datadir}/{dataset}.json --method anderson -a /TCPDBench/analysis/annotations/signatures_attributes.json",
+    "default_mozilla_rep_cliff": "python3.9 {execdir}/python/cpdbench_mozilla_rep_cliff.py -i {datadir}/{dataset}.json -a /TCPDBench/analysis/annotations/signatures_attributes.json",
+    "default_welch_cliff": "python3.9 {execdir}/python/cpdbench_methods_cliff.py -i {datadir}/{dataset}.json --method welch -a /TCPDBench/analysis/annotations/signatures_attributes.json",
+    "default_mwu_cliff": "python3.9 {execdir}/python/cpdbench_methods_cliff.py -i {datadir}/{dataset}.json --method mwu -a /TCPDBench/analysis/annotations/signatures_attributes.json",
+    "default_ks_cliff": "python3.9 {execdir}/python/cpdbench_methods_cliff.py -i {datadir}/{dataset}.json --method ks -a /TCPDBench/analysis/annotations/signatures_attributes.json",
+    "default_cvm_cliff": "python3.9 {execdir}/python/cpdbench_methods_cliff.py -i {datadir}/{dataset}.json --method cvm -a /TCPDBench/analysis/annotations/signatures_attributes.json",
+    "default_levene_cliff": "python3.9 {execdir}/python/cpdbench_methods_cliff.py -i {datadir}/{dataset}.json --method levene -a /TCPDBench/analysis/annotations/signatures_attributes.json",
+    "default_anderson_cliff": "python3.9 {execdir}/python/cpdbench_methods_cliff.py -i {datadir}/{dataset}.json --method anderson -a /TCPDBench/analysis/annotations/signatures_attributes.json"
 }
 
 METRICS = {}

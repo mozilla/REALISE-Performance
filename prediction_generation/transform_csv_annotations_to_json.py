@@ -9,6 +9,7 @@ def parse_args():
     parser.add_argument("--input", required=True, help="Path to the input CSV file")
     parser.add_argument("--output", required=True, help="Path to the output JSON file")
     parser.add_argument("--top", type=int, default=None, help="Minimum number of unique users per dataset to include")
+    parser.add_argument("--variance", default="yes", choices=["yes", "no"], help="Including variance or not: options are 'yes' and 'no'")
     return parser.parse_args()
 
 def main():
@@ -38,7 +39,11 @@ def main():
         else:
             try:
                 index = int(annotation_index)
-                temp[dataset][user_id].append(index)
+                if (args.variance == "no"):
+                    if (annotation_type != "variance"):
+                        temp[dataset][user_id].append(index)
+                else:
+                    temp[dataset][user_id].append(index)
             except ValueError:
                 continue
     

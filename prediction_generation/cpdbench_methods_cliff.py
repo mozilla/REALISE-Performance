@@ -16,6 +16,7 @@ from datetime import datetime
 from cpdbench_utils import load_dataset, exit_success, exit_with_error
 from collections import defaultdict
 #from django.db import transaction
+from cliffs_delta import cliffs_delta
 import moz_measure_noise
 import json
 import os
@@ -235,45 +236,6 @@ def get_alert_properties(prev_value, new_value, lower_is_better):
     return AlertProperties(pct_change, delta, is_regression, prev_value, new_value)
 
 
-def cliffs_delta(x, y):
-    """
-    Compute Cliff's delta effect size between two samples.
-    δ = ( (#(xi > yj) - #(xi < yj) ) / (len(x)*len(y)) )
-    Range: -1 to +1. We use absolute value for magnitude.
-    """
-    n = len(x)
-    m = len(y)
-    if n == 0 or m == 0:
-        return 0.0
-
-    greater = 0
-    less = 0
-    for xi in x:
-        for yj in y:
-            if xi > yj:
-                greater += 1
-            elif xi < yj:
-                less += 1
-    delta = (greater - less) / float(n * m)
-    return abs(delta)
-
-
-def cliffs_delta_category(delta):
-    """
-    Convert Cliff's delta value into categorical effect size.
-    Reference thresholds from Romano et al. (2006).
-    """
-    if delta < 0.147:
-        return "negligible"
-    elif delta < 0.33:
-        return "small"
-    elif delta < 0.474:
-        return "medium"
-    else:
-        return "large"
-
-
-
 def main():
     logger = logging.getLogger(__name__)
     args = parse_args()
@@ -351,8 +313,7 @@ def main():
             jw_values = [v for d in analyzed_series if d.push_timestamp <= prev.push_timestamp for v in d.values]
             kw_values = [v for d in analyzed_series if d.push_timestamp >= cur.push_timestamp for v in d.values]
 
-            delta = cliffs_delta(jw_values, kw_values)
-            category = cliffs_delta_category(delta)
+            delta, category = cliffs_delta(jw_values, kw_values)
             category_threshold = args.alert_threshold
 
             CATEGORY_ORDER = {
