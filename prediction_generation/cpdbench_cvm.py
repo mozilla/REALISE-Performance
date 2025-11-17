@@ -19,6 +19,8 @@ def parse_args():
                         help="List of window sizes for sliding test windows (default: [20, 50])")
     parser.add_argument("--min-distance", type=int, default=30,
                         help="Minimum distance between detected change points (default: 30)")
+    parser.add_argument("--n-bootstraps", type=int, default=1000,
+                        help="Number of bootstrap simulations for threshold configuration (default: 1000)")
     return parser.parse_args()
 
 
@@ -28,24 +30,28 @@ def main():
     raw_args = copy.deepcopy(args)
 
     try:
+        # Load and shape data
         series = np.array(data["series"][0]["raw"]).reshape(-1, 1)
         args.window_sizes = list(map(int, args.window_sizes))
         max_win = max(args.window_sizes)
 
-        # Ensure enough reference data
+        # Check for sufficient data
         if series.shape[0] < max_win + 1:
-            raise ValueError(f"Not enough data points ({series.shape[0]}) for the largest window size ({max_win}).")
+            raise ValueError(
+                f"Not enough data points ({series.shape[0]}) for the largest window size ({max_win})."
+            )
 
+        # Reference window (x_ref)
         x_ref = series[:max_win]
-
         if x_ref.ndim != 2 or x_ref.shape[1] != 1:
             raise ValueError(f"x_ref shape must be (n, 1), got {x_ref.shape}")
 
+        # Initialize detector
         detector = CVMDriftOnline(
             x_ref=x_ref,
             ert=args.ert,
             window_sizes=args.window_sizes,
-            n_bootstraps=1000,
+            n_bootstraps=args.n_bootstraps,
             verbose=False,
         )
 
@@ -53,19 +59,20 @@ def main():
         last_cp = -args.min_distance
         start_time = time.time()
 
-        # Feed one point at a time
+        # Stream data sequentially
         for i in range(max_win, len(series)):
             x_t = series[i].reshape(1, 1)
 
             try:
-                stat = detector.score(x_t)
-            except ValueError as e:
-                raise ValueError(f"Broadcast error at t={i}, x_t shape={x_t.shape}, error={str(e)}")
+                pred = detector.predict(x_t, return_test_stat=True)
+            except Exception as e:
+                raise RuntimeError(f"Error at t={i}: {str(e)}")
 
-            if not np.isnan(stat).all():
-                if np.any(stat > detector.thresholds) and (i - last_cp > args.min_distance):
-                    drift_points.append(i)
-                    last_cp = i
+            is_drift = int(pred["data"]["is_drift"])
+
+            if is_drift and (i - last_cp > args.min_distance):
+                drift_points.append(i)
+                last_cp = i
 
         runtime = time.time() - start_time
         exit_success(data, raw_args, vars(args), drift_points, runtime, __file__)

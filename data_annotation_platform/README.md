@@ -1,32 +1,14 @@
 # Perf Annotation Changer
 
-This application was created to collect annotations of time series data in order to 
+This application was originally created to collect annotations of time series data in order to 
 construct the [Turing Change Point 
-Dataset](https://github.com/alan-turing-institute/TCPD) (TCPD). The TCPD is a 
-dataset of real-world time series used to evaluate change point detection 
-algorithms. For the change point detection benchmark that was created using 
-this dataset, see the [Turing Change Point Detection 
-Benchmark](https://github.com/alan-turing-institute/TCPDBench) repository.
-
-Any work that uses this repository should cite our paper: [**Van den Burg & 
-Williams - An Evaluation of Change Point Detection Algorithms 
-(2020)**](https://arxiv.org/abs/2003.06222). You can use the following BibTeX 
-entry:
-
-```bib
-@article{vandenburg2020evaluation,
-        title={An Evaluation of Change Point Detection Algorithms},
-        author={{Van den Burg}, G. J. J. and Williams, C. K. I.},
-        journal={arXiv preprint arXiv:2003.06222},
-        year={2020}
-}
-```
+Dataset](https://github.com/alan-turing-institute/TCPD) (TCPD) and we extended it in order to utilize it in the annotation data collection process of our study. [This](https://github.com/alan-turing-institute/annotatechange) is the repository having the code of the original project. Make sure to cite their work in case you will use it.
 
 Here's a screenshot of what the application looks like during the annotation 
 process:
 
 <p align="center">
-<img height="500px" src="app/static/img/annotatechange_wide.png" alt="screenshot of 
+<img height="500px" src="app/static/img/annotation_ui_example.png" alt="screenshot of 
 Perf Annotation Changer" />
 </p>
 
@@ -43,7 +25,7 @@ Some of the features of Perf Annotation Changer include:
   ever annotates the same dataset twice, and prioritising datasets that are 
   close to a desired number of annotations.
 
-* Interactive graph of a time series that supports pan and zoom, support for 
+* Interactive graph of a time series that supports pan and zoom on x and y axis, support for 
   multidimensional time series.
 
 * Mandatory "demo" to onboard the user to change point annotation.
@@ -51,6 +33,10 @@ Some of the features of Perf Annotation Changer include:
 * Backup of annotations to the admin via email.
 
 * Time series datasets are verified upon upload acccording to a strict schema.
+
+* The charcteristics of the timeseries under annotation.
+
+
 
 ## Getting Started
 
@@ -189,17 +175,6 @@ instructions](./docs/DEPLOYMENT.md).
 9. After completing the instruction, you then will be able to access the user 
    interface ("Home") to annotate your own time series.
 
-## Notes
-
-This codebase is provided "as is". If you find any problems, please raise an 
-issue [on GitHub](https://github.com/mozilla/REALISE-Performance.git).
-
-The code is licensed under the [MIT License](./LICENSE).
-
-This code was written by [Gertjan van den Burg](https://gertjan.dev) with 
-helpful comments provided by [Chris 
-Williams](https://homepages.inf.ed.ac.uk/ckiw/). It was further accustomed to fit our use case.
-
 ## Some implementation details
 
 Below are some thoughts that may help make sense of the codebase.
@@ -221,8 +196,7 @@ Below are some thoughts that may help make sense of the codebase.
 
 * All datasets must adhere to a specific dataset schema (see 
   [utils/dataset_schema.json](app/utils/dataset_schema.json)). See the files 
-  in [demo_data] for examples, as well as those in 
-  [TCPD](https://github.com/alan-turing-institute/TCPD).
+  in [demo_data] for examples.
 
 * Annotations are stored in the database using 0-based indexing. Tasks are 
   assigned on the fly when a user requests a time series to annotate (see 

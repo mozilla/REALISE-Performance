@@ -17,10 +17,10 @@ parser.add_argument('--folders-to-merge', nargs='+', required=True, help='List o
 args = parser.parse_args()
 
 base_dir = args.base_dir
-ding_dir = os.path.join(base_dir, args.output_folder)
+output_dir = os.path.join(base_dir, args.output_folder)
 folders_to_merge = args.folders_to_merge
 
-os.makedirs(ding_dir, exist_ok=True)
+os.makedirs(output_dir, exist_ok=True)
 
 # List of subfolders to merge into 'ding'
 # folders_to_merge = ["union_kcpa_bocpd", "union_mongodb_bocpd","union_mongodb_kcpa","union_mongodb_pelt","union_pelt_bocpd","union_pelt_kcpa"]
@@ -36,7 +36,7 @@ def merge_folders(src_dir, dest_dir):
         # Create the destination directory if it doesn't exist
         if not os.path.exists(dest_folder):
             os.makedirs(dest_folder)
-        
+         
         # Move or copy files from the source to the destination
         for file in files:
             # Skip files that start with '._'
@@ -55,6 +55,6 @@ for folder_name in folders_to_merge:
     for subfolder in os.listdir(folder_path):
         subfolder_path = os.path.join(folder_path, subfolder)
         if os.path.isdir(subfolder_path):
-            merge_folders(subfolder_path, os.path.join(ding_dir, subfolder))
+            merge_folders(subfolder_path, os.path.join(output_dir, subfolder))
 
 print('Merge complete')

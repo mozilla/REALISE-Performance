@@ -7,27 +7,27 @@ import string
 # bocpd, amoc, binseg, cpnp, kcpa, mongodb, pelt, rfpop, wbs, zero
 # python3 merge_cpds.py  -i ../data/temp_data/clean_data/new_analysis_results -o ../data/temp_data/clean_data/mozilla_with_vote_strict -f -s mozilla -c intersection_first -m 5
 
-# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s cvm_advanced -c intersection_strict -m 5
-# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s ks_advanced -c intersection_strict -m 5
-# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s levene_advanced -c intersection_strict -m 5
-# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s mwu_advanced -c intersection_strict -m 5
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_merged -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s cvm_advanced -c intersection_strict -m 5
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_merged -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s ks_advanced -c intersection_strict -m 5
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_merged -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s levene_advanced -c intersection_strict -m 5
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_merged -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s mwu_advanced -c intersection_strict -m 5
 
-# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f cvm_advanced -s ks_advanced -c intersection_strict -m 5
-# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f cvm_advanced -s levene_advanced -c intersection_strict -m 5
-# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f cvm_advanced -s mwu_advanced -c intersection_strict -m 5
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_merged -o ../data/temp_data/clean_data/stats_merge -f cvm_advanced -s ks_advanced -c intersection_strict -m 5
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_merged -o ../data/temp_data/clean_data/stats_merge -f cvm_advanced -s levene_advanced -c intersection_strict -m 5
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_merged -o ../data/temp_data/clean_data/stats_merge -f cvm_advanced -s mwu_advanced -c intersection_strict -m 5
 
-# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f ks_advanced -s mwu_advanced -c intersection_strict -m 5
-# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f ks_advanced -s levene_advanced -c intersection_strict -m 5
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_merged -o ../data/temp_data/clean_data/stats_merge -f ks_advanced -s mwu_advanced -c intersection_strict -m 5
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_merged -o ../data/temp_data/clean_data/stats_merge -f ks_advanced -s levene_advanced -c intersection_strict -m 5
 
-# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f mwu_advanced -s levene_advanced -c intersection_strict -m 5
-
-
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_merged -o ../data/temp_data/clean_data/stats_merge -f mwu_advanced -s levene_advanced -c intersection_strict -m 5
 
 
 
 
 
-# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s ks_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s levene_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s mwu_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f cvm_advanced -s ks_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f cvm_advanced -s levene_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f cvm_advanced -s mwu_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f ks_advanced -s mwu_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f ks_advanced -s levene_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_results_simple_mozilla_source -o ../data/temp_data/clean_data/stats_merge -f mwu_advanced -s levene_advanced -c intersection_strict -m 5
+
+
+# python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_merged -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s cvm_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_merged -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s ks_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_merged -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s levene_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_merged -o ../data/temp_data/clean_data/stats_merge -f welch_advanced -s mwu_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_merged -o ../data/temp_data/clean_data/stats_merge -f cvm_advanced -s ks_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_merged -o ../data/temp_data/clean_data/stats_merge -f cvm_advanced -s levene_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_merged -o ../data/temp_data/clean_data/stats_merge -f cvm_advanced -s mwu_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_merged -o ../data/temp_data/clean_data/stats_merge -f ks_advanced -s mwu_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_merged -o ../data/temp_data/clean_data/stats_merge -f ks_advanced -s levene_advanced -c intersection_strict -m 5 && python3 merge_cpds.py  -i ../data/temp_data/clean_data/stat_methods_merged -o ../data/temp_data/clean_data/stats_merge -f mwu_advanced -s levene_advanced -c intersection_strict -m 5
 
 
 
@@ -84,7 +84,7 @@ def prefix_param_arg(first_json_conf, second_json_conf, first_method, second_met
     result_conf_args = dict()
 
     for key, value in first_json_conf["parameters"].items():
-        result_conf_params[first_method + "_" + key] = value
+        result_conf_params[first_method + "_" + key]    = value
 
     for key, value in first_json_conf["args"].items():
         result_conf_args[first_method + "_" + key] = value

@@ -39,6 +39,7 @@ def parse_args():
         "-f",
         "--failure-threshold",
         help="The threshold of failed dataset runs per hyper parameter configuration (in decimal)",
+        type=float,
         default=0.05,
         required=False,
     )
@@ -177,7 +178,20 @@ def process_best(method):
             best_conf_file_names = [conf["task_file"] for conf in dataset_metrics["results"][method] if json.dumps(conf["args"], sort_keys=True)  == best_f1_conf]
             for file_name in best_conf_file_names:
                 best_paths.append(signature_id + "/" + method + "/" + file_name)
-        
+    if max_precision:
+            best_precision_conf = max(dict_precision, key=dict_precision.get)
+            for dataset_metrics in datasets_metrics:
+                signature_id = dataset_metrics["dataset"]
+                best_conf_file_names = [conf["task_file"] for conf in dataset_metrics["results"][method] if json.dumps(conf["args"], sort_keys=True)  == best_precision_conf]
+                for file_name in best_conf_file_names:
+                    best_paths.append(signature_id + "/" + method + "/" + file_name)
+    if max_recall:
+            best_recall_conf = max(dict_recall, key=dict_recall.get)
+            for dataset_metrics in datasets_metrics:
+                signature_id = dataset_metrics["dataset"]
+                best_conf_file_names = [conf["task_file"] for conf in dataset_metrics["results"][method] if json.dumps(conf["args"], sort_keys=True)  == best_recall_conf]
+                for file_name in best_conf_file_names:
+                    best_paths.append(signature_id + "/" + method + "/" + file_name)        
     
 
 def process_oracle(method):
