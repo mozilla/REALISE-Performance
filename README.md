@@ -4,7 +4,7 @@ The performance of large systems is crucial for business efficiency, as unrespon
 
 ## Vision
 
-- The goal is to enhance Mozilla's performance workflow by trying different strategies including empirical analysis of the performance workflow, both from a system perspective and from manual process perspective, in order to explore the landscape. Afterwards, based on the findings, we want to propose possible changes to the workflow and we want to report the changes' effects on the performance engineering workflow if the changes are implemented.
+The goal is to enhance Mozilla's performance workflow by trying different strategies including empirical analysis of the performance workflow, both from a system perspective and from manual process perspective, in order to explore the landscape. Afterwards, based on the findings, we want to propose possible changes to the workflow and we want to report the changes' effects on the performance engineering workflow if the changes are implemented.
 ## Challenges
 
 In order to make the vision concrete, the project is divided to multiple challeneges
@@ -49,4 +49,4 @@ This work is a collaboration between Mozilla and REALISE Lab in Concordia Univer
 - Prof. Diego Elias Costa (Supervising Professor)
 - Mohamed Bilel Besbes (Research assistant)
 
-![Concordia logo](app/static/img/concordia-logo.png)
+![Concordia logo](assets/concordia-logo.png)
