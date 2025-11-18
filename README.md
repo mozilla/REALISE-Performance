@@ -31,7 +31,7 @@ The `data_extraction_transformation` folder contains scripts and notebooks to ex
 
 ## prediction_generation overview
 
-The `prediction_generation` folder contains scripts to detect the change points in the data using [TCPDBench](https://github.com/SimonEismann/TCPDBench). The YCPDBench project is extended and altered to fit the use case of this project.
+The `prediction_generation` folder contains scripts to detect the change points in the data using [TCPDBench](https://github.com/SimonEismann/TCPDBench). The TCPDBench project is extended and altered to fit the use case of this project.
 
 ## prediction_postprocessing_scripts overview
 
@@ -49,4 +49,18 @@ This work is a collaboration between Mozilla and REALISE Lab in Concordia Univer
 - Prof. Diego Elias Costa (Supervising Professor)
 - Mohamed Bilel Besbes (Research assistant)
 
-![Concordia logo](assets/concordia-logo.png)
+![Concordia logo](assets/concordia_logo.png)
+
+## License
+The code in this repository is licensed under the MIT license, unless 
+otherwise specified. See the [LICENSE file](LICENSE) for further details. 
+Reuse of the code in this repository is allowed, but should cite [our 
+paper](https://arxiv.org/abs/2003.06222).
+```bib
+@article{vandenburg2020evaluation,
+        title={An Evaluation of Change Point Detection Algorithms},
+        author={{Van den Burg}, G. J. J. and Williams, C. K. I.},
+        journal={arXiv preprint arXiv:2003.06222},
+        year={2020}
+}
+```
