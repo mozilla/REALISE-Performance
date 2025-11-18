@@ -7,10 +7,7 @@ Dataset](https://github.com/alan-turing-institute/TCPD) (TCPD) and we extended i
 Here's a screenshot of what the application looks like during the annotation 
 process:
 
-<p align="center">
-<img height="500px" src="app/static/img/annotation_ui_example.png" alt="screenshot of 
-Perf Annotation Changer" />
-</p>
+![screenshot of Perf Annotation Changer](app/static/img/annotation_ui_example.png)
 
 Some of the features of Perf Annotation Changer include:
 
