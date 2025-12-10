@@ -9,6 +9,8 @@ ding_dir = os.path.join(base_dir, "all_best_default_mixed_4_cpd")
 folders_to_merge = ["all_best_default"]
 '''
 
+# python3 merge_data.py --base-dir ../data/temp_data/clean_data/stat_methods_merged_aaaaa --output-folder ../data/temp_data/clean_data/stat_methods_merged_best_mozilla_leveraged --folders-to-merge mozilla_rep_best_f1_handpicked stat_methods_merged_best_no_mozilla 
+
 parser = argparse.ArgumentParser(description="Merge subfolders into a destination folder.")
 parser.add_argument('--base-dir', required=True, help='Base directory containing the folders to merge')
 parser.add_argument('--output-folder', required=True, help='Name of the output (merged) folder')
@@ -47,6 +49,7 @@ def merge_folders(src_dir, dest_dir):
             
             # If file already exists, skip (to avoid overwriting)
             if not os.path.exists(dest_file):
+                print(f'Copying {src_file} to {dest_file}')
                 shutil.copy2(src_file, dest_file)
 
 # Merge each folder in the list into 'ding'

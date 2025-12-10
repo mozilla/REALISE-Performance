@@ -96,7 +96,7 @@ def vote_and_average(cpd_points_dict, min_votes, margin, strategy="median"):
 
 def process_variant(ts_folder, methods, variant, out_root, min_votes, margin):
     """Process either 'default' or 'best' configurations separately."""
-    print(f"  Processing variant '{variant}'...")
+    # print(f"  Processing variant '{variant}'...")
     method_files = {m: [] for m in methods}
 
     # Load files for each method
@@ -153,7 +153,7 @@ def process_variant(ts_folder, methods, variant, out_root, min_votes, margin):
         with open(output_path, "w") as out_f:
             json.dump(merged_json, out_f, indent=4)
 
-    print(f"    Finished variant '{variant}' with {len(combos)} combinations.")
+    # print(f"    Finished variant '{variant}' with {len(combos)} combinations.")
 
 
 def main():
@@ -173,7 +173,7 @@ def main():
         if not ts_folder.is_dir():
             continue
         dataset_id = ts_folder.name
-        print(f"Processing dataset {dataset_id}...")
+        # print(f"Processing dataset {dataset_id}...")
 
         dataset_out = output_root / dataset_id
         dataset_out.mkdir(parents=True, exist_ok=True)

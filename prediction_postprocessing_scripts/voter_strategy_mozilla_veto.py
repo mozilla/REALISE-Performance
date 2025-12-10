@@ -69,7 +69,7 @@ def vote_and_average_with_veto(cpd_points_dict, veto_points, min_votes, margin):
 
 def process_variant(ts_folder, methods, veto_method, variant, out_root, min_votes, margin):
     """Process either 'default' or 'best' configurations."""
-    print(f"  Processing variant '{variant}'...")
+    # print(f"  Processing variant '{variant}'...")
 
     # Separate veto and regular methods
     all_methods = set(methods + [veto_method])
@@ -84,12 +84,12 @@ def process_variant(ts_folder, methods, veto_method, variant, out_root, min_vote
 
     # Skip dataset if veto method missing
     if not method_files[veto_method]:
-        print(f"    Skipping '{variant}' — veto method '{veto_method}' missing results.")
+        print(f"    Skipping '{variant}' — dataset '{ts_folder}' veto method '{veto_method}' missing results.")
         return
 
     # Skip datasets missing some voting methods
     if any(len(v) == 0 for m, v in method_files.items() if m != veto_method):
-        print(f"    Skipping '{variant}' — some voting methods missing results.")
+        print(f"    Dataset '{ts_folder}' skipping '{variant}' — some voting methods missing results.")
         return
 
     combos = list(itertools.product(*[method_files[m] for m in methods]))
@@ -146,7 +146,7 @@ def process_variant(ts_folder, methods, veto_method, variant, out_root, min_vote
             with open(output_path, "w") as out_f:
                 json.dump(merged_json, out_f, indent=4)
 
-    print(f"    Finished variant '{variant}' with {len(veto_files) * len(combos)} combinations.")
+    # print(f"    Finished variant '{variant}' with {len(veto_files) * len(combos)} combinations.")
  
 
 def main():
@@ -162,12 +162,13 @@ def main():
     input_root = Path(args.input_folder)
     output_root = Path(args.output_folder)
     output_root.mkdir(parents=True, exist_ok=True)
+    print(f"Starting voting-based CPD merging with veto method... for '{args.input_folder}'")
 
     for ts_folder in sorted(input_root.iterdir()):
         if not ts_folder.is_dir():
             continue
         dataset_id = ts_folder.name
-        print(f"Processing dataset {dataset_id}...")
+        # print(f"Processing dataset {dataset_id}...")
 
         dataset_out = output_root / dataset_id
         dataset_out.mkdir(parents=True, exist_ok=True)
@@ -175,7 +176,7 @@ def main():
         process_variant(ts_folder, args.methods, args.veto_method, "default", dataset_out, args.min_votes, args.margin)
         process_variant(ts_folder, args.methods, args.veto_method, "best", dataset_out, args.min_votes, args.margin)
 
-    print("✅ All datasets processed successfully.")
+    # print("✅ All datasets processed successfully.")
 
 
 if __name__ == "__main__":
