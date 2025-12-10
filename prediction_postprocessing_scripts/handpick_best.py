@@ -178,6 +178,7 @@ def process_best(method):
             best_conf_file_names = [conf["task_file"] for conf in dataset_metrics["results"][method] if json.dumps(conf["args"], sort_keys=True)  == best_f1_conf]
             for file_name in best_conf_file_names:
                 best_paths.append(signature_id + "/" + method + "/" + file_name)
+    '''
     if max_precision:
             best_precision_conf = max(dict_precision, key=dict_precision.get)
             for dataset_metrics in datasets_metrics:
@@ -192,7 +193,7 @@ def process_best(method):
                 best_conf_file_names = [conf["task_file"] for conf in dataset_metrics["results"][method] if json.dumps(conf["args"], sort_keys=True)  == best_recall_conf]
                 for file_name in best_conf_file_names:
                     best_paths.append(signature_id + "/" + method + "/" + file_name)        
-    
+    '''
 
 def process_oracle(method):
     metrics_dict = {'f1': [], 'recall': [], 'precision': []}
