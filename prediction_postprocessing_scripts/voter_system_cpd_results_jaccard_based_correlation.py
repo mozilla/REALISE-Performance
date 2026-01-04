@@ -16,95 +16,85 @@ def load_cplocations(folder):
 
 
 def clean_method_name(raw):
-    """
-    raw could be like:
-        'ks_advanced'
-        'levene_advanced'
-        'rep_mwu'
-        'rep_ks'
-    Goal: extract the true name and capitalize first letter.
-    """
-    # strip known prefixes
     if raw.endswith("_rep"):
         raw = raw.replace("_rep", "")
     if raw.endswith("_advanced"):
         raw = raw.replace("_advanced", "")
-
     return raw.capitalize()
 
 
-def expand_with_tolerance(indices, window):
-    expanded = set()
-    for idx in indices:
-        for x in range(idx - window, idx + window + 1):
-            expanded.add(x)
-    return expanded
+def tolerance_jaccard(list_a, list_b, window):
+    a = sorted(list_a)
+    b = sorted(list_b)
 
+    i = j = 0
+    matched = 0
+    used_b = set()
 
-def jaccard(a, b):
-    if not a and not b:
-        return 1.0
-    inter = len(a & b)
-    union = len(a | b)
-    return inter / union if union > 0 else 0.0
+    while i < len(a) and j < len(b):
+        if abs(a[i] - b[j]) <= window:
+            if j not in used_b:
+                matched += 1
+                used_b.add(j)
+                i += 1
+                j += 1
+            else:
+                j += 1
+        elif a[i] < b[j]:
+            i += 1
+        else:
+            j += 1
+
+    union = len(a) + len(b) - matched
+    return matched / union if union > 0 else 1.0
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input-folder", required=True)
     parser.add_argument("--output-heatmap", required=True)
-    parser.add_argument("--window", type=int, required=False, default=5)
+    parser.add_argument("--window", type=int, required=True)
     args = parser.parse_args()
 
     root = Path(args.input_folder)
     ts_folders = [p for p in root.iterdir() if p.is_dir()]
 
     raw_methods = set()
-
-    # Detect all "best_*" folders and extract raw method names
     for ts in ts_folders:
         for sub in ts.iterdir():
             if sub.is_dir() and sub.name.startswith("best_"):
                 raw_methods.add(sub.name.replace("best_", ""))
 
-    # Clean method names
     method_map = {raw: clean_method_name(raw) for raw in raw_methods}
     methods = [method_map[r] for r in sorted(raw_methods)]
 
-    # For pairing matrix, we need consistent order
     similarities = {m1: {m2: [] for m2 in methods} for m1 in methods}
 
     for ts in ts_folders:
         method_cp = {}
 
-        # Populate CP sets for this TS
         for sub in ts.iterdir():
             if sub.is_dir() and sub.name.startswith("best_"):
                 raw = sub.name.replace("best_", "")
                 pretty = method_map[raw]
+                method_cp[pretty] = load_cplocations(sub)
 
-                indices = load_cplocations(sub)
-                method_cp[pretty] = expand_with_tolerance(indices, args.window)
-
-        # Pairwise Jaccard per TS
         for i, m1 in enumerate(methods):
             for m2 in methods[i:]:
-                a = method_cp.get(m1, set())
-                b = method_cp.get(m2, set())
-                sim = jaccard(a, b)
+                a = method_cp.get(m1, [])
+                b = method_cp.get(m2, [])
 
+                sim = tolerance_jaccard(a, b, args.window)
                 similarities[m1][m2].append(sim)
                 if m1 != m2:
                     similarities[m2][m1].append(sim)
 
-    # Average matrix
     mat = np.zeros((len(methods), len(methods)))
     for i, m1 in enumerate(methods):
         for j, m2 in enumerate(methods):
             vals = similarities[m1][m2]
             mat[i, j] = np.mean(vals) if vals else 0.0
 
-    # Plot heatmap with values
     fig, ax = plt.subplots(figsize=(8, 6))
     im = ax.imshow(mat, interpolation="nearest")
 
@@ -114,15 +104,10 @@ def main():
     ax.set_yticklabels(methods)
     plt.colorbar(im, ax=ax)
 
-    # Add similarity numbers
     for i in range(len(methods)):
         for j in range(len(methods)):
-            ax.text(
-                j, i,
-                f"{mat[i,j]:.2f}",
-                ha="center", va="center",
-                fontsize=8, color="white"
-            )
+            ax.text(j, i, f"{mat[i,j]:.2f}", ha="center", va="center",
+                    fontsize=8, color="white")
 
     plt.tight_layout()
     plt.savefig(args.output_heatmap, dpi=300)
