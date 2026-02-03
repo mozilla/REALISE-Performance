@@ -161,16 +161,24 @@ DATASET_NAMES = {k: k for k in DATASETS}
     "default_cvm_simple",
     "default_cvm_advanced",
     "default_levene_simple",
-    "default_levene_advanced"
+    "default_levene_advanced",
     "default_anderson_simple",
     "default_anderson_advanced"
 ]'''
 
 METHODS = [
-    "best_cvm_online",
-    "best_adwin",
-    "default_cvm_online",
-    "default_adwin"
+    "best_welch_advanced",
+    "best_mwu_advanced",
+    "best_ks_advanced",
+    "best_cvm_advanced",
+    "best_levene_advanced",
+    "best_mozilla_rep",
+    "default_welch_advanced",
+    "default_mwu_advanced",
+    "default_ks_advanced",
+    "default_cvm_advanced",
+    "default_levene_advanced",
+    "default_mozilla_rep"
 ]
 
 # many of these combinations will be invalid for the changepoint package, but
@@ -191,7 +199,8 @@ R_changepoint_params = {
 R_changepoint_params_seg = copy.deepcopy(R_changepoint_params)
 R_changepoint_params_seg["Q"] = ["max", "default"]
 
-alert_threshold_magnitude_change = [1, 2, 3]
+# alert_threshold_magnitude_change = [1, 2, 3]
+alert_threshold_magnitude_change = [0]
 alert_threshold_cliff_delta = ["negligible", "small", "medium", "large"]
 
 

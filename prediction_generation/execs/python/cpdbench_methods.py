@@ -313,6 +313,7 @@ def main():
             # threshold
 
             # ALERT_PCT, ALERT_ABS, and ALERT_CHANGE_TYPES come from the PerformanceSignature class in the Treeherder code
+            '''
             ALERT_PCT = 0
             ALERT_ABS = 1
             ALERT_CHANGE_TYPES = ((ALERT_PCT, "percentage"), (ALERT_ABS, "absolute"))
@@ -328,6 +329,7 @@ def main():
                     and abs(alert_properties.delta) < float(alert_threshold)
                 ):
                     continue
+            '''
             # summary, _ = PerformanceAlertSummary.objects.get_or_create(
             #     repository=signature.repository,
             #     framework=signature.framework,
