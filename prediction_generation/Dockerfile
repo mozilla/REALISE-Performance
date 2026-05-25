@@ -24,4 +24,4 @@ COPY ${ANNOTATIONS_PATH} /TCPDBench/analysis/annotations/annotations.json
 COPY ${SIG_ATTIBUTES} /TCPDBench/analysis/annotations/signatures_attributes.json
 RUN chmod +x utils/setup_datasets.sh && ./utils/setup_datasets.sh
 
-# docker build --no-cache --build-arg DATASETS_PATH=data/temp_data/clean_data/sp3-tp6-datasets-annotated-aggregated-jsonfied-174-samples --build-arg ANNOTATIONS_PATH=data/temp_data/clean_data/annotations.json --build-arg SIG_ATTIBUTES=data_annotation_platform/app/static/resources/timeseries_specs.json -t mohamedbilelbesbes/selected_174_online_extension_dockerfile_refacotring:cliff -f prediction_generation/Dockerfile .
+# docker build --no-cache --build-arg DATASETS_PATH=data/temp_data/clean_data/sp3-tp6-datasets-annotated-aggregated-jsonfied-174-samples --build-arg ANNOTATIONS_PATH=data/temp_data/clean_data/annotations.json --build-arg SIG_ATTIBUTES=data_annotation_platform/app/static/resources/timeseries_specs.json -t mohamedbilelbesbes/selected_174_online_extension_dockerfile_refacotring:nomag -f prediction_generation/Dockerfile .

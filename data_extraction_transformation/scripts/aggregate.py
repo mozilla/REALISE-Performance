@@ -30,6 +30,8 @@ def process_folder(input_folder, output_folder, folder, aggregation_method):
         # Save the processed DataFrame
         output_path = f'{output_folder}/{folder}/{signature_file}'
         df_grouped.to_csv(output_path, index=False)
+        print("###########")
+        print(output_path)
 
 
 def main():

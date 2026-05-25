@@ -213,6 +213,8 @@ stat_method_params_base = {
 
 mozilla_rep_params = copy.deepcopy(stat_method_params_base)
 mozilla_rep_params["t_threshold"] = [5, 7, 9]
+
+alert_threshold_magnitude_change = [1, 2, 3]
 mozilla_rep_params_regular = copy.deepcopy(mozilla_rep_params)
 mozilla_rep_params_regular["alert_threshold"] = alert_threshold_magnitude_change
 

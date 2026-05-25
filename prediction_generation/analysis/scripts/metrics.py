@@ -10,7 +10,7 @@ License: See the LICENSE file.
 """
 
 
-def true_positives(T, X, margin=5):
+def true_positives(T, X, margin=2):
     """Compute true positives without double counting
 
     >>> true_positives({1, 10, 20, 23}, {3, 8, 20})
@@ -38,7 +38,7 @@ def true_positives(T, X, margin=5):
     return TP
 
 
-def f_measure(annotations, predictions, margin=5, alpha=0.5, return_PR=False):
+def f_measure(annotations, predictions, margin=3, alpha=0.5, return_PR=False):
     """Compute the F-measure based on human annotations.
 
     annotations : dict from user_id to iterable of CP locations

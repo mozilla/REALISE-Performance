@@ -107,9 +107,26 @@ def process_variant(ts_folder, methods, variant, out_root, min_votes, margin):
                 method_files[m].append(f)
 
     # Skip if any method is missing
-    if any(len(v) == 0 for v in method_files.values()):
-        print(f"    Skipping variant '{variant}', missing method results.")
+    # if any(len(v) == 0 for v in method_files.values()):
+    #     print(f"    Skipping variant '{variant}', missing method results.")
+    #     return
+
+    # Keep only methods that actually have files
+    available_methods = {m: files for m, files in method_files.items() if len(files) > 0}
+
+    missing_methods = [m for m, files in method_files.items() if len(files) == 0]
+
+    if missing_methods:
+        print(f"    Warning: missing results for methods {missing_methods} in variant '{variant}'")
+
+    # Check if we still have enough methods to vote
+    if len(available_methods) < min_votes:
+        print(f"    Skipping variant '{variant}', not enough methods available after filtering.")
         return
+
+    # Replace method_files with filtered version
+    method_files = available_methods
+    methods = list(method_files.keys())
 
     combos = list(itertools.product(*method_files.values()))
     out_dir = out_root / f"{variant}_voter_merged"
