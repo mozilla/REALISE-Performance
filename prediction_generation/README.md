@@ -1,5 +1,5 @@
 # Turing Change Point Detection Benchmark
-This is a fork of the [TCPDBench](https://github.com/SimonEismann/TCPDBench) with the goal to make it easier to configure and deploy. This fork only supports one-dimensional datasets!
+This folder is a fork of the [TCPDBench](https://github.com/SimonEismann/TCPDBench) with the goal to make it easier to configure and deploy. This fork only supports one-dimensional datasets!
 
 ## Running the experiments with Docker
 
