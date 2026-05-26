@@ -20,3 +20,7 @@ docker run -i -t -v tcpdbench_vol:/TCPDBench/docker_results tcpdexperiment /bin/
 docker volume inspect tcpdbench_vol
 ```
 You will find the needed LaTeX talbe under ```analysis/output/tables/latex_summary.tex```.
+
+
+> [!NOTE]
+> The 174 time series used in the project, their ground truth data, and the full experimental results are available [here](https://doi.org/10.5281/zenodo.20381265).
